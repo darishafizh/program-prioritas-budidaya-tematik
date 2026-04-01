@@ -1,86 +1,77 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Page Header with Breadcrumb -->
-<div class="page-header-row">
+<!-- Page Header with Breadcrumb - Aligned -->
+<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 class="page-title">Kuesioner KDMP</h1>
-        <p class="page-subtitle">Data Koperasi Desa Merah Putih</p>
+        <h1 class="page-title fs-3 fw-bold m-0" style="font-family: 'Manrope', sans-serif; color: var(--kkp-navy);">Data KDMP</h1>
+        <p class="text-muted small m-0">Data Lokasi Koperasi Desa Merah Putih</p>
     </div>
-    <x-breadcrumb :items="[
-        ['label' => 'KDMP', 'url' => route('kdmp.index')]
-    ]" />
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb m-0">
+             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-decoration-none text-muted">Dashboard</a></li>
+             <li class="breadcrumb-item active" aria-current="page">KDMP</li>
+        </ol>
+    </nav>
 </div>
 
-<!-- Page Actions -->
-<div class="page-header">
-    <div class="page-header-content">
-        <div></div>
-        <a href="{{ route('kdmp.create') }}" class="btn btn-success">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Tambah Kuesioner
-        </a>
-    </div>
-</div>
+<!-- Data Table Card -->
+<div class="card shadow-sm border-0" style="border-radius: 12px;">
+    <div class="card-body p-4">
+        
+        <!-- Toolbar: Add Button -->
+        <div class="d-flex justify-content-end mb-3">
+             <a href="{{ route('kdmp.create') }}" class="btn btn-sm btn-success d-flex align-items-center gap-2 rounded-pill px-4 shadow-sm">
+                <svg style="width:18px;height:18px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span class="fw-bold">Tambah Kuesioner</span>
+            </a>
+        </div>
 
-<!-- Data Table -->
-<div class="card">
-    <div class="card-body">
-        <table id="kdmpTable" class="table display" style="width:100%">
-            <thead>
+        <table id="kdmpTable" class="table table-hover w-100 table-sm align-middle">
+            <thead class="bg-light">
                 <tr>
-                    <th>No</th>
-                    <th>Koperasi</th>
-                    <th>Lokasi</th>
+                    <th class="text-center" width="40">No</th>
+                    <th>Provinsi</th>
+                    <th>Kabupaten</th>
+                    <th>Desa/Kelurahan</th>
+                    <th>Nama KDKMP</th>
                     <th>Komoditas</th>
-                    <th>Progres</th>
-                    <th>Tanggal</th>
-                    <th>Aksi</th>
+                    <th>Ketua/Anggota</th>
+                    <th>Penyuluh</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($surveys as $index => $survey)
+                @foreach($kdmpLocations as $item)
                 <tr>
-                    <td>{{ $index + 1 }}</td>
+                    <td class="text-center">{{ $item->no ?? $loop->iteration }}</td>
+                    <td>{{ $item->provinsi ?? '-' }}</td>
+                    <td>{{ $item->kabupaten ?? '-' }}</td>
+                    <td>{{ $item->desa ?? '-' }}</td>
+                    <td class="fw-bold text-dark">{{ $item->nama_kdkmp ?? '-' }}</td>
                     <td>
-                        <div class="font-medium">{{ $survey->nama_koperasi ?? '-' }}</div>
-                        <div class="text-xs text-muted">{{ $survey->responden ?? '-' }}</div>
-                    </td>
-                    <td>
-                        <div>{{ $survey->kabupaten ?? '-' }}</div>
-                        <div class="text-xs text-muted">{{ $survey->provinsi ?? '-' }}</div>
-                    </td>
-                    <td>
-                        <span class="badge {{ $survey->komoditas == 'Lele' ? 'badge-teal' : 'badge-success' }}">
-                            {{ $survey->komoditas ?? '-' }}
+                        <span class="badge {{ strtolower($item->komoditas ?? '') == 'lele' ? 'bg-info text-dark' : 'bg-success' }} rounded-pill px-2 py-1 user-select-none" style="font-size: 0.75rem;">
+                            {{ $item->komoditas ?? '-' }}
                         </span>
                     </td>
                     <td>
-                        <div class="flex items-center gap-2">
-                            <div class="progress" style="width:60px;">
-                                <div class="progress-bar" style="width: {{ $survey->average_progress }}%"></div>
-                            </div>
-                            <span class="text-sm">{{ $survey->average_progress }}%</span>
+                        <div class="fw-bold text-dark">{{ $item->ketua_anggota ?? '-' }}</div>
+                        @if($item->no_hp)
+                        <div class="text-muted small d-flex align-items-center gap-1" style="font-size: 0.75rem;">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            {{ $item->no_hp }}
                         </div>
+                        @endif
                     </td>
-                    <td>{{ $survey->tanggal ? $survey->tanggal->format('d/m/Y') : '-' }}</td>
                     <td>
-                        <div class="table-actions">
-                            <a href="{{ route('kdmp.show', $survey) }}" class="table-action-btn view" title="Lihat">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            </a>
-                            <a href="{{ route('kdmp.edit', $survey) }}" class="table-action-btn" style="color:#3B82F6;" title="Edit">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                            </a>
-                            <form action="{{ route('kdmp.destroy', $survey) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus data ini?')">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="table-action-btn delete" title="Hapus">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
-                            </form>
+                        <div class="fw-bold text-dark">{{ $item->nama_penyuluh ?? '-' }}</div>
+                        @if($item->no_hp_penyuluh)
+                        <div class="text-muted small d-flex align-items-center gap-1" style="font-size: 0.75rem;">
+                             <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            {{ $item->no_hp_penyuluh }}
                         </div>
+                        @endif
                     </td>
                 </tr>
                 @endforeach
@@ -91,28 +82,68 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<style>
+    /* Ensure Manrope font is used */
+    body, .page-title, .table, .btn {
+        font-family: 'Manrope', sans-serif;
+    }
+    
+    /* Table modifications */
+    .table-sm td, .table-sm th {
+        padding: 0.75rem 0.75rem;
+        vertical-align: middle;
+        font-size: 0.875rem;
+    }
+    
+    /* Custom Badge Colors to match theme */
+    .bg-info { background-color: var(--kkp-cyan) !important; }
+    .bg-success { background-color: var(--kkp-success) !important; }
+
+    /* DataTables Customization */
+    .dataTables_wrapper .dataTables_length select {
+        padding-right: 2rem; 
+        background-position: right 0.5rem center;
+        border-radius: 6px;
+        border-color: var(--gray-300);
+    }
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 6px;
+        padding: 6px 12px;
+        border: 1px solid var(--gray-300);
+    }
+    .dataTables_length, .dataTables_filter {
+        margin-bottom: 1rem;
+    }
+    div.dataTables_wrapper div.dataTables_filter {
+        text-align: right;
+    }
+</style>
 @endpush
 
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 <script>
 $(document).ready(function() {
     $('#kdmpTable').DataTable({
         language: {
             search: "Cari:",
-            lengthMenu: "Tampilkan _MENU_ data",
+            lengthMenu: "Tampilkan _MENU_ Data", 
             info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-            infoEmpty: "Tidak ada data",
-            infoFiltered: "(filter dari _MAX_ data)",
+            infoEmpty: "Menampilkan 0 data",
+            infoFiltered: "(difilter dari _MAX_ total data)",
             zeroRecords: "Tidak ada data yang cocok",
             paginate: { first: "<<", last: ">>", next: ">", previous: "<" }
         },
-        pageLength: 10,
+        pageLength: 25,
+        dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
         order: [[0, 'asc']],
-        columnDefs: [{ orderable: false, targets: [6] }]
+        columnDefs: [
+            { className: "text-center", targets: [0] },
+            { className: "text-center", targets: [5] }
+        ]
     });
 });
 </script>
