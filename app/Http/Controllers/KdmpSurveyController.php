@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kdmp;
 use App\Models\KdmpSurvey;
 use App\Models\Province;
 use Illuminate\Http\Request;
@@ -14,14 +15,16 @@ class KdmpSurveyController extends Controller
      */
     public function index(Request $request)
     {
-        $query = KdmpSurvey::with('user')->latest();
+        $query = Kdmp::query();
         
         // Filter by search
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('nama_koperasi', 'like', "%{$search}%")
-                  ->orWhere('responden', 'like', "%{$search}%")
-                  ->orWhere('kabupaten', 'like', "%{$search}%");
+                $q->where('nama_kdkmp', 'like', "%{$search}%")
+                  ->orWhere('kabupaten', 'like', "%{$search}%")
+                  ->orWhere('provinsi', 'like', "%{$search}%")
+                  ->orWhere('ketua_anggota', 'like', "%{$search}%")
+                  ->orWhere('nama_penyuluh', 'like', "%{$search}%");
             });
         }
         
@@ -35,10 +38,10 @@ class KdmpSurveyController extends Controller
             $query->where('komoditas', $komoditas);
         }
         
-        $surveys = $query->paginate(10);
+        $kdmpLocations = $query->orderBy('no', 'asc')->get();
         $provinces = Province::orderBy('name')->pluck('name', 'id');
         
-        return view('kdmp.index', compact('surveys', 'provinces'));
+        return view('kdmp.index', compact('kdmpLocations', 'provinces'));
     }
 
     /**

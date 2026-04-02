@@ -5,11 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\KdmpSurvey;
 use App\Models\MasyarakatSurvey;
 use App\Models\SppgSurvey;
+use App\Models\LocationScore;
+use App\Services\ScoringService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    protected $scoringService;
+
+    public function __construct(ScoringService $scoringService)
+    {
+        $this->scoringService = $scoringService;
+    }
+
     /**
      * Display dashboard with statistics
      */
@@ -104,6 +113,21 @@ class DashboardController extends Controller
             ->filter()
             ->values();
         
+        // Location Scoring Data
+        $scoringStats = [
+            'total' => LocationScore::count(),
+            'sangat_layak' => LocationScore::where('status', 'SANGAT LAYAK')->count(),
+            'layak' => LocationScore::where('status', 'LAYAK')->count(),
+            'cukup_layak' => LocationScore::where('status', 'CUKUP LAYAK')->count(),
+            'tidak_layak' => LocationScore::where('status', 'TIDAK LAYAK')->count(),
+            'avg_score' => round(LocationScore::avg('total_score') ?? 0, 1),
+        ];
+        
+        // Top 5 locations by score
+        $topLocations = LocationScore::orderByDesc('total_score')
+            ->limit(5)
+            ->get();
+        
         return view('dashboard.index', compact(
             'totalKuesioner',
             'totalKoperasi',
@@ -116,9 +140,12 @@ class DashboardController extends Controller
             'progresData',
             'hambatanCounts',
             'instalasiData',
-            'mapLocations'
+            'mapLocations',
+            'scoringStats',
+            'topLocations'
         ));
     }
+
 
     /**
      * Get API data for charts (AJAX)
