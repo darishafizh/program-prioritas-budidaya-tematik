@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     // SPPG Survey routes
     Route::resource('sppg', SppgSurveyController::class);
     
+    // Monitoring Lokasi Budidaya routes
+    Route::resource('lokasi-budidaya', App\Http\Controllers\LokasiBudidayaController::class);
+    
     // Scoring Dashboard routes
     Route::prefix('scoring')->name('scoring.')->group(function () {
         Route::get('/', [LocationScoreController::class, 'index'])->name('index');
