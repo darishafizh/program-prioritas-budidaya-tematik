@@ -2,7 +2,7 @@
 
 <nav class="breadcrumb" aria-label="Breadcrumb">
     <div class="breadcrumb-item">
-        <a href="{{ route('dashboard') }}" title="Beranda">Beranda</a>
+        <a href="{{ route('dashboard') }}" title="Dashboard">Dashboard</a>
     </div>
     
     @foreach($items as $item)

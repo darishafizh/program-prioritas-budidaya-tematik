@@ -7,9 +7,6 @@
         <h1 class="page-title">Dashboard Monitoring Budidaya Tematik, Bioflok 2025</h1>
         <p class="page-subtitle">Visualisasi data kuesioner budidaya ikan tematik</p>
     </div>
-    <x-breadcrumb :items="[
-        ['label' => 'Dashboard', 'url' => route('dashboard')]
-    ]" />
 </div>
 
 <!-- Stats Cards -->

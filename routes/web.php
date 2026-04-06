@@ -27,19 +27,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     // User Management routes (admin only)
     Route::resource('users', UserController::class)->except(['show']);
-    
+
     // KDMP Survey routes
     Route::resource('kdmp', KdmpSurveyController::class);
     Route::get('kdmp/{kdmp}/pdf', [KdmpSurveyController::class, 'exportPdf'])->name('kdmp.pdf');
-    
+
     // Masyarakat Survey routes
     Route::resource('masyarakat', MasyarakatSurveyController::class);
-    
+
     // SPPG Survey routes
     Route::resource('sppg', SppgSurveyController::class);
+    
+    // Monitoring Lokasi Budidaya routes
+    Route::resource('lokasi-budidaya', App\Http\Controllers\LokasiBudidayaController::class);
     
     // Scoring Dashboard routes
     Route::prefix('scoring')->name('scoring.')->group(function () {
