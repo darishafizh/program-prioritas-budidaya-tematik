@@ -4,7 +4,7 @@
 <!-- Page Header with Breadcrumb -->
 <div class="page-header-row">
     <div>
-        <h1 class="page-title">Dashboard Monitoring</h1>
+        <h1 class="page-title">Dashboard Monitoring Budidaya Tematik, Bioflok 2025</h1>
         <p class="page-subtitle">Visualisasi data kuesioner budidaya ikan tematik</p>
     </div>
     <x-breadcrumb :items="[
@@ -35,7 +35,7 @@
     <!-- Koperasi Terdata -->
     <div class="stat-card card-gradient-success">
         <div class="stat-card-content">
-            <h3>Koperasi Terdata</h3>
+            <h3>KDKMP Pengelola</h3>
             <div class="stat-card-value">{{ number_format($totalKoperasi) }}</div>
         </div>
         <div class="stat-card-icon">
@@ -68,33 +68,6 @@
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
             </svg>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="card mb-5">
-    <div class="card-body">
-        <h2 class="card-title mb-4">Aksi Cepat</h2>
-        <div class="flex gap-3 flex-wrap">
-            <a href="{{ route('kdmp.create') }}" class="btn btn-success">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Input Kuesioner KDMP
-            </a>
-            <a href="{{ route('masyarakat.create') }}" class="btn btn-success">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Input Kuesioner Masyarakat
-            </a>
-            <a href="{{ route('sppg.create') }}" class="btn btn-success">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Input Kuesioner SPPG
-            </a>
         </div>
     </div>
 </div>
