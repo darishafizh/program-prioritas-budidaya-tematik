@@ -16,7 +16,39 @@
 <form action="{{ route('kdmp.store') }}" method="POST">
     @csrf
 
-    <!-- Data Verifikator & Responden -->
+    {{-- ===== PEMILIHAN KDKMP DARI DATA MASTER ===== --}}
+    <div class="section-card mb-4" style="border:2px solid #0891B2; background: linear-gradient(135deg, rgba(8,145,178,0.04), rgba(6,182,212,0.06));">
+        <div class="section-header">
+            <div class="section-icon teal">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </div>
+            <h3 class="section-title">Pilih Lokasi KDKMP <span style="font-size:0.78rem;font-weight:400;color:#0891B2;">(data otomatis terisi)</span></h3>
+        </div>
+        <div class="section-body">
+            <div class="form-group" style="max-width: 600px;">
+                <label class="form-label">Pilih KDKMP dari Data Master</label>
+                <select name="kdmp_id" id="kdmp_id_selector" class="form-control form-select">
+                    <option value="">-- Pilih nama KDKMP --</option>
+                    @foreach($kdmpList as $kdmp)
+                    <option value="{{ $kdmp->id }}"
+                        data-nama="{{ $kdmp->nama_kdkmp }}"
+                        data-desa="{{ $kdmp->desa }}"
+                        data-kabupaten="{{ $kdmp->kabupaten }}"
+                        data-provinsi="{{ $kdmp->provinsi }}"
+                        data-komoditas="{{ $kdmp->komoditas }}"
+                        data-lat="{{ $kdmp->lat }}"
+                        data-long="{{ $kdmp->long }}">
+                        [{{ $kdmp->no }}] {{ $kdmp->nama_kdkmp }} — {{ $kdmp->kabupaten }}, {{ $kdmp->provinsi }}
+                    </option>
+                    @endforeach
+                </select>
+                <p class="text-muted text-sm mt-1">Memilih KDKMP akan otomatis mengisi Nama Koperasi, Lokasi, Komoditas, dan Koordinat di bawah.</p>
+            </div>
+        </div>
+    </div>
+
     <div class="section-card">
         <div class="section-header">
             <div class="section-icon success">
@@ -335,3 +367,41 @@
     @include('kdmp._form_part2')
 </form>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const selector = document.getElementById('kdmp_id_selector');
+    if (!selector) return;
+
+    selector.addEventListener('change', function () {
+        const selected = this.options[this.selectedIndex];
+        if (!selected.value) return;
+
+        const nama      = selected.getAttribute('data-nama') || '';
+        const desa      = selected.getAttribute('data-desa') || '';
+        const kabupaten = selected.getAttribute('data-kabupaten') || '';
+        const provinsi  = selected.getAttribute('data-provinsi') || '';
+        const komoditas = selected.getAttribute('data-komoditas') || '';
+        const lat       = selected.getAttribute('data-lat') || '';
+        const long_     = selected.getAttribute('data-long') || '';
+
+        // Auto-fill form fields
+        const setVal = (name, value) => {
+            const el = document.querySelector(`[name="${name}"]`);
+            if (el) el.value = value;
+        };
+
+        setVal('nama_koperasi', nama);
+        setVal('desa',          desa);
+        setVal('kabupaten',     kabupaten);
+        setVal('provinsi',      provinsi);
+        setVal('komoditas',     komoditas);
+
+        if (lat && long_) {
+            setVal('koordinat', lat + ', ' + long_);
+        }
+    });
+});
+</script>
+@endpush

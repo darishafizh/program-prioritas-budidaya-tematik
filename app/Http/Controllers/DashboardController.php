@@ -92,25 +92,19 @@ class DashboardController extends Controller
             'IPAL' => KdmpSurvey::where('inst_ipal', true)->count(),
         ];
         
-        // Map locations
-        $mapLocations = KdmpSurvey::whereNotNull('koordinat')
-            ->select('id', 'nama_koperasi', 'kabupaten', 'provinsi', 'koordinat', 'komoditas')
+        // Map locations dari data master KDMP
+        $mapLocations = \App\Models\Kdmp::whereNotNull('lat')->whereNotNull('long')
             ->get()
             ->map(function ($item) {
-                $coords = $item->coordinates_array;
-                if ($coords) {
-                    return [
-                        'id' => $item->id,
-                        'name' => $item->nama_koperasi,
-                        'location' => $item->kabupaten . ', ' . $item->provinsi,
-                        'commodity' => $item->komoditas,
-                        'lat' => $coords['lat'],
-                        'lng' => $coords['lng'],
-                    ];
-                }
-                return null;
+                return [
+                    'id' => $item->id,
+                    'name' => $item->nama_kdkmp ?? 'KDMP Tanpa Nama',
+                    'location' => $item->kabupaten . ', ' . $item->provinsi,
+                    'commodity' => $item->komoditas,
+                    'lat' => $item->lat,
+                    'lng' => $item->long,
+                ];
             })
-            ->filter()
             ->values();
         
         // Location Scoring Data

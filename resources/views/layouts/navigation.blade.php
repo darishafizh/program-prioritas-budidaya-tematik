@@ -25,7 +25,7 @@
 
         <!-- Navigation Menu -->
         <nav class="sidebar-nav">
-            <div class="sidebar-nav-label">Menu Utama</div>
+            <div class="sidebar-nav-label">Dashboard</div>
 
             <a href="{{ route('dashboard') }}"
                 class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -36,6 +36,8 @@
                 </svg>
                 <span>Dashboard</span>
             </a>
+
+            <div class="sidebar-nav-label">Kuesioner</div>
 
             <a href="{{ route('kdmp.index') }}" class="sidebar-link {{ request()->routeIs('kdmp.*') ? 'active' : '' }}">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,18 +69,17 @@
 
             <div class="sidebar-nav-label">Monitoring</div>
 
-            <a href="{{ route('lokasi-budidaya.index') }}"
-                class="sidebar-link {{ request()->routeIs('lokasi-budidaya.*') ? 'active' : '' }}">
+            <a href="{{ route('monitoring.index') }}"
+                class="sidebar-link {{ request()->routeIs('monitoring.*') ? 'active' : '' }}">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
                 </svg>
-                <span>Lokasi Budidaya</span>
+                <span>Monitoring</span>
             </a>
 
-            <div class="sidebar-nav-label">Analisis</div>
+            <div class="sidebar-nav-label">Scoring</div>
 
             <a href="{{ route('scoring.index') }}"
                 class="sidebar-link {{ request()->routeIs('scoring.*') ? 'active' : '' }}">

@@ -1,0 +1,101 @@
+id	no	provinsi	kabupaten	desa	nama_kdkmp	komoditas	ketua_anggota	no_hp	nama_penyuluh	no_hp_penyuluh	long	lat
+1	1	DI. Yogyakarta	Bantul	Gadingsari	KDMP Gadingsari	Nila	Sugiyarto	81227386350	Firman Ardy	87717817881	110,2524001	-7,980278616
+2	2	DI. Yogyakarta	Bantul	Argomulyo	KDMP Argomulyo	Nila	Tukiran	89606954323	Adya Dwi	81393740690	104,2629793	-4,911915364
+3	3	DI. Yogyakarta	Gunungkidul	Genjahan	KDMP Kalurahan Genjahan	Lele	Bangun Teja Sulaksana	81802755025	Danang	85350499893	110,7098742	-7,962362884
+4	4	DI. Yogyakarta	Gunungkidul	Karangrejek	KDMP Karangrejek	Lele	Sujarwanto	85228401635	Wahyudi	81318882126	110,597589	-7,986606343
+5	5	DI. Yogyakarta	Kulonprogo	Banaran	KDMP Banaran	Lele	Suwarjo	85292394189	Isoep Suprihatin	81390194345	110,5990026	-7,523778974
+6	6	DI. Yogyakarta	Sleman	Sidoarum	KDMP Sidoarum	Nila	Sutarmono	89672630002	Ita Wulan H	81228953985	110,3189974	-7,779230229
+7	7	DI. Yogyakarta	Sleman	Tamanmartani	KDMP Kalurahan Tamanmartani	Nila	Mawardi	8156813374	Nadia Ratnasari W	82132009378	110,4821347	-7,743567744
+8	8	DI. Yogyakarta	Kulonprogo	Pengasih	KKMP Pengasih	Lele	Edson Krusma	83843453775	NULL	NULL	110,1664386	-7,843226972
+9	9	DI. Yogyakarta	Kulonprogo	Kedungsari	KKMP Kedungsari	lele	Ika Diana Budi	88802751611	NULL	NULL	108,3369637	-6,631174437
+10	10	JawaBarat	Bandung Barat	Mekarsari	KDMP Mekarsari	Lele	Taufik Rahman	8988422252	Topik	87822106969	107,5873729	-7,121167483
+11	11	JawaBarat	Bandung Barat	Mekarmukti	KDMP Mekarmukti	Nila	Beni	81214684444	Sucy	83820903617	107,4660379	-6,930254859
+12	12	JawaTengah	Banyumas	Dawuhan	KDMP Dawuhan	lele	Suparjo	*081229060700	Laurensia Lonita	NULL	109,2636806	-7,520312573
+13	13	JawaTengah	Banyumas	Babakan	KDMP Babakan	Lele	Khoirul Hamzah	*081391684004	Supriono	NULL	108,1653333	-6,682899766
+14	14	JawaTengah	Batang	Wonotunggal	KDMP Wonotunggal	Lele	Supri (Ketua KDMP)	82324569990	Dian	85293886886	109,7554682	-7,004479861
+15	15	JawaTengah	Batang	Simpar	KDMP Simpar	Nila	Syakur (Ketua KDMP) / Dwi (Admin KDMP)	085950125668 / '085200141031	Zaqqi	85326795759	109,7762954	-6,991108396
+16	16	JawaTengah	Blora	Kentong	KDMP Kentong	Lele	Luhur Susilo (Ketua KDMP)	85257710774	Listyaningsih	NULL	111,560799	-7,168103087
+17	17	JawaTengah	Blora	Sambongrejo	KDMP Sambongrejo	Lele	Purwati	81326316949	Mieke	81390741611	111,314385	-6,978817486
+18	18	JawaTengah	Blora	Kunden	KKMP Kunden	Lele	Akhlis Nur Fuad	89671940301	Any Nurhalimah	81325545636	111,4095081	-6,959058376
+19	19	JawaTengah	Boyolali	Senting	KDMP Senting	Lele	Murjito (Ketua KDMP)	81226267958	Lina K	88232173097	110,7191574	-7,498256081
+20	20	JawaTengah	Boyolali	Ngablak	KDMP Ngablak	Lele	Sugiyanto	83148330303	Emanuel Erwin Widiatmoko	817287232	110,4016047	-7,40063454
+21	21	JawaTengah	Boyolali	Mojo	KDMP Mojo	Lele	Setyo aji (Ketua KDMP)	88980448309	Adiguna Lelana	85647177172	110,7625606	-7,381349844
+22	22	JawaTengah	Grobogan	Baturagung	KDMP Baturagung	Lele	Bangun Setiawan (ketua KDMP)	81390673737	Rr. Ratri Sulih Pinasti	89608649113	110,6807358	-7,024819513
+23	23	JawaTengah	Grobogan	Jatipecaron	KDMP Jatipecaron	Lele	Solekhan	85763020012	Fila Alfiani	81325546898	110,6645376	-7,037544128
+24	24	JawaTengah	Grobogan	Kedungrejo	KDMP Kedungrejo	Lele	Ali Mahmudi	89603346521	Rohmatun Nafidah	87881451791	110,9426672	-7,093831922
+25	25	JawaTengah	Karanganyar	Ngadiluwih	KDMP Ngadiluwih	Lele	Inka Fatika (sekretaris)	82147184566	Adi Surahman	81329253390	111,0020253	-7,634486472
+26	26	JawaTengah	Karanganyar	Tawangsari	KDMP Tawangsari	Lele	Suyanto Bandung (ketua)	82330769984	Anggara	82322199399	110,6596297	-7,517326374
+27	27	JawaTengah	Kebumen	Sidomukti	KDMP Sidomukti	Nila	Sumarlan	0877-3788-0377	Febri Rizki Setiyono	NULL	102,025417	0,183205169
+28	28	JawaTengah	Kebumen	Grogolbeningsari	KDMP Grogolbeningsari	Lele	Inayah	0856-4323-1486	Sugiarto	NULL	109,6060938	-7,740856612
+29	29	JawaTengah	Kebumen	Kenoyojayan	KDMP Kenoyojayan	Lele	Slamet Prayitno	0882-0082-5264	Hardiyono	NULL	109,7160908	-7,791983553
+30	30	JawaTengah	Kendal	Curugsewu	KDMP Curugsewu	Nila	Leni (Sekretaris KDMP)	82329682341	Yolanda	85788878547	110,0904876	-7,089905079
+31	31	JawaTengah	Kendal	Sriwulan	KDMP Sriwulan	lele	Agus Cahyo (Ketua KDMP)	8987499880	Azhar	81389866566	110,3175415	-7,161556422
+32	32	JawaTengah	Kota Salatiga	Kauman Kidul	KKMP Kauman Kidul	Lele	Mahbi Raharto (Ketua KKMP)	*08156573951	Mujiyono,S.Pi	85799378563	110,5147315	-7,301973482
+33	33	JawaTengah	Kudus	Undaan Lor	KDMP Undaan Lor	Nila	Rif'an Hamim	85727415945	Moh Astho Nugroho Utomo	85226178112	110,8291152	-6,8824616
+34	34	JawaTengah	Kudus	Karangrowo	KDMP Karangrowo	Nila	Aldi Santoso	81393169916	Novie Dyah Irawati	81392833136	110,8703667	-6,879059675
+35	35	JawaTengah	Magelang	Candiretno	KDMP Candiretno	Lele	M Zumri Amanullah	0857-4321-9275	Taufiq Nurdin Dwisaputro	NULL	110,2466623	-7,430103268
+36	36	JawaTengah	Magelang	Blondo	KDMP Blondo	Lele	Ikhsan Setyahadi	0878-6343-6330	Wahyu Hidayat Furqon	NULL	110,2374527	-7,544986909
+37	37	JawaTengah	Magelang	Pagersari	KDMP Pagersari	Lele	Nur Hidayat Setya Putra	0812-8018-9799	Wahyu Hidayat Furqon	NULL	108,1657197	-7,12936387
+38	38	JawaTengah	Magelang	Menayu	KDMP Menayu	Nila	Sutoto	0818-0400-2627	Wastu Kencana	NULL	110,2518563	-7,594507938
+39	39	JawaTengah	Magelang	Pabelan	KDMP Pabelan	Lele	Adam Ali Zuwarta	0896-7378-6650	Fathur Buyut Abdulah	NULL	110,2558365	-7,578856643
+40	40	JawaTengah	Pekalongan	Tratebang	KDMP Tratebang	Lele	Saefuddin (Ketua KDMP)	85878676660	Juhlisyukur	85870179285	109,6179704	-6,862498663
+41	41	JawaTengah	Pekalongan	Sijambe	KDMP Sijambe	Lele	Prawito (Ketua KDMP)	85878967541	Juhlisyukur	85870179285	109,632228	-6,874368572
+42	42	JawaTengah	Pekalongan	Tanggeran	KDMP Tanggeran	Lele	Anton Prasetyo (Ketua KDMP)	82328570504	Prabowo	85740020929	109,6069217	-7,649591331
+43	43	JawaTengah	Purbalingga	Timbang	KDMP Timbang	Nila	Ibnu Mas'ud	85201830998	Ria	85642542080	108,5197742	-6,881007956
+44	44	JawaTengah	Purworejo	Kaliharjo	KDMP Kaliharjo	Lele	Purwoko	0852-5129-0595	Kemuning Amin	*08561609748	110,0705232	-7,739997318
+45	45	JawaTengah	Purworejo	Purwosari	KDMP Purwosari	Lele	Halyono	0823-2487-2790	Dian Fitri Astuti	NULL	96,27221933	4,071673941
+46	46	JawaTengah	Purworejo	Dukuhdungus	KDMP Dukuhdungus	Lele	Waliudin	0838-4375-0690	Toto Erwanto	NULL	109,9055409	-7,780970662
+47	47	JawaTengah	Purworejo	Condongsari	KDMP Condongsari	Lele	Muchamim	0812-2780-3697	Slamet Oki Utami	NULL	109,972378	-7,733710006
+48	48	JawaTengah	Rembang	Tuyuhan	KDMP Tuyuhan	Lele	Muhammad Kusmin	81217766196	Surindra	85260986451	111,4446016	-6,725764811
+49	49	JawaTengah	Semarang	Pringapus	KKMP Pringapus	Lele	Setyawan Ady Nugroho (Ketua KDMP), Cahya Ok	089627779269, 085232752903	Hadha Senoutomo	8122510115	110,4637391	-7,197290237
+50	50	JawaTengah	Semarang	Bakalrejo	KDMP Bakalrejo	Lele	"Muhtadin (Ketua KDMP); Nastain (Sekdes)"	"081225616683; 085659759555"	Anton Wismoyo	85225013685	110,6145686	-6,964133013
+51	51	JawaTengah	Tegal	Dermasandi	KDMP Dermasandi	Lele	Akhmad Khumaeni	0896-5985-6292	Yusuf wijanarko	NULL	109,1797467	-6,946311003
+52	52	JawaTengah	Tegal	Kalisapu	KDMP Kalisapu	Lele	Rio Mardilova	0815-7575-7905	Slamet Priyono	NULL	109,121085	-6,98872719
+53	53	JawaTengah	Tegal	Pedeslohor	KDMP Pedeslohor	Lele	Aris Hari Sasmito	0815 8812 1777	Idham Ali Rosadi	NULL	109,0824182	-6,940113352
+54	54	JawaTengah	Wonogiri	Kepatihan	KDMP Kepatihan	Lele	Suwanto (Ketua KDMP), Agus Suyitno (Kades)	089525379997/ '085229246630	Aziz Sinung Wardika	8122598644	110,8619199	-7,810687399
+55	55	JawaTengah	Blora	Kamolan	KDMP Kamolan	Lele	Juremi	81931439759	Dini	85747023002	111,4179928	-6,994787974
+56	56	JawaTimur	Banyuwangi	Tegalsari	KDMP Tegalsari	Lele	Tsabit Mahbubi (Pembudidaya KDMP)	81878315222	Fahmi	NULL	108,3049366	-6,899154474
+57	57	JawaTimur	Blitar	Sawentar	KDMP Sawentar	Lele	M. Rosuli	8123325196	Rike Handayani	85234923659	112,2334574	-8,11426909
+58	58	JawaTimur	Blitar	Mandesan	KDMP Mandesan	Lele	M. Abror ( Ketua KDMP)	85735928961	Ridianti Pratiwi	85655439969	112,288064	-8,149444896
+59	59	JawaTimur	Blitar	Ngreco	KDMP Ngreco	Lele	Yehuda Kurniawanto ( Ketua KDMP)	85100568053	Afiyatus sholehah	81246284081	112,4465477	-8,139769362
+60	60	JawaTimur	Bojonegoro	Baureno	KDMP Baureno	Lele	AHMAD YASIN (Ket. KDMP)	83139611363	CATUR AGUNG P.	81335511101	112,1040632	-7,133319873
+61	61	JawaTimur	Bojonegoro	Kanor	KDMP Kanor	Lele	DHENI S. A. (Ket. KDMP)	82231654002	CATUR AGUNG P.	81335511101	112,0174849	-7,09599081
+62	62	JawaTimur	Bondowoso	Trotosari	KDMP Trotosari	Lele	Muhammad Agung Naufaldi (Ketua KDMP)	82330424624	Ifada	82331123771	113,9567155	-7,981246739
+63	63	JawaTimur	Bondowoso	Tarum	KDMP Tarum	Lele	Rofiki	81336412265	Vany Chairul sidik	82337072030	113,9978353	-7,797120557
+64	64	JawaTimur	Gresik	Beton	KDMP Beton	Lele	MOCH. JAENURI (Ket. KDMP)	81357576733	M. HILAL FAHMI	81216005465	112,5377691	-7,276526018
+65	65	JawaTimur	Gresik	Kramat	KDMP Kramat	Lele	M. HAFIDZ FIRDAUS (Ket. KDMP)	81554833393	KHOFIFAH	82234674140	109,315381	-7,416707811
+66	66	JawaTimur	Jember	Sidomukti	KDMP Sidomukti	NULL	Efendi (Ketua KDMP)	8,81027E+11	Rio	81332701022	102,025417	0,183205169
+67	67	JawaTimur	Jember	Nogosari	KDMP Nogosari	Lele	Agus Dwi Prayogo (Ketua KDMP)	82228225378	Abbdillah	81249327716	113,9757746	-7,929185718
+68	68	JawaTimur	Kota Batu	Bulukerto	KKMP Bulukerto	Lele	Dicky Setiawan ( Ketua KKMP )	818384114	M. Rafir Syaifullah	81230794954	112,5490117	-7,311802483
+69	69	JawaTimur	Kota Blitar	Rembang	KKMP Rembang	Lele	Mestya Rochmawati ( Ketua KKMP )	82257273961	Siti Romelah	81216981727	111,9973668	-7,879655625
+70	70	JawaTimur	Kota Kediri	Betet	KKMP Betet	Lele	Agung Gunawan Ap ( Ketua KKMP )	82143250993	Badi'a Himma	85784759965	113,8137673	-6,922004584
+71	71	JawaTimur	Kota Kediri	Bawang	KKMP Bawang	Lele	Agung Budi Utamo ( Ketua KKMP )	85100011272	Badi'a Himma	85784759965	105,1489174	-5,754093326
+72	72	JawaTimur	Kota Probolinggo	Pakistaji	KKMP Pakistaji	Lele	Janji Siswanto ( Ketua KKMP )	81779200372	Yoga Yonut	85646556839	112,6395976	-7,207482394
+73	73	JawaTimur	Lamongan	Kebonsari	KDMP Kebonsari	Lele	M. RIYANTO (Ket. KDMP)	85649431085	DYAH YUANITA	85230567894	110,7331387	-6,946372941
+74	74	JawaTimur	Lamongan	Tambakploso	KDMP Tambakploso	Lele	SULISTIONO (Ket. KDMP)	85606777222	LAILIYATUL M.	8128585518	112,7814758	-7,231270689
+75	75	JawaTimur	Lamongan	Pangkatrejo	KDMP Pangkatrejo	Lele	KHOYRI MUTAKIN (Ket. KDMP)	85707055687	NI'MATUS SADIYAH	85746226595	112,2640932	-7,152256621
+76	76	JawaTimur	Lumajang	Madurejo	KDMP Madurejo	Lele	Imam (Pembudidaya KDMP)	85119961427	Andal	85231994010	113,1476988	-8,214423206
+77	77	JawaTimur	Madiun	Luworo	KDMP Luworo	Lele	Muh. Hariyadi M (Ketua)	82245863279	Endi Suandi	85252131998	111,6556307	-7,445729821
+78	78	JawaTimur	Madiun	Buduran	KDMP Buduran	Lele	Trisma Rostanti (Ketua)	85755242097	SUSILO EKO BUDIANTO	85850813709	111,6412869	-7,539513884
+79	79	JawaTimur	Magetan	Prampelan	KDMP Prampelan	Nila	Septian Mahda Pangestu (Ketua)	82234712753	BRIGITE APRILYA EKA PRATICAH	85655445660	111,4221432	-7,553066693
+80	80	JawaTimur	Magetan	Mategal	KDMP Mategal	Lele	Muhamad Rifa'i Arissandi (ketua)	82337894548	ENDRO DEWANTORO SINIWOKO	85130308073	111,3512984	-7,770491529
+81	81	JawaTimur	Magetan	Tebon	KDMP Tebon	Lele	Winarko (ketua)	85331223333	ANGGA RUDIYANTO	82233512524	111,4569133	-7,561858589
+82	82	JawaTimur	Magetan	Balerejo	KDMP Balerejo	Lele	Brian Nurmananda (ketua)	85649166998	TITIK MINARSIH	81359729747	111,4062739	-7,707967106
+83	83	JawaTimur	Mojokerto	Ngastemi	KDMP Ngastemi	Nila	SUDARTO (Ket. KDMP)	85648948496	RENGGA	85649129013	112,4957503	-7,5174193
+84	84	JawaTimur	Mojokerto	Gempolkerep	KDMP Gempolkerep	lele	SA'DULLAH (Ket. KDMP)	8563395758	ACHMAD AMARUDIN	85646040004	112,3863864	-7,450857069
+85	85	JawaTimur	Mojokerto	Ngimbangan	KDMP Ngimbangan	Lele	JUNAEDI (Krt. KDMP)	88991021951	NUR ALIYAH	81357767454	112,5506694	-7,479659161
+86	86	JawaTimur	Nganjuk	Klurahan	KDMP Klurahan	Lele	Sunarto SP (Ketua)	85210878080	ANDRI INDRAWAN SUSILO	81335181407	111,4792025	-7,546208886
+87	87	JawaTimur	Nganjuk	Ngadiboyo	KDMP Ngadiboyo	Lele	Aris Jatmiko (Ketua)	85745091484	TRI WAHYURINI	81331276641	111,866895	-7,509341864
+88	88	JawaTimur	Ngawi	Tempuran	KDMP Tempuran	Lele	Marjoko (Ketua)	85807250263	Dwi Sri Murniani	81333305713	107,4762567	-6,174644705
+89	89	JawaTimur	Ngawi	Jagir	KDMP Jagir	Lele	Wahyu Tri Widodo (Anggota)	81259705497	Nurhayati	85607380621	112,4957393	-7,871591021
+90	90	JawaTimur	Ngawi	Kauman	KDMP Kauman	Lele	Wawan Wahyudi (Anggota)	82247722170	Nurhayati	85607380621	109,6738755	-6,885829083
+91	91	JawaTimur	Pacitan	Sooka	KDMP Sooka	Nila	Annas Syaifulloh ( Ketua KDMP )	81234074499	Rina Dwi Ariani	81230753913	111,0140017	-8,158520633
+92	92	JawaTimur	Ponorogo	Plancungan	KDMP Plancungan	Lele	Eko Prasetyo (Anggota)	82225223992	Qusnul Andini	NULL	111,4142413	-7,994276117
+93	93	JawaTimur	Ponorogo	Ngloning	KDMP Ngloning	Lele	Abdul Somad (Anggota)	81231516472	Qusnul Andini	NULL	111,4161357	-7,986386997
+94	94	JawaTimur	Probolinggo	Kebonagung	KDMP Kebonagung	Nila	Nasution (pembudidaya KDMP)	85233133205	Jayus	81248369522	109,0245039	-6,95893791
+95	95	JawaTimur	Situbondo	Pokaan	KDMP Pokaan	Lele	M. Ilyas (Pembudidaya KDMP)	85234825888	Febrika Kusuma Lestari	81334762883	114,0566063	-7,668443276
+96	96	JawaTimur	Situbondo	Sumberkolak	KDMP Sumberkolak	Lele	Iskandar Zaini (Pembudidaya KDMP)	85204660698	Wahyu Kurniasih	82332823671	113,9904063	-7,729549915
+97	97	JawaTimur	Situbondo	Alasmalang	KDMP Alasmalang	Lele	Imam Maliki (Ketua KDMP)	85230597940	Wahyu Kurniasih	82332823671	109,3088841	-7,583078087
+98	98	JawaTimur	Tulungagung	Bolorejo	KDMP Bolorejo	Lele	Djoko Purnawarman ( Ketua KDMP )	82142124660	Gurat Pawilang	81218055369	111,8556449	-8,054142123
+99	99	JawaTimur	Tulungagung	Boyolangu	KDMP Boyolangu	Lele	Nening Yuliarini ( Ketua KDMP )	89662372124	Imam Tohari	8563685085	114,3416958	-8,203066665
+100	100	Jawa Timur	Tulungagung	Jabalsari	KDMP Jabalsari	Lele	Imam Daelami (ketua KDMP)	81359339344	Lilis Prasetiawati	85259156691	111,9633593	-8,07799973

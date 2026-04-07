@@ -11,6 +11,7 @@ class KdmpSurvey extends Model
 
     protected $fillable = [
         'user_id',
+        'kdmp_id',
         // Verifikator & Responden
         'verifikator',
         'responden',
@@ -125,6 +126,14 @@ class KdmpSurvey extends Model
         'inst_peralatan' => 'boolean',
         'inst_ipal' => 'boolean',
     ];
+
+    /**
+     * Get the master KDMP data linked to this survey
+     */
+    public function kdmp()
+    {
+        return $this->belongsTo(Kdmp::class);
+    }
 
     /**
      * Get the user who created this survey

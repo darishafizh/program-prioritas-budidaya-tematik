@@ -1,0 +1,94 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Edit Laporan Monitoring</h1>
+        <p class="page-subtitle">{{ $record->kdmp->nama_kdkmp }} — {{ $record->bulan_label }} {{ $record->tahun }}</p>
+    </div>
+    <a href="{{ route('monitoring.show', $record->kdmp_id) }}" class="btn btn-outline">← Kembali</a>
+</div>
+
+<div class="section-card" style="max-width:820px;">
+    <div class="section-body">
+        <form action="{{ route('monitoring.update', $record->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            @if ($errors->any())
+            <div class="alert" style="background:#FEF2F2;border:1px solid #FECACA;border-radius:var(--radius);padding:1rem;margin-bottom:1.25rem;color:#DC2626;">
+                <ul style="margin:0;padding-left:1.25rem;">
+                    @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+                </ul>
+            </div>
+            @endif
+
+            {{-- Info Readonly --}}
+            <div class="grid grid-cols-3 mb-4" style="background:var(--gray-50);border-radius:var(--radius);padding:1rem;">
+                <div><span class="text-muted text-sm">KDKMP</span><div class="font-semibold">{{ $record->kdmp->nama_kdkmp }}</div></div>
+                <div><span class="text-muted text-sm">Periode</span><div class="font-semibold">{{ $bulanList[$record->bulan] }} {{ $record->tahun }}</div></div>
+                <div><span class="text-muted text-sm">Kabupaten</span><div class="font-semibold">{{ $record->kdmp->kabupaten }}</div></div>
+            </div>
+
+            {{-- Status & Progres --}}
+            <div class="grid grid-cols-2">
+                <div class="form-group">
+                    <label class="form-label">Status Lokasi <span style="color:red">*</span></label>
+                    <select name="status_lokasi" class="form-control form-select" required>
+                        <option value="on_track"   {{ $record->status_lokasi === 'on_track'   ? 'selected' : '' }}>🟢 On Track</option>
+                        <option value="bermasalah" {{ $record->status_lokasi === 'bermasalah' ? 'selected' : '' }}>🔴 Bermasalah</option>
+                        <option value="selesai"    {{ $record->status_lokasi === 'selesai'    ? 'selected' : '' }}>🔵 Selesai</option>
+                        <option value="vakum"      {{ $record->status_lokasi === 'vakum'      ? 'selected' : '' }}>🟡 Vakum</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Progres Fisik (%) <span style="color:red">*</span></label>
+                    <input type="number" name="progres_fisik" min="0" max="100"
+                        value="{{ old('progres_fisik', $record->progres_fisik) }}" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2">
+                <div class="form-group">
+                    <label class="form-label">Volume Panen (kg)</label>
+                    <input type="number" name="volume_panen_kg" min="0" step="0.01"
+                        value="{{ old('volume_panen_kg', $record->volume_panen_kg) }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nilai Produksi (Rp)</label>
+                    <input type="number" name="nilai_produksi" min="0"
+                        value="{{ old('nilai_produksi', $record->nilai_produksi) }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Biaya Operasional (Rp)</label>
+                    <input type="number" name="biaya_operasional" min="0"
+                        value="{{ old('biaya_operasional', $record->biaya_operasional) }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Jumlah Pembudidaya Aktif</label>
+                    <input type="number" name="jumlah_pembudidaya_aktif" min="0"
+                        value="{{ old('jumlah_pembudidaya_aktif', $record->jumlah_pembudidaya_aktif) }}" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Kendala</label>
+                <textarea name="kendala" rows="3" class="form-control">{{ old('kendala', $record->kendala) }}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tindak Lanjut</label>
+                <textarea name="tindak_lanjut" rows="3" class="form-control">{{ old('tindak_lanjut', $record->tindak_lanjut) }}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Catatan</label>
+                <textarea name="catatan" rows="2" class="form-control">{{ old('catatan', $record->catatan) }}</textarea>
+            </div>
+
+            <div class="flex gap-3 mt-2">
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                <a href="{{ route('monitoring.show', $record->kdmp_id) }}" class="btn btn-outline">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection

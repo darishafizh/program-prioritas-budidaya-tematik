@@ -50,7 +50,8 @@ class KdmpSurveyController extends Controller
     public function create()
     {
         $provinces = Province::orderBy('name')->get();
-        return view('kdmp.create', compact('provinces'));
+        $kdmpList = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'desa', 'kabupaten', 'provinsi', 'komoditas', 'long', 'lat']);
+        return view('kdmp.create', compact('provinces', 'kdmpList'));
     }
 
     /**
@@ -59,24 +60,31 @@ class KdmpSurveyController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'kdmp_id'     => 'nullable|exists:kdmp,id',
             'verifikator' => 'nullable|string|max:255',
-            'responden' => 'nullable|string|max:255',
+            'responden'   => 'nullable|string|max:255',
             'nama_koperasi' => 'required|string|max:255',
-            'kabupaten' => 'required|string|max:255',
-            'provinsi' => 'required|string|max:255',
-            'komoditas' => 'nullable|in:Lele,Nila',
-            // Add more validation as needed
+            'kabupaten'   => 'required|string|max:255',
+            'provinsi'    => 'required|string|max:255',
+            'komoditas'   => 'nullable|in:Lele,Nila',
         ]);
-        
+
         $validated['user_id'] = Auth::id();
-        
-        // Process checkbox arrays
-        $validated['hambatan_koperasi'] = $request->input('hambatan_koperasi', []);
+
+        // Auto-fill koordinat dari master KDMP jika belum diisi
+        if (!empty($validated['kdmp_id']) && empty($request->koordinat)) {
+            $masterKdmp = Kdmp::find($validated['kdmp_id']);
+            if ($masterKdmp && $masterKdmp->lat && $masterKdmp->long) {
+                $validated['koordinat'] = $masterKdmp->lat . ', ' . $masterKdmp->long;
+            }
+        }
+
+        $validated['hambatan_koperasi']   = $request->input('hambatan_koperasi', []);
         $validated['kendala_pembangunan'] = $request->input('kendala_pembangunan', []);
-        $validated['tujuan_penjualan'] = $request->input('tujuan_penjualan', []);
-        
+        $validated['tujuan_penjualan']    = $request->input('tujuan_penjualan', []);
+
         $survey = KdmpSurvey::create($validated);
-        
+
         return redirect()
             ->route('kdmp.show', $survey)
             ->with('success', 'Kuesioner KDMP berhasil disimpan!');
@@ -87,6 +95,7 @@ class KdmpSurveyController extends Controller
      */
     public function show(KdmpSurvey $kdmp)
     {
+        $kdmp->load('kdmp');
         return view('kdmp.show', compact('kdmp'));
     }
 
@@ -96,7 +105,8 @@ class KdmpSurveyController extends Controller
     public function edit(KdmpSurvey $kdmp)
     {
         $provinces = Province::orderBy('name')->get();
-        return view('kdmp.edit', compact('kdmp', 'provinces'));
+        $kdmpList  = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'desa', 'kabupaten', 'provinsi', 'komoditas', 'long', 'lat']);
+        return view('kdmp.edit', compact('kdmp', 'provinces', 'kdmpList'));
     }
 
     /**
@@ -105,21 +115,21 @@ class KdmpSurveyController extends Controller
     public function update(Request $request, KdmpSurvey $kdmp)
     {
         $validated = $request->validate([
+            'kdmp_id'     => 'nullable|exists:kdmp,id',
             'verifikator' => 'nullable|string|max:255',
-            'responden' => 'nullable|string|max:255',
+            'responden'   => 'nullable|string|max:255',
             'nama_koperasi' => 'required|string|max:255',
-            'kabupaten' => 'required|string|max:255',
-            'provinsi' => 'required|string|max:255',
-            'komoditas' => 'nullable|in:Lele,Nila',
+            'kabupaten'   => 'required|string|max:255',
+            'provinsi'    => 'required|string|max:255',
+            'komoditas'   => 'nullable|in:Lele,Nila',
         ]);
-        
-        // Process checkbox arrays
-        $validated['hambatan_koperasi'] = $request->input('hambatan_koperasi', []);
+
+        $validated['hambatan_koperasi']   = $request->input('hambatan_koperasi', []);
         $validated['kendala_pembangunan'] = $request->input('kendala_pembangunan', []);
-        $validated['tujuan_penjualan'] = $request->input('tujuan_penjualan', []);
-        
+        $validated['tujuan_penjualan']    = $request->input('tujuan_penjualan', []);
+
         $kdmp->update($validated);
-        
+
         return redirect()
             ->route('kdmp.show', $kdmp)
             ->with('success', 'Kuesioner KDMP berhasil diperbarui!');

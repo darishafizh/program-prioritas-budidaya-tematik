@@ -10,6 +10,7 @@ class LocationScore extends Model
     use HasFactory;
 
     protected $fillable = [
+        'kdmp_id',
         'kecamatan',
         'kabupaten',
         'provinsi',
@@ -42,6 +43,11 @@ class LocationScore extends Model
     ];
 
     // Relationships
+    public function kdmp()
+    {
+        return $this->belongsTo(\App\Models\Kdmp::class);
+    }
+
     public function kdmpSurvey()
     {
         return $this->belongsTo(KdmpSurvey::class);
