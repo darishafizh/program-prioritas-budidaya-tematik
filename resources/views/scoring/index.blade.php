@@ -97,8 +97,8 @@
 <!-- Filters -->
 <div class="section-card mb-4">
     <div class="section-body">
-        <form action="{{ route('scoring.index') }}" method="GET" class="grid grid-cols-4 gap-4">
-            <div class="form-group">
+        <form action="{{ route('scoring.index') }}" method="GET" class="d-flex gap-3 flex-wrap align-items-end">
+            <div class="form-group mb-0" style="min-width:200px;">
                 <label class="form-label">Status</label>
                 <select name="status" class="form-control form-select">
                     <option value="">Semua Status</option>
@@ -107,7 +107,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-0" style="min-width:200px;">
                 <label class="form-label">Kabupaten</label>
                 <select name="kabupaten" class="form-control form-select">
                     <option value="">Semua Kabupaten</option>
@@ -116,7 +116,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-0" style="min-width:200px;">
                 <label class="form-label">Provinsi</label>
                 <select name="provinsi" class="form-control form-select">
                     <option value="">Semua Provinsi</option>
@@ -125,10 +125,8 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group flex items-end">
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <a href="{{ route('scoring.index') }}" class="btn btn-outline ml-2">Reset</a>
-            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{{ route('scoring.index') }}" class="btn btn-outline">Reset</a>
         </form>
     </div>
 </div>
@@ -312,6 +310,71 @@
 @media (max-width: 768px) {
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-number {
+        font-size: 1.35rem;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .stat-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* Data table responsive */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: linear-gradient(135deg, var(--kkp-navy) 0%, var(--kkp-navy-light) 100%);
+}
+
+.data-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--gray-200);
+    font-size: 0.875rem;
+    color: var(--gray-700);
+}
+
+.data-table tbody tr:hover {
+    background: var(--gray-50);
+}
+
+@media (max-width: 768px) {
+    .data-table th,
+    .data-table td {
+        padding: 0.5rem 0.625rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
     }
 }
 </style>

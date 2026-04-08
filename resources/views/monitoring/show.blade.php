@@ -37,7 +37,7 @@
             <h3>Status Terakhir</h3>
             @if($records->count())
             @php $last = $records->first(); @endphp
-            <div class="stat-card-value" style="font-size:1.1rem;">{{ $last->status_icon }} {{ $last->status_label }}</div>
+            <div class="stat-card-value" style="font-size:1.1rem;">{!! $last->status_icon !!} {{ $last->status_label }}</div>
             @else
             <div class="stat-card-value" style="font-size:1rem;">Belum Ada</div>
             @endif
@@ -76,25 +76,25 @@
     </div>
     <div class="section-body" style="padding:0;">
         @forelse($records as $record)
-        <div style="border-bottom:1px solid var(--gray-200);padding:1.25rem 1.5rem;" class="hover:bg-gray-50">
-            <div class="flex items-center justify-between">
-                <div class="flex gap-4 items-center">
-                    <div style="text-align:center;min-width:80px;">
+        <div class="monitoring-record-item" style="border-bottom:1px solid var(--gray-200);padding:1.25rem 1.5rem;">
+            <div class="monitoring-record-header">
+                <div class="monitoring-record-main">
+                    <div style="text-align:center;min-width:70px;">
                         <div style="font-size:1rem;font-weight:700;color:var(--kkp-teal);">{{ $bulanList[$record->bulan] }}</div>
                         <div style="font-size:0.8rem;color:var(--gray-500);">{{ $record->tahun }}</div>
                     </div>
-                    <div style="height:48px;width:1px;background:var(--gray-200);"></div>
+                    <div class="monitoring-record-divider" style="height:48px;width:1px;background:var(--gray-200);"></div>
                     <div>
-                        <span class="status-badge {{ $record->status_color }}">{{ $record->status_icon }} {{ $record->status_label }}</span>
-                        <div style="margin-top:0.4rem;display:flex;gap:1.5rem;font-size:0.82rem;color:var(--gray-600);">
-                            <span>📊 Progres: <strong>{{ $record->progres_fisik }}%</strong></span>
-                            <span>🐟 Panen: <strong>{{ number_format($record->volume_panen_kg,0,',','.') }} kg</strong></span>
-                            <span>💰 Nilai: <strong>Rp {{ number_format($record->nilai_produksi,0,',','.') }}</strong></span>
-                            <span>👥 Pembudidaya: <strong>{{ $record->jumlah_pembudidaya_aktif }} orang</strong></span>
+                        <span class="status-badge {{ $record->status_color }}">{!! $record->status_icon !!} {{ $record->status_label }}</span>
+                        <div class="monitoring-record-stats">
+                            <span><i class="fa-solid fa-chart-line"></i> Progres: <strong>{{ $record->progres_fisik }}%</strong></span>
+                            <span><i class="fa-solid fa-fish"></i> Panen: <strong>{{ number_format($record->volume_panen_kg,0,',','.') }} kg</strong></span>
+                            <span><i class="fa-solid fa-sack-dollar"></i> Nilai: <strong>Rp {{ number_format($record->nilai_produksi,0,',','.') }}</strong></span>
+                            <span><i class="fa-solid fa-users"></i> Pembudidaya: <strong>{{ $record->jumlah_pembudidaya_aktif }} orang</strong></span>
                         </div>
                     </div>
                 </div>
-                <div class="flex gap-2">
+                <div class="monitoring-record-actions">
                     <a href="{{ route('monitoring.edit', $record->id) }}" class="btn btn-sm btn-outline">Edit</a>
                     <form action="{{ route('monitoring.destroy', $record->id) }}" method="POST" onsubmit="return confirm('Yakin hapus laporan ini?')">
                         @csrf @method('DELETE')
@@ -103,12 +103,12 @@
                 </div>
             </div>
             @if($record->kendala)
-            <div style="margin-top:0.75rem;padding:0.6rem 0.8rem;background:var(--gray-50);border-radius:var(--radius);border-left:3px solid #EF4444;font-size:0.82rem;">
+            <div style="margin-top:0.75rem;padding:0.6rem 0.8rem;background:var(--gray-50);border-radius:var(--radius-md);border-left:3px solid #EF4444;font-size:0.82rem;">
                 <strong>Kendala:</strong> {{ $record->kendala }}
             </div>
             @endif
             @if($record->tindak_lanjut)
-            <div style="margin-top:0.5rem;padding:0.6rem 0.8rem;background:var(--gray-50);border-radius:var(--radius);border-left:3px solid #10B981;font-size:0.82rem;">
+            <div style="margin-top:0.5rem;padding:0.6rem 0.8rem;background:var(--gray-50);border-radius:var(--radius-md);border-left:3px solid #10B981;font-size:0.82rem;">
                 <strong>Tindak Lanjut:</strong> {{ $record->tindak_lanjut }}
             </div>
             @endif

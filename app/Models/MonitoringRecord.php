@@ -27,10 +27,10 @@ class MonitoringRecord extends Model
     ];
 
     protected $casts = [
-        'foto'             => 'array',
-        'volume_panen_kg'  => 'decimal:2',
-        'nilai_produksi'   => 'decimal:2',
-        'biaya_operasional'=> 'decimal:2',
+        'foto' => 'array',
+        'volume_panen_kg' => 'decimal:2',
+        'nilai_produksi' => 'decimal:2',
+        'biaya_operasional' => 'decimal:2',
     ];
 
     // ==========================================
@@ -57,11 +57,11 @@ class MonitoringRecord extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status_lokasi) {
-            'on_track'   => 'On Track',
+            'on_track' => 'On Track',
             'bermasalah' => 'Bermasalah',
-            'selesai'    => 'Selesai',
-            'vakum'      => 'Vakum',
-            default      => '-',
+            'selesai' => 'Selesai',
+            'vakum' => 'Vakum',
+            default => '-',
         };
     }
 
@@ -71,11 +71,11 @@ class MonitoringRecord extends Model
     public function getStatusColorAttribute(): string
     {
         return match ($this->status_lokasi) {
-            'on_track'   => 'success',
+            'on_track' => 'success',
             'bermasalah' => 'danger',
-            'selesai'    => 'primary',
-            'vakum'      => 'warning',
-            default      => 'secondary',
+            'selesai' => 'primary',
+            'vakum' => 'warning',
+            default => 'secondary',
         };
     }
 
@@ -85,11 +85,11 @@ class MonitoringRecord extends Model
     public function getStatusIconAttribute(): string
     {
         return match ($this->status_lokasi) {
-            'on_track'   => '🟢',
-            'bermasalah' => '🔴',
-            'selesai'    => '🔵',
-            'vakum'      => '🟡',
-            default      => '⚪',
+            'on_track' => '<i class="fa-solid fa-circle-check"></i>',
+            'bermasalah' => '<i class="fa-solid fa-circle-xmark"></i>',
+            'selesai' => '<i class="fa-solid fa-circle-check"></i>',
+            'vakum' => '<i class="fa-solid fa-circle-exclamation"></i>',
+            default => '<i class="fa-solid fa-circle"></i>',
         };
     }
 
@@ -99,10 +99,18 @@ class MonitoringRecord extends Model
     public function getBulanLabelAttribute(): string
     {
         $bulanList = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
-            4 => 'April',   5 => 'Mei',      6 => 'Juni',
-            7 => 'Juli',    8 => 'Agustus',  9 => 'September',
-            10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
         ];
         return $bulanList[$this->bulan] ?? '-';
     }

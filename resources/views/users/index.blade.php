@@ -51,6 +51,7 @@
     <!-- Data Table -->
     <div class="card">
         <div class="card-body">
+            <div class="table-responsive">
             <table id="usersTable" class="table display" style="width:100%">
                 <thead>
                     <tr>
@@ -127,6 +128,7 @@
                     @endforeach
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 @endsection

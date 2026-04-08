@@ -62,10 +62,10 @@
                 <div class="form-group">
                     <label class="form-label">Status Lokasi <span style="color:red">*</span></label>
                     <select name="status_lokasi" class="form-control form-select" required>
-                        <option value="on_track"   {{ old('status_lokasi') === 'on_track'   ? 'selected' : '' }}>🟢 On Track</option>
-                        <option value="bermasalah" {{ old('status_lokasi') === 'bermasalah' ? 'selected' : '' }}>🔴 Bermasalah</option>
-                        <option value="selesai"    {{ old('status_lokasi') === 'selesai'    ? 'selected' : '' }}>🔵 Selesai</option>
-                        <option value="vakum"      {{ old('status_lokasi') === 'vakum'      ? 'selected' : '' }}>🟡 Vakum</option>
+                        <option value="on_track"   {{ old('status_lokasi') === 'on_track'   ? 'selected' : '' }}><i class="fa-solid fa-circle-check text-success mr-1"></i> On Track</option>
+                        <option value="bermasalah" {{ old('status_lokasi') === 'bermasalah' ? 'selected' : '' }}><i class="fa-solid fa-circle-xmark text-danger mr-1"></i> Bermasalah</option>
+                        <option value="selesai"    {{ old('status_lokasi') === 'selesai'    ? 'selected' : '' }}><i class="fa-solid fa-circle-check text-primary mr-1"></i> Selesai</option>
+                        <option value="vakum"      {{ old('status_lokasi') === 'vakum'      ? 'selected' : '' }}><i class="fa-solid fa-circle-exclamation text-warning mr-1"></i> Vakum</option>
                     </select>
                 </div>
                 <div class="form-group">

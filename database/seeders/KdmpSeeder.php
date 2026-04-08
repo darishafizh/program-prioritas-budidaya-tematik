@@ -46,7 +46,9 @@ class KdmpSeeder extends Seeder
         fclose($file);
 
         // Menghapus data lama jika diinginkan:
+        \Illuminate\Support\Facades\Schema::disableForeignKeyConstraints();
         \Illuminate\Support\Facades\DB::table('kdmp')->truncate();
+        \Illuminate\Support\Facades\Schema::enableForeignKeyConstraints();
         
         // Insert data per baris karena DB::table()->insert() memiliki limit jumlah parameter di MySQL/SQLite
         $chunks = array_chunk($data, 50);

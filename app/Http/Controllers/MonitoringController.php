@@ -25,10 +25,10 @@ class MonitoringController extends Controller
         ]);
 
         if ($search) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nama_kdkmp', 'like', "%$search%")
-                  ->orWhere('kabupaten', 'like', "%$search%")
-                  ->orWhere('provinsi', 'like', "%$search%");
+                    ->orWhere('kabupaten', 'like', "%$search%")
+                    ->orWhere('provinsi', 'like', "%$search%");
             });
         }
 
@@ -38,28 +38,42 @@ class MonitoringController extends Controller
         $recordsPeriode = MonitoringRecord::where('tahun', $tahun)->where('bulan', $bulan);
 
         $stats = [
-            'total_kdmp'  => Kdmp::count(),
+            'total_kdmp' => Kdmp::count(),
             'sudah_lapor' => MonitoringRecord::where('tahun', $tahun)->where('bulan', $bulan)->count(),
-            'on_track'    => (clone $recordsPeriode)->where('status_lokasi', 'on_track')->count(),
-            'bermasalah'  => (clone $recordsPeriode)->where('status_lokasi', 'bermasalah')->count(),
-            'selesai'     => (clone $recordsPeriode)->where('status_lokasi', 'selesai')->count(),
-            'vakum'       => (clone $recordsPeriode)->where('status_lokasi', 'vakum')->count(),
+            'on_track' => (clone $recordsPeriode)->where('status_lokasi', 'on_track')->count(),
+            'bermasalah' => (clone $recordsPeriode)->where('status_lokasi', 'bermasalah')->count(),
+            'selesai' => (clone $recordsPeriode)->where('status_lokasi', 'selesai')->count(),
+            'vakum' => (clone $recordsPeriode)->where('status_lokasi', 'vakum')->count(),
             'total_panen' => (clone $recordsPeriode)->sum('volume_panen_kg'),
             'total_nilai' => (clone $recordsPeriode)->sum('nilai_produksi'),
         ];
 
         // Daftar tahun yang tersedia di data
-        $tahunList = range(2024, (int)date('Y') + 1);
+        $tahunList = range(2024, (int) date('Y') + 1);
 
         $bulanList = [
-            1=>'Januari', 2=>'Februari', 3=>'Maret', 4=>'April',
-            5=>'Mei', 6=>'Juni', 7=>'Juli', 8=>'Agustus',
-            9=>'September', 10=>'Oktober', 11=>'November', 12=>'Desember',
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
         ];
 
         return view('monitoring.index', compact(
-            'kdmpList', 'stats', 'tahun', 'bulan',
-            'tahunList', 'bulanList', 'search'
+            'kdmpList',
+            'stats',
+            'tahun',
+            'bulan',
+            'tahunList',
+            'bulanList',
+            'search'
         ));
     }
 
@@ -76,21 +90,30 @@ class MonitoringController extends Controller
             ->get();
 
         $bulanList = [
-            1=>'Januari', 2=>'Februari', 3=>'Maret', 4=>'April',
-            5=>'Mei', 6=>'Juni', 7=>'Juli', 8=>'Agustus',
-            9=>'September', 10=>'Oktober', 11=>'November', 12=>'Desember',
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
         ];
 
         // Data chart progres fisik & panen per periode
-        $chartData = $records->sortBy(function($r) {
+        $chartData = $records->sortBy(function ($r) {
             return $r->tahun * 100 + $r->bulan;
-        })->values()->map(function($r) use ($bulanList) {
+        })->values()->map(function ($r) use ($bulanList) {
             return [
-                'label'          => ($bulanList[$r->bulan] ?? $r->bulan) . ' ' . $r->tahun,
-                'progres_fisik'  => $r->progres_fisik,
-                'volume_panen'   => (float) $r->volume_panen_kg,
+                'label' => ($bulanList[$r->bulan] ?? $r->bulan) . ' ' . $r->tahun,
+                'progres_fisik' => $r->progres_fisik,
+                'volume_panen' => (float) $r->volume_panen_kg,
                 'nilai_produksi' => (float) $r->nilai_produksi,
-                'status'         => $r->status_lokasi,
+                'status' => $r->status_lokasi,
             ];
         });
 
@@ -107,11 +130,20 @@ class MonitoringController extends Controller
         $kdmpSelected = $kdmpId ? Kdmp::find($kdmpId) : null;
 
         $bulanList = [
-            1=>'Januari', 2=>'Februari', 3=>'Maret', 4=>'April',
-            5=>'Mei', 6=>'Juni', 7=>'Juli', 8=>'Agustus',
-            9=>'September', 10=>'Oktober', 11=>'November', 12=>'Desember',
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
         ];
-        $tahunList = range(2024, (int)date('Y') + 1);
+        $tahunList = range(2024, (int) date('Y') + 1);
 
         return view('monitoring.create', compact('kdmpList', 'kdmpSelected', 'bulanList', 'tahunList'));
     }
@@ -122,18 +154,18 @@ class MonitoringController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kdmp_id'                 => 'required|exists:kdmp,id',
-            'bulan'                   => 'required|integer|between:1,12',
-            'tahun'                   => 'required|integer|min:2024',
-            'status_lokasi'           => 'required|in:on_track,bermasalah,selesai,vakum',
-            'progres_fisik'           => 'required|integer|between:0,100',
-            'volume_panen_kg'         => 'nullable|numeric|min:0',
-            'nilai_produksi'          => 'nullable|numeric|min:0',
-            'biaya_operasional'       => 'nullable|numeric|min:0',
-            'jumlah_pembudidaya_aktif'=> 'nullable|integer|min:0',
-            'kendala'                 => 'nullable|string',
-            'tindak_lanjut'           => 'nullable|string',
-            'catatan'                 => 'nullable|string',
+            'kdmp_id' => 'required|exists:kdmp,id',
+            'bulan' => 'required|integer|between:1,12',
+            'tahun' => 'required|integer|min:2024',
+            'status_lokasi' => 'required|in:on_track,bermasalah,selesai,vakum',
+            'progres_fisik' => 'required|integer|between:0,100',
+            'volume_panen_kg' => 'nullable|numeric|min:0',
+            'nilai_produksi' => 'nullable|numeric|min:0',
+            'biaya_operasional' => 'nullable|numeric|min:0',
+            'jumlah_pembudidaya_aktif' => 'nullable|integer|min:0',
+            'kendala' => 'nullable|string',
+            'tindak_lanjut' => 'nullable|string',
+            'catatan' => 'nullable|string',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -165,11 +197,20 @@ class MonitoringController extends Controller
         $record->load('kdmp');
 
         $bulanList = [
-            1=>'Januari', 2=>'Februari', 3=>'Maret', 4=>'April',
-            5=>'Mei', 6=>'Juni', 7=>'Juli', 8=>'Agustus',
-            9=>'September', 10=>'Oktober', 11=>'November', 12=>'Desember',
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
         ];
-        $tahunList = range(2024, (int)date('Y') + 1);
+        $tahunList = range(2024, (int) date('Y') + 1);
 
         return view('monitoring.edit', compact('record', 'bulanList', 'tahunList'));
     }
@@ -180,15 +221,15 @@ class MonitoringController extends Controller
     public function update(Request $request, MonitoringRecord $monitoring)
     {
         $validated = $request->validate([
-            'status_lokasi'           => 'required|in:on_track,bermasalah,selesai,vakum',
-            'progres_fisik'           => 'required|integer|between:0,100',
-            'volume_panen_kg'         => 'nullable|numeric|min:0',
-            'nilai_produksi'          => 'nullable|numeric|min:0',
-            'biaya_operasional'       => 'nullable|numeric|min:0',
-            'jumlah_pembudidaya_aktif'=> 'nullable|integer|min:0',
-            'kendala'                 => 'nullable|string',
-            'tindak_lanjut'           => 'nullable|string',
-            'catatan'                 => 'nullable|string',
+            'status_lokasi' => 'required|in:on_track,bermasalah,selesai,vakum',
+            'progres_fisik' => 'required|integer|between:0,100',
+            'volume_panen_kg' => 'nullable|numeric|min:0',
+            'nilai_produksi' => 'nullable|numeric|min:0',
+            'biaya_operasional' => 'nullable|numeric|min:0',
+            'jumlah_pembudidaya_aktif' => 'nullable|integer|min:0',
+            'kendala' => 'nullable|string',
+            'tindak_lanjut' => 'nullable|string',
+            'catatan' => 'nullable|string',
         ]);
 
         $monitoring->update($validated);

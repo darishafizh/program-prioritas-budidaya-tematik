@@ -75,7 +75,7 @@
     </div>
     <div class="section-body">
         <div class="detail-grid">
-            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Nama SPPG</div><div class="detail-value font-semibold">{{ $sppg->nama_sppg ?? '-' }}</div></div>
+            <div class="detail-item" style="grid-column: 1 / -1;"><div class="detail-label">Nama SPPG</div><div class="detail-value font-semibold">{{ $sppg->nama_sppg ?? '-' }}</div></div>
             <div class="detail-item"><div class="detail-label">Kabupaten</div><div class="detail-value">{{ $sppg->kabupaten ?? '-' }}</div></div>
             <div class="detail-item"><div class="detail-label">Provinsi</div><div class="detail-value">{{ $sppg->provinsi ?? '-' }}</div></div>
             <div class="detail-item"><div class="detail-label">Jml Sekolah MBG</div><div class="detail-value">{{ $sppg->jumlah_sekolah ?? 0 }}</div></div>
@@ -123,8 +123,8 @@
     </div>
     <div class="section-body">
         <div class="detail-grid">
-            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Minat Kerjasama</div><div class="detail-value">{{ $sppg->minat_kerjasama ?? '-' }}</div></div>
-            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Alasan</div><div class="detail-value">{{ $sppg->alasan_minat ?? '-' }}</div></div>
+            <div class="detail-item" style="grid-column: 1 / -1;"><div class="detail-label">Minat Kerjasama</div><div class="detail-value">{{ $sppg->minat_kerjasama ?? '-' }}</div></div>
+            <div class="detail-item" style="grid-column: 1 / -1;"><div class="detail-label">Alasan</div><div class="detail-value">{{ $sppg->alasan_minat ?? '-' }}</div></div>
         </div>
     </div>
 </div>

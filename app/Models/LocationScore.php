@@ -75,15 +75,14 @@ class LocationScore extends Model
         };
     }
 
-    // Get status icon
     public function getStatusIconAttribute()
     {
         return match ($this->status) {
-            'SANGAT LAYAK' => '🟢',
-            'LAYAK' => '🔵',
-            'CUKUP LAYAK' => '🟡',
-            'TIDAK LAYAK' => '🔴',
-            default => '⚪',
+            'SANGAT LAYAK' => '<i class="fa-solid fa-circle-check"></i>',
+            'LAYAK' => '<i class="fa-solid fa-circle-check"></i>',
+            'CUKUP LAYAK' => '<i class="fa-solid fa-circle-exclamation"></i>',
+            'TIDAK LAYAK' => '<i class="fa-solid fa-circle-xmark"></i>',
+            default => '<i class="fa-solid fa-circle"></i>',
         };
     }
 

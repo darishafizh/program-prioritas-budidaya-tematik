@@ -22,12 +22,15 @@
     <!-- KKP Theme CSS -->
     <link rel="stylesheet" href="{{ asset('css/kkp-theme.css') }}">
     
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     @stack('styles')
 </head>
 <body>
     <script>
         // Restore sidebar state BEFORE render to prevent flash
-        if (window.innerWidth >= 1024 && localStorage.getItem('sidebar-collapsed') === 'true') {
+        if (window.innerWidth > 768 && localStorage.getItem('sidebar-collapsed') === 'true') {
             document.write('<div class="app-layout sidebar-collapsed">');
         } else {
             document.write('<div class="app-layout">');
@@ -82,7 +85,7 @@
             const sidebar = document.querySelector('.sidebar');
             const appLayout = document.querySelector('.app-layout');
 
-            if (window.innerWidth >= 1024) {
+            if (window.innerWidth > 768) {
                 // Desktop: collapse/expand & save state
                 appLayout.classList.toggle('sidebar-collapsed');
                 localStorage.setItem('sidebar-collapsed', appLayout.classList.contains('sidebar-collapsed'));
@@ -95,7 +98,7 @@
         // Close sidebar on mobile when clicking a link
         document.querySelectorAll('.sidebar-link').forEach(link => {
             link.addEventListener('click', () => {
-                if (window.innerWidth < 1024) {
+                if (window.innerWidth <= 768) {
                     document.querySelector('.sidebar').classList.remove('sidebar-open');
                 }
             });
@@ -110,6 +113,13 @@
         // Close sidebar overlay on mobile
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('sidebar-overlay')) {
+                document.querySelector('.sidebar').classList.remove('sidebar-open');
+            }
+        });
+
+        // Automatically close mobile sidebar when window is resized to avoid layout bugs
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
                 document.querySelector('.sidebar').classList.remove('sidebar-open');
             }
         });

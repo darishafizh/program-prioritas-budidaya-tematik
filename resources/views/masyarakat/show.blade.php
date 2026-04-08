@@ -54,9 +54,9 @@
     </div>
     <div class="section-body">
         <div class="detail-grid">
-            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Sesuai Kebutuhan</div><div class="detail-value">{{ $masyarakat->sesuai_kebutuhan ?? '-' }}</div></div>
-            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Perasaan</div><div class="detail-value">{{ $masyarakat->perasaan ?? '-' }}</div></div>
-            <div class="detail-item" style="grid-column: span 4;"><div class="detail-label">Harapan</div><div class="detail-value">{{ $masyarakat->harapan ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Sesuai Kebutuhan</div><div class="detail-value">{{ $masyarakat->sesuai_kebutuhan ?? '-' }}</div></div>
+            <div class="detail-item"><div class="detail-label">Perasaan</div><div class="detail-value">{{ $masyarakat->perasaan ?? '-' }}</div></div>
+            <div class="detail-item" style="grid-column: 1 / -1;"><div class="detail-label">Harapan</div><div class="detail-value">{{ $masyarakat->harapan ?? '-' }}</div></div>
         </div>
     </div>
 </div>

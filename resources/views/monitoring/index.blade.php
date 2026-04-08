@@ -28,7 +28,7 @@
     </div>
     <div class="stat-card card-gradient-success">
         <div class="stat-card-content">
-            <h3>🟢 On Track</h3>
+            <h3><i class="fa-solid fa-circle-check"></i> On Track</h3>
             <div class="stat-card-value">{{ $stats['on_track'] }}</div>
         </div>
         <div class="stat-card-icon">
@@ -37,7 +37,7 @@
     </div>
     <div class="stat-card card-gradient-warning">
         <div class="stat-card-content">
-            <h3>🔴 Bermasalah</h3>
+            <h3><i class="fa-solid fa-circle-xmark"></i> Bermasalah</h3>
             <div class="stat-card-value">{{ $stats['bermasalah'] }}</div>
         </div>
         <div class="stat-card-icon">
@@ -58,8 +58,8 @@
 {{-- Filter --}}
 <div class="section-card mb-4">
     <div class="section-body">
-        <form method="GET" action="{{ route('monitoring.index') }}" class="flex gap-3 flex-wrap items-end">
-            <div class="form-group" style="margin:0;min-width:200px;">
+        <form method="GET" action="{{ route('monitoring.index') }}" class="d-flex gap-3 flex-wrap align-items-end">
+            <div class="form-group mb-0" style="min-width:200px;">
                 <label class="form-label">Cari KDMP</label>
                 <input type="text" name="search" value="{{ $search }}" class="form-control" placeholder="Nama, kabupaten, provinsi...">
             </div>
@@ -89,8 +89,8 @@
 <div class="section-card">
     <div class="section-body" style="padding:0;">
         <div class="table-responsive">
-            <table class="data-table">
-                <thead>
+            <table class="table table-hover table-sm align-middle w-100 mb-0">
+                <thead class="bg-light">
                     <tr>
                         <th style="width:40px">No</th>
                         <th>Nama KDKMP</th>
@@ -109,8 +109,8 @@
                         $lastRecord = $kdmp->monitoringRecords->first();
                     @endphp
                     <tr>
-                        <td class="text-center font-bold text-muted">{{ $kdmp->no }}</td>
-                        <td class="font-semibold">{{ $kdmp->nama_kdkmp }}</td>
+                        <td class="text-center fw-bold text-muted">{{ $kdmp->no }}</td>
+                        <td class="fw-bold text-dark">{{ $kdmp->nama_kdkmp }}</td>
                         <td>{{ $kdmp->kabupaten }}</td>
                         <td>{{ $kdmp->provinsi }}</td>
                         <td class="text-center">
@@ -128,10 +128,10 @@
                         <td class="text-center">
                             @if($lastRecord)
                                 <span class="status-badge {{ $lastRecord->status_color }}">
-                                    {{ $lastRecord->status_icon }} {{ $lastRecord->status_label }}
+                                    {!! $lastRecord->status_icon !!} {{ $lastRecord->status_label }}
                                 </span>
                             @else
-                                <span class="status-badge" style="background:var(--gray-100);color:var(--gray-500);">⚪ Belum Lapor</span>
+                                <span class="status-badge" style="background:var(--gray-100);color:var(--gray-500);"><i class="fa-solid fa-circle"></i> Belum Lapor</span>
                             @endif
                         </td>
                         <td class="text-center">
@@ -147,7 +147,7 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <div class="flex gap-1 justify-center">
+                            <div class="d-flex gap-1 justify-content-center">
                                 <a href="{{ route('monitoring.show', $kdmp->id) }}" class="btn btn-sm btn-primary">Detail</a>
                                 <a href="{{ route('monitoring.create', ['kdmp_id' => $kdmp->id]) }}" class="btn btn-sm btn-outline" title="Tambah laporan">+</a>
                             </div>
@@ -161,8 +161,8 @@
                 </tbody>
             </table>
         </div>
-        <div class="p-4">
-            {{ $kdmpList->links() }}
+        <div class="p-4 d-flex justify-content-center">
+            {{ $kdmpList->withQueryString()->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </div>

@@ -18,7 +18,7 @@
                 @csrf
                 
                 <div class="grid grid-cols-2">
-                    <div class="form-group col-span-2 md:col-span-1">
+                    <div class="form-group">
                         <label class="form-label" for="nama_koperasi">Nama Koperasi <span class="required">*</span></label>
                         <input type="text" name="nama_koperasi" id="nama_koperasi" class="form-control @error('nama_koperasi') is-invalid @enderror" value="{{ old('nama_koperasi') }}" required>
                         @error('nama_koperasi')
@@ -26,7 +26,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group col-span-2 md:col-span-1">
+                    <div class="form-group">
                         <label class="form-label" for="lokasi">Lokasi <span class="required">*</span></label>
                         <input type="text" name="lokasi" id="lokasi" class="form-control @error('lokasi') is-invalid @enderror" value="{{ old('lokasi') }}" required>
                         @error('lokasi')
@@ -34,7 +34,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group col-span-2 md:col-span-1">
+                    <div class="form-group">
                         <label class="form-label" for="volume_hasil_panen">Volume Hasil Panen (kg) <span class="required">*</span></label>
                         <div class="input-group">
                             <input type="number" step="0.01" min="0" name="volume_hasil_panen" id="volume_hasil_panen" class="form-control @error('volume_hasil_panen') is-invalid @enderror" value="{{ old('volume_hasil_panen', 0) }}" required>
@@ -44,7 +44,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group col-span-2 md:col-span-1">
+                    <div class="form-group">
                         <label class="form-label" for="nilai_hasil_panen">Nilai Hasil Panen (Rp) <span class="required">*</span></label>
                         <div class="input-group">
                             <span class="input-icon" style="left:12px;">Rp</span>
@@ -55,7 +55,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group col-span-2 md:col-span-1">
+                    <div class="form-group">
                         <label class="form-label" for="biaya_operasional">Biaya Operasional (Rp) <span class="required">*</span></label>
                         <div class="input-group">
                             <span class="input-icon" style="left:12px;">Rp</span>
@@ -66,7 +66,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group col-span-2 md:col-span-1">
+                    <div class="form-group">
                         <label class="form-label" for="harga_jual_per_kg">Harga Jual per kg (Rp) <span class="required">*</span></label>
                         <div class="input-group">
                             <span class="input-icon" style="left:12px;">Rp</span>

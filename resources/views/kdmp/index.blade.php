@@ -2,10 +2,10 @@
 
 @section('content')
 <!-- Page Header with Breadcrumb - Aligned -->
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="page-header-row mb-4">
     <div>
-        <h1 class="page-title fs-3 fw-bold m-0" style="font-family: 'Manrope', sans-serif; color: var(--kkp-navy);">Data KDMP</h1>
-        <p class="text-muted small m-0">Data Lokasi Koperasi Desa Merah Putih</p>
+        <h1 class="page-title" style="color: var(--kkp-navy);">Data KDMP</h1>
+        <p class="page-subtitle">Data Lokasi Koperasi Desa Merah Putih</p>
     </div>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb m-0">
@@ -17,7 +17,7 @@
 
 <!-- Data Table Card -->
 <div class="card shadow-sm border-0" style="border-radius: 12px;">
-    <div class="card-body p-4">
+    <div class="card-body">
         
         <!-- Toolbar: Add Button -->
         <div class="d-flex justify-content-end mb-3">
@@ -29,6 +29,7 @@
             </a>
         </div>
 
+        <div class="table-responsive">
         <table id="kdmpTable" class="table table-hover w-100 table-sm align-middle">
             <thead class="bg-light">
                 <tr>
@@ -77,6 +78,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 @endsection
@@ -101,11 +103,22 @@
     .bg-success { background-color: var(--kkp-success) !important; }
 
     /* DataTables Customization */
+    .dataTables_wrapper .dataTables_length label {
+        font-weight: normal;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
     .dataTables_wrapper .dataTables_length select {
-        padding-right: 2rem; 
-        background-position: right 0.5rem center;
-        border-radius: 6px;
-        border-color: var(--gray-300);
+        width: auto !important;
+        padding: 2px 4px !important;
+        appearance: auto !important;
+        background-image: none !important;
+        border-radius: 3px !important;
+        border: 1px solid var(--gray-300) !important;
+        font-size: 1rem !important;
+        display: inline-block !important;
+        margin: 0 !important;
     }
     .dataTables_wrapper .dataTables_filter input {
         border-radius: 6px;

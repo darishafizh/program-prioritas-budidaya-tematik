@@ -76,8 +76,8 @@
     </div>
     <div class="section-body">
         <div class="detail-grid">
-            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">Nama Koperasi</div><div class="detail-value font-semibold">{{ $kdmp->nama_koperasi ?? '-' }}</div></div>
-            <div class="detail-item" style="grid-column: span 2;"><div class="detail-label">No. Badan Hukum</div><div class="detail-value">{{ $kdmp->nomor_badan_hukum ?? '-' }}</div></div>
+            <div class="detail-item" style="grid-column: 1 / -1;"><div class="detail-label">Nama Koperasi</div><div class="detail-value font-semibold">{{ $kdmp->nama_koperasi ?? '-' }}</div></div>
+            <div class="detail-item" style="grid-column: 1 / -1;"><div class="detail-label">No. Badan Hukum</div><div class="detail-value">{{ $kdmp->nomor_badan_hukum ?? '-' }}</div></div>
             <div class="detail-item"><div class="detail-label">Desa</div><div class="detail-value">{{ $kdmp->desa ?? '-' }}</div></div>
             <div class="detail-item"><div class="detail-label">Kecamatan</div><div class="detail-value">{{ $kdmp->kecamatan ?? '-' }}</div></div>
             <div class="detail-item"><div class="detail-label">Kabupaten</div><div class="detail-value">{{ $kdmp->kabupaten ?? '-' }}</div></div>

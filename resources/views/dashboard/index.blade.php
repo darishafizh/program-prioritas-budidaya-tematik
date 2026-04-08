@@ -2,7 +2,7 @@
 
 @section('content')
 <!-- Page Header with Breadcrumb -->
-<div class="page-header-row">
+<div class="page-header-row animate-fade-in-up">
     <div>
         <h1 class="page-title">Dashboard Monitoring Budidaya Tematik, Bioflok 2025</h1>
         <p class="page-subtitle">Visualisasi data kuesioner budidaya ikan tematik</p>
@@ -12,7 +12,7 @@
 <!-- Stats Cards -->
 <div class="grid grid-cols-4 mb-5">
     <!-- Total Kuesioner -->
-    <div class="stat-card card-gradient-teal">
+    <div class="stat-card card-gradient-teal animate-fade-in-up delay-100">
         <div class="stat-card-content">
             <h3>Total Kuesioner</h3>
             <div class="stat-card-value">{{ number_format($totalKuesioner) }}</div>
@@ -30,7 +30,7 @@
     </div>
 
     <!-- Koperasi Terdata -->
-    <div class="stat-card card-gradient-success">
+    <div class="stat-card card-gradient-success animate-fade-in-up delay-200">
         <div class="stat-card-content">
             <h3>KDKMP Pengelola</h3>
             <div class="stat-card-value">{{ number_format($totalKoperasi) }}</div>
@@ -43,7 +43,7 @@
     </div>
 
     <!-- Total Pembudidaya -->
-    <div class="stat-card card-gradient-navy">
+    <div class="stat-card card-gradient-navy animate-fade-in-up delay-300">
         <div class="stat-card-content">
             <h3>Total Pembudidaya</h3>
             <div class="stat-card-value">{{ number_format($totalPembudidaya) }}</div>
@@ -56,7 +56,7 @@
     </div>
 
     <!-- Rata-rata Progres -->
-    <div class="stat-card card-gradient-warning">
+    <div class="stat-card card-gradient-warning animate-fade-in-up delay-400">
         <div class="stat-card-content">
             <h3>Rata-rata Progres</h3>
             <div class="stat-card-value">{{ number_format($avgProgress, 1) }}%</div>
@@ -70,7 +70,7 @@
 </div>
 
 <!-- Scoring Section -->
-<div class="section-card mb-5">
+<div class="section-card mb-5 animate-fade-in-up delay-500">
     <div class="section-header">
         <div class="section-icon teal">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
@@ -88,19 +88,19 @@
             </div>
             <div class="scoring-stat-card success">
                 <span class="scoring-stat-number">{{ $scoringStats['sangat_layak'] }}</span>
-                <span class="scoring-stat-label">🟢 Sangat Layak</span>
+                <span class="scoring-stat-label"><i class="fa-solid fa-circle-check"></i> Sangat Layak</span>
             </div>
             <div class="scoring-stat-card primary">
                 <span class="scoring-stat-number">{{ $scoringStats['layak'] }}</span>
-                <span class="scoring-stat-label">🔵 Layak</span>
+                <span class="scoring-stat-label"><i class="fa-solid fa-circle-check"></i> Layak</span>
             </div>
             <div class="scoring-stat-card warning">
                 <span class="scoring-stat-number">{{ $scoringStats['cukup_layak'] }}</span>
-                <span class="scoring-stat-label">🟡 Cukup Layak</span>
+                <span class="scoring-stat-label"><i class="fa-solid fa-circle-exclamation"></i> Cukup Layak</span>
             </div>
             <div class="scoring-stat-card danger">
                 <span class="scoring-stat-number">{{ $scoringStats['tidak_layak'] }}</span>
-                <span class="scoring-stat-label">🔴 Tidak Layak</span>
+                <span class="scoring-stat-label"><i class="fa-solid fa-circle-xmark"></i> Tidak Layak</span>
             </div>
         </div>
 
@@ -148,7 +148,7 @@
                         </td>
                         <td class="text-center">
                             <span class="status-badge {{ $score->status_color }}">
-                                {{ $score->status_icon }} {{ $score->status }}
+                                {!! $score->status_icon !!} {{ $score->status }}
                             </span>
                         </td>
                         <td class="text-center">
@@ -192,7 +192,7 @@
 </div>
 
 <!-- Charts Grid -->
-<div class="grid grid-cols-2 mb-5">
+<div class="grid grid-cols-2 mb-5 animate-fade-in-up delay-600">
     <!-- Komoditas Chart -->
     <div class="card">
         <div class="card-body">
@@ -235,7 +235,7 @@
 </div>
 
 <!-- Map Section -->
-<div class="card mb-5">
+<div class="card mb-5 animate-fade-in-up delay-600">
     <div class="card-body">
         <div class="flex items-center justify-between mb-4">
             <div>
@@ -259,7 +259,7 @@
 </div>
 
 <!-- Data Tables Links -->
-<div class="grid grid-cols-3">
+<div class="grid grid-cols-3 animate-fade-in-up delay-600">
     <a href="{{ route('kdmp.index') }}" class="card" style="text-decoration:none;">
         <div class="card-body flex items-center gap-4">
             <div style="width:56px;height:56px;background:linear-gradient(135deg,#0891B2,#06B6D4);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;">
@@ -370,8 +370,40 @@
     padding: 2rem;
 }
 
+@media (max-width: 1024px) {
+    .grid-cols-5 { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media (max-width: 768px) {
     .grid-cols-5 { grid-template-columns: repeat(2, 1fr); }
+    
+    #kdmpMap {
+        height: 280px !important;
+    }
+
+    .scoring-stat-number {
+        font-size: 1.35rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-cols-5 { grid-template-columns: 1fr; }
+    
+    .scoring-stat-card {
+        padding: 0.75rem;
+    }
+
+    .scoring-stat-number {
+        font-size: 1.15rem;
+    }
+
+    .scoring-stat-label {
+        font-size: 0.7rem;
+    }
+
+    #kdmpMap {
+        height: 220px !important;
+    }
 }
 </style>
 @endpush
