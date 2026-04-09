@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     // Monitoring records (laporan berkala per KDMP)
     Route::prefix('lokasi-budidaya')->name('monitoring.')->group(function () {
         Route::get('/', [MonitoringController::class, 'index'])->name('index');
+        Route::get('/pdf', [MonitoringController::class, 'exportPdf'])->name('pdf');
         Route::get('/create', [MonitoringController::class, 'create'])->name('create');
         Route::post('/', [MonitoringController::class, 'store'])->name('store');
         Route::get('/kdmp/{monitoring}', [MonitoringController::class, 'show'])->name('show');
