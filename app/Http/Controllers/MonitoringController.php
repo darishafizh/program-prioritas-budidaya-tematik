@@ -249,4 +249,37 @@ class MonitoringController extends Controller
         return redirect()->route('monitoring.show', $kdmpId)
             ->with('success', 'Laporan telah dihapus.');
     }
+    /**
+     * Export data monitoring ke PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $tahun = $request->get('tahun', date('Y'));
+        $bulan = $request->get('bulan', date('n'));
+        $search = $request->get('search');
+
+        // Ambil semua KDMP beserta record monitoring terakhir
+        $query = Kdmp::with([
+            'monitoringRecords' => fn($q) => $q->orderBy('tahun', 'desc')->orderBy('bulan', 'desc'),
+        ]);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_kdkmp', 'like', "%$search%")
+                    ->orWhere('kabupaten', 'like', "%$search%")
+                    ->orWhere('provinsi', 'like', "%$search%");
+            });
+        }
+
+        $kdmpList = $query->orderBy('no')->get();
+
+        $bulanList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+        ];
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('monitoring.pdf', compact('kdmpList', 'tahun', 'bulan', 'bulanList', 'search'))->setPaper('a4', 'landscape');
+        return $pdf->download('Data_Lokasi_Budidaya_' . ($bulanList[$bulan] ?? $bulan) . '_' . $tahun . '.pdf');
+    }
 }
