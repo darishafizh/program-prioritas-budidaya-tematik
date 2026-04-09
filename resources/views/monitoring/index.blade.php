@@ -58,7 +58,8 @@
             <div class="stat-card-content">
                 <h3>Total Panen</h3>
                 <div class="stat-card-value" style="font-size:1.5rem;">
-                    {{ number_format($stats['total_panen'], 0, ',', '.') }} kg</div>
+                    {{ number_format($stats['total_panen'], 0, ',', '.') }} kg
+                </div>
             </div>
             <div class="stat-card-icon">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,14 +119,14 @@
                                 style="vertical-align:middle; text-align:center; color:#333 !important; background:#f0f0f0 !important;">
                                 KDKMP</th>
                             <th colspan="2"
-                                style="text-align:center; color:#333 !important; background:#f0f0f0 !important;">Hasil panen
+                                style="text-align:center; color:#333 !important; background:#f0f0f0 !important;">Hasil Panen
                             </th>
                             <th rowspan="2"
                                 style="vertical-align:middle; text-align:center; color:#333 !important; background:#f0f0f0 !important;">
                                 Biaya opr</th>
                             <th rowspan="2"
                                 style="vertical-align:middle; text-align:center; color:#333 !important; background:#f0f0f0 !important;">
-                                Harga jual</th>
+                                Harga Jual</th>
                             <th rowspan="2"
                                 style="text-align:center; width:100px; vertical-align:middle; color:#333 !important; background:#f0f0f0 !important;">
                                 Aksi</th>
@@ -151,13 +152,15 @@
                                 <td>
                                     <div class="fw-bold text-dark">{{ $kdmp->nama_kdkmp }}</div>
                                     <div class="text-muted" style="font-size:0.8em;">{{ $kdmp->kabupaten }},
-                                        {{ $kdmp->provinsi }}</div>
+                                        {{ $kdmp->provinsi }}
+                                    </div>
                                 </td>
                                 <td class="text-end">{{ $lastRecord ? number_format($volume, 2, ',', '.') : '-' }}</td>
                                 <td class="text-end">{{ $lastRecord ? number_format($nilai, 0, ',', '.') : '-' }}</td>
                                 <td class="text-end">{{ $lastRecord ? number_format($biaya, 0, ',', '.') : '-' }}</td>
                                 <td class="text-end">
-                                    {{ $lastRecord && $volume > 0 ? number_format($hargaJual, 0, ',', '.') : '-' }}</td>
+                                    {{ $lastRecord && $volume > 0 ? number_format($hargaJual, 0, ',', '.') : '-' }}
+                                </td>
                                 <td class="text-center">
                                     <div class="d-flex gap-1 justify-content-center">
                                         <a href="{{ route('monitoring.show', $kdmp->id) }}"

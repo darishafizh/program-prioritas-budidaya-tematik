@@ -46,9 +46,9 @@
                         <tr>
                             <th rowspan="2" class="text-center" style="vertical-align: middle;">No</th>
                             <th rowspan="2" style="vertical-align: middle;">KDKMP</th>
-                            <th colspan="2" class="text-center">Hasil panen</th>
+                            <th colspan="2" class="text-center">Hasil Panen</th>
                             <th rowspan="2" class="text-end" style="vertical-align: middle;">Biaya Opr</th>
-                            <th rowspan="2" class="text-end" style="vertical-align: middle;">Harga jual</th>
+                            <th rowspan="2" class="text-end" style="vertical-align: middle;">Harga Jual</th>
                             <th rowspan="2" class="text-center" style="vertical-align: middle;">Aksi</th>
                         </tr>
                         <tr>
