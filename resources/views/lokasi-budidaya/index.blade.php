@@ -47,7 +47,8 @@
                         <th class="text-center">No</th>
                         <th>Nama Koperasi</th>
                         <th>Lokasi</th>
-                        <th class="text-end">Volume Hasil Panen (kg)</th>
+                        <th class="text-end">Volume</th>
+                        <th class="text-end">Hasil Panen (kg)</th>
                         <th class="text-end">Nilai Hasil Panen (Rp)</th>
                         <th class="text-end">Biaya Operasional (Rp)</th>
                         <th class="text-end">Harga Jual per kg (Rp)</th>
@@ -59,8 +60,20 @@
                         <tr>
                             <td class="text-center">{{ $index + 1 }}</td>
                             <td><div class="font-medium">{{ $item->nama_koperasi }}</div></td>
-                            <td>{{ $item->lokasi }}</td>
-                            <td class="text-end">{{ number_format($item->volume_hasil_panen, 2, ',', '.') }}</td>
+                            <td>
+                                <div class="font-medium">{{ $item->provinsi }}</div>
+                                @if($item->kabupaten_kota)
+                                    <div class="text-sm text-muted">{{ $item->kabupaten_kota }}</div>
+                                @endif
+                                @if($item->kecamatan)
+                                    <div class="text-sm text-muted">{{ $item->kecamatan }}</div>
+                                @endif
+                                @if($item->desa)
+                                    <div class="text-sm text-muted">{{ $item->desa }}</div>
+                                @endif
+                            </td>
+                            <td class="text-end">{{ number_format($item->volume, 2, ',', '.') }}</td>
+                            <td class="text-end">{{ number_format($item->hasil_panen_kg, 2, ',', '.') }}</td>
                             <td class="text-end">{{ number_format($item->nilai_hasil_panen, 0, ',', '.') }}</td>
                             <td class="text-end">{{ number_format($item->biaya_operasional, 0, ',', '.') }}</td>
                             <td class="text-end">{{ number_format($item->harga_jual_per_kg, 0, ',', '.') }}</td>
@@ -111,7 +124,7 @@
                 },
                 pageLength: 10,
                 order: [[0, 'asc']],
-                columnDefs: [{ orderable: false, targets: [7] }]
+                columnDefs: [{ orderable: false, targets: [8] }]
             });
         });
     </script>

@@ -1,473 +1,871 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Page Header with Breadcrumb -->
-<div class="page-header-row animate-fade-in-up">
+
+{{-- ============================================================ --}}
+{{-- HEADER --}}
+{{-- ============================================================ --}}
+<div class="exec-header animate-fade-in-up">
     <div>
-        <h1 class="page-title">Dashboard Monitoring Budidaya Tematik, Bioflok 2025</h1>
-        <p class="page-subtitle">Visualisasi data kuesioner budidaya ikan tematik</p>
+        <h1 class="exec-title">Executive Summary</h1>
+        <p class="exec-subtitle">Program Budidaya Tematik Bioflok · Kementerian Kelautan dan Perikanan</p>
+    </div>
+    <div class="exec-meta">
+        <span class="exec-badge">
+            <i class="fa-regular fa-calendar"></i>
+            Update: {{ now()->locale('id')->isoFormat('D MMMM YYYY') }}
+        </span>
+        <span class="exec-badge primary">
+            <i class="fa-solid fa-location-dot"></i>
+            {{ $totalLokasi }} Lokasi KDMP
+        </span>
     </div>
 </div>
 
-<!-- Stats Cards -->
-<div class="grid grid-cols-4 mb-5">
-    <!-- Total Kuesioner -->
-    <div class="stat-card card-gradient-teal animate-fade-in-up delay-100">
-        <div class="stat-card-content">
-            <h3>Total Kuesioner</h3>
-            <div class="stat-card-value">{{ number_format($totalKuesioner) }}</div>
-            <div class="flex gap-2 mt-3" style="font-size:0.75rem; opacity:0.9;">
-                <span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:4px;">KDMP: {{ $totalKdmp }}</span>
-                <span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:4px;">Masy: {{ $totalMasyarakat }}</span>
-                <span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:4px;">SPPG: {{ $totalSppg }}</span>
-            </div>
-        </div>
-        <div class="stat-card-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
+{{-- ============================================================ --}}
+{{-- BAGIAN 1: INDIKASI KELAYAKAN LOKASI --}}
+{{-- ============================================================ --}}
+<div class="section-divider animate-fade-in-up delay-100">
+    <div class="section-divider-line"></div>
+    <span class="section-divider-label">
+        <i class="fa-solid fa-star-half-stroke"></i>
+        INDIKASI KELAYAKAN LOKASI
+    </span>
+    <div class="section-divider-line"></div>
+</div>
+
+{{-- KPI Scoring --}}
+<div class="kpi-grid animate-fade-in-up delay-200">
+    <div class="kpi-card kpi-total">
+        <div class="kpi-icon"><i class="fa-solid fa-map-pin"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ number_format($scoringStats['total']) }}</div>
+            <div class="kpi-label">Lokasi Sudah Dinilai</div>
+            <div class="kpi-sub">dari {{ $totalLokasi }} total lokasi</div>
         </div>
     </div>
-
-    <!-- Koperasi Terdata -->
-    <div class="stat-card card-gradient-success animate-fade-in-up delay-200">
-        <div class="stat-card-content">
-            <h3>KDKMP Pengelola</h3>
-            <div class="stat-card-value">{{ number_format($totalKoperasi) }}</div>
-        </div>
-        <div class="stat-card-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-            </svg>
+    <div class="kpi-card kpi-sangat-layak">
+        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $scoringStats['sangat_layak'] }}</div>
+            <div class="kpi-label">Sangat Layak</div>
+            <div class="kpi-sub">Prioritas utama</div>
         </div>
     </div>
-
-    <!-- Total Pembudidaya -->
-    <div class="stat-card card-gradient-navy animate-fade-in-up delay-300">
-        <div class="stat-card-content">
-            <h3>Total Pembudidaya</h3>
-            <div class="stat-card-value">{{ number_format($totalPembudidaya) }}</div>
-        </div>
-        <div class="stat-card-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
+    <div class="kpi-card kpi-layak">
+        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $scoringStats['layak'] }}</div>
+            <div class="kpi-label">Layak</div>
+            <div class="kpi-sub">Dapat dilanjutkan</div>
         </div>
     </div>
-
-    <!-- Rata-rata Progres -->
-    <div class="stat-card card-gradient-warning animate-fade-in-up delay-400">
-        <div class="stat-card-content">
-            <h3>Rata-rata Progres</h3>
-            <div class="stat-card-value">{{ number_format($avgProgress, 1) }}%</div>
+    <div class="kpi-card kpi-cukup">
+        <div class="kpi-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $scoringStats['cukup_layak'] }}</div>
+            <div class="kpi-label">Cukup Layak</div>
+            <div class="kpi-sub">Perlu pengembangan</div>
         </div>
-        <div class="stat-card-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
+    </div>
+    <div class="kpi-card kpi-tidak">
+        <div class="kpi-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $scoringStats['tidak_layak'] }}</div>
+            <div class="kpi-label">Tidak Layak</div>
+            <div class="kpi-sub">Perlu evaluasi</div>
+        </div>
+    </div>
+    <div class="kpi-card kpi-belum">
+        <div class="kpi-icon"><i class="fa-solid fa-clock"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $scoringStats['belum_dinilai'] }}</div>
+            <div class="kpi-label">Belum Dinilai</div>
+            <div class="kpi-sub">Menunggu assessment</div>
         </div>
     </div>
 </div>
 
-<!-- Scoring Section -->
-<div class="section-card mb-5 animate-fade-in-up delay-500">
-    <div class="section-header">
-        <div class="section-icon teal">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
+{{-- Peta + Donut --}}
+<div class="dash-grid-70-30 animate-fade-in-up delay-300">
+    {{-- Peta --}}
+    <div class="dash-card">
+        <div class="dash-card-header">
+            <div class="dash-card-title">
+                <i class="fa-solid fa-map-location-dot" style="color:#0891B2;"></i>
+                Peta Sebaran Lokasi KDMP
+            </div>
+            <div class="map-legend">
+                <span class="legend-dot" style="background:#16A34A;"></span><span>Sangat Layak</span>
+                <span class="legend-dot" style="background:#2563EB;"></span><span>Layak</span>
+                <span class="legend-dot" style="background:#D97706;"></span><span>Cukup Layak</span>
+                <span class="legend-dot" style="background:#DC2626;"></span><span>Tidak Layak</span>
+                <span class="legend-dot" style="background:#9CA3AF;"></span><span>Belum Dinilai</span>
+            </div>
         </div>
-        <h3 class="section-title">Skor Kelayakan Lokasi</h3>
+        <div id="kdmpMap" style="height:400px; border-radius: var(--radius-lg); overflow:hidden;"></div>
     </div>
-    <div class="section-body">
-        <!-- Scoring Stats -->
-        <div class="grid grid-cols-5 gap-4 mb-4">
-            <div class="scoring-stat-card">
-                <span class="scoring-stat-number">{{ $scoringStats['total'] }}</span>
-                <span class="scoring-stat-label">Total Lokasi</span>
-            </div>
-            <div class="scoring-stat-card success">
-                <span class="scoring-stat-number">{{ $scoringStats['sangat_layak'] }}</span>
-                <span class="scoring-stat-label"><i class="fa-solid fa-circle-check"></i> Sangat Layak</span>
-            </div>
-            <div class="scoring-stat-card primary">
-                <span class="scoring-stat-number">{{ $scoringStats['layak'] }}</span>
-                <span class="scoring-stat-label"><i class="fa-solid fa-circle-check"></i> Layak</span>
-            </div>
-            <div class="scoring-stat-card warning">
-                <span class="scoring-stat-number">{{ $scoringStats['cukup_layak'] }}</span>
-                <span class="scoring-stat-label"><i class="fa-solid fa-circle-exclamation"></i> Cukup Layak</span>
-            </div>
-            <div class="scoring-stat-card danger">
-                <span class="scoring-stat-number">{{ $scoringStats['tidak_layak'] }}</span>
-                <span class="scoring-stat-label"><i class="fa-solid fa-circle-xmark"></i> Tidak Layak</span>
-            </div>
-        </div>
 
-        @if($topLocations->count() > 0)
-        <!-- Top Locations Table -->
-        <h4 style="font-weight:600; margin-bottom:1rem; color:var(--gray-700);">Top 5 Lokasi Terbaik</h4>
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th style="width:50px">Rank</th>
-                        <th>Kecamatan</th>
-                        <th>Kabupaten</th>
-                        <th style="width:80px;text-align:center">KDMP</th>
-                        <th style="width:90px;text-align:center">Masyarakat</th>
-                        <th style="width:80px;text-align:center">SPPG</th>
-                        <th style="width:80px;text-align:center">Total</th>
-                        <th style="width:130px;text-align:center">Status</th>
-                        <th style="width:80px;text-align:center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($topLocations as $index => $score)
-                    <tr>
-                        <td class="text-center font-bold">{{ $index + 1 }}</td>
-                        <td class="font-semibold">{{ $score->kecamatan }}</td>
-                        <td>{{ $score->kabupaten }}</td>
-                        <td class="text-center">
-                            <span class="score-badge {{ $score->kdmp_score >= 70 ? 'high' : ($score->kdmp_score >= 50 ? 'medium' : 'low') }}">
-                                {{ number_format($score->kdmp_score, 0) }}
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <span class="score-badge {{ $score->masyarakat_score >= 70 ? 'high' : ($score->masyarakat_score >= 50 ? 'medium' : 'low') }}">
-                                {{ number_format($score->masyarakat_score, 0) }}
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <span class="score-badge {{ $score->sppg_score >= 70 ? 'high' : ($score->sppg_score >= 50 ? 'medium' : 'low') }}">
-                                {{ number_format($score->sppg_score, 0) }}
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <span class="total-score">{{ number_format($score->total_score, 1) }}</span>
-                        </td>
-                        <td class="text-center">
-                            <span class="status-badge {{ $score->status_color }}">
-                                {!! $score->status_icon !!} {{ $score->status }}
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <a href="{{ route('scoring.show', $score) }}" class="btn btn-sm btn-primary">Detail</a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+    {{-- Donut Chart Kelayakan --}}
+    <div class="dash-card">
+        <div class="dash-card-header">
+            <div class="dash-card-title">
+                <i class="fa-solid fa-chart-pie" style="color:#0891B2;"></i>
+                Komposisi Kelayakan
+            </div>
         </div>
-        <div class="mt-4 flex justify-between items-center">
-            <form action="{{ route('scoring.generate') }}" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="btn btn-outline btn-sm">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px;height:14px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Generate/Update Skor
-                </button>
-            </form>
-            <a href="{{ route('scoring.index') }}" class="btn btn-primary btn-sm">Lihat Semua Lokasi →</a>
+        @if($scoringStats['total'] > 0)
+        <div style="height:260px; display:flex; align-items:center;">
+            <canvas id="donutKelayakan"></canvas>
+        </div>
+        <div class="donut-legend">
+            <div class="donut-legend-item">
+                <span class="legend-dot" style="background:#16A34A;"></span>
+                <span>Sangat Layak</span>
+                <strong>{{ $scoringStats['sangat_layak'] }}</strong>
+            </div>
+            <div class="donut-legend-item">
+                <span class="legend-dot" style="background:#2563EB;"></span>
+                <span>Layak</span>
+                <strong>{{ $scoringStats['layak'] }}</strong>
+            </div>
+            <div class="donut-legend-item">
+                <span class="legend-dot" style="background:#D97706;"></span>
+                <span>Cukup Layak</span>
+                <strong>{{ $scoringStats['cukup_layak'] }}</strong>
+            </div>
+            <div class="donut-legend-item">
+                <span class="legend-dot" style="background:#DC2626;"></span>
+                <span>Tidak Layak</span>
+                <strong>{{ $scoringStats['tidak_layak'] }}</strong>
+            </div>
         </div>
         @else
-        <div class="empty-state-mini">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:40px;height:40px;color:var(--gray-400);margin-bottom:0.5rem;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-            <p style="color:var(--gray-600); margin-bottom:1rem;">Belum ada data skor. Klik tombol di bawah untuk generate dari survey KDMP.</p>
-            <form action="{{ route('scoring.generate') }}" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="btn btn-primary">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Generate Skor dari Survey
-                </button>
-            </form>
+        <div class="empty-state-sm">
+            <i class="fa-solid fa-chart-pie" style="font-size:2rem;color:var(--gray-300);"></i>
+            <p>Belum ada data scoring</p>
+            <a href="{{ route('scoring.index') }}" class="btn btn-sm btn-primary">Generate Scoring</a>
         </div>
         @endif
     </div>
 </div>
 
-<!-- Charts Grid -->
-<div class="grid grid-cols-2 mb-5 animate-fade-in-up delay-600">
-    <!-- Komoditas Chart -->
-    <div class="card">
-        <div class="card-body">
-            <h3 class="card-title mb-4">Sebaran Komoditas</h3>
-            <div style="height: 250px;">
-                <canvas id="komoditasChart"></canvas>
-            </div>
+{{-- Top 5 Lokasi Terbaik --}}
+@if($topLocations->count() > 0)
+<div class="dash-card animate-fade-in-up delay-400">
+    <div class="dash-card-header">
+        <div class="dash-card-title">
+            <i class="fa-solid fa-trophy" style="color:#D97706;"></i>
+            Top 5 Lokasi Terbaik
+        </div>
+        <a href="{{ route('scoring.index') }}" class="dash-link">Lihat Semua →</a>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width:40px">#</th>
+                    <th>Nama KDMP</th>
+                    <th>Kecamatan</th>
+                    <th>Kabupaten</th>
+                    <th style="text-align:center">Skor KDMP</th>
+                    <th style="text-align:center">Total Skor</th>
+                    <th style="text-align:center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($topLocations as $i => $score)
+                <tr>
+                    <td class="text-center">
+                        @if($i === 0)
+                            <i class="fa-solid fa-medal" style="color:#F59E0B;"></i>
+                        @elseif($i === 1)
+                            <i class="fa-solid fa-medal" style="color:#9CA3AF;"></i>
+                        @elseif($i === 2)
+                            <i class="fa-solid fa-medal" style="color:#B45309;"></i>
+                        @else
+                            <span style="color:var(--gray-400);">{{ $i + 1 }}</span>
+                        @endif
+                    </td>
+                    <td class="font-semibold">{{ $score->kdmp->nama_kdkmp ?? '-' }}</td>
+                    <td>{{ $score->kecamatan }}</td>
+                    <td>{{ $score->kabupaten }}</td>
+                    <td class="text-center">
+                        <span class="score-pill {{ $score->kdmp_score >= 70 ? 'high' : ($score->kdmp_score >= 50 ? 'mid' : 'low') }}">
+                            {{ number_format($score->kdmp_score, 0) }}
+                        </span>
+                    </td>
+                    <td class="text-center font-bold" style="color:var(--kkp-navy);">
+                        {{ number_format($score->total_score, 1) }}
+                    </td>
+                    <td class="text-center">
+                        <span class="status-chip {{ $score->status_color }}">
+                            {!! $score->status_icon !!} {{ $score->status }}
+                        </span>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endif
+
+{{-- ============================================================ --}}
+{{-- BAGIAN 2: MONITORING EVALUASI PRODUKSI --}}
+{{-- ============================================================ --}}
+<div class="section-divider animate-fade-in-up delay-500" style="margin-top:2rem;">
+    <div class="section-divider-line"></div>
+    <span class="section-divider-label">
+        <i class="fa-solid fa-chart-line"></i>
+        MONITORING EVALUASI PRODUKSI
+    </span>
+    <div class="section-divider-line"></div>
+</div>
+
+{{-- KPI Monitoring --}}
+<div class="kpi-grid-4 animate-fade-in-up delay-600">
+    <div class="kpi-card kpi-ontrack">
+        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $monitoringStats['on_track'] }}</div>
+            <div class="kpi-label">On Track</div>
+            <div class="kpi-sub">Lokasi berjalan lancar</div>
         </div>
     </div>
-
-    <!-- Progress Chart -->
-    <div class="card">
-        <div class="card-body">
-            <h3 class="card-title mb-4">Progres Pembangunan</h3>
-            <div style="height: 250px;">
-                <canvas id="progresChart"></canvas>
-            </div>
+    <div class="kpi-card kpi-bermasalah">
+        <div class="kpi-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $monitoringStats['bermasalah'] }}</div>
+            <div class="kpi-label">Bermasalah</div>
+            <div class="kpi-sub">Perlu intervensi segera</div>
         </div>
     </div>
-
-    <!-- Hambatan Chart -->
-    <div class="card">
-        <div class="card-body">
-            <h3 class="card-title mb-4">Hambatan Koperasi</h3>
-            <div style="height: 250px;">
-                <canvas id="hambatanChart"></canvas>
-            </div>
+    <div class="kpi-card kpi-volume">
+        <div class="kpi-icon"><i class="fa-solid fa-fish"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ number_format($produksiTotal['volume_kg'], 0) }}</div>
+            <div class="kpi-label">Total Volume Panen (kg)</div>
+            <div class="kpi-sub">Kumulatif seluruh lokasi</div>
         </div>
     </div>
-
-    <!-- Instalasi Chart -->
-    <div class="card">
-        <div class="card-body">
-            <h3 class="card-title mb-4">Status Instalasi</h3>
-            <div style="height: 250px;">
-                <canvas id="instalasiChart"></canvas>
-            </div>
+    <div class="kpi-card kpi-nilai">
+        <div class="kpi-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">Rp {{ number_format($produksiTotal['nilai_rupiah'] / 1000000, 1) }}M</div>
+            <div class="kpi-label">Total Nilai Produksi</div>
+            <div class="kpi-sub">Kumulatif seluruh lokasi</div>
         </div>
     </div>
 </div>
 
-<!-- Map Section -->
-<div class="card mb-5 animate-fade-in-up delay-600">
-    <div class="card-body">
-        <div class="flex items-center justify-between mb-4">
-            <div>
-                <h3 class="card-title flex items-center gap-2">
-                    <svg style="width:20px;height:20px;color:#0891B2;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-                    </svg>
-                    Peta Lokasi KDMP
-                </h3>
-                <p class="text-muted text-sm">Sebaran titik lokasi Koperasi Desa Merah Putih</p>
+{{-- Tren Produksi + Donut Status --}}
+<div class="dash-grid-70-30 animate-fade-in-up delay-600">
+    {{-- Line Chart Tren Produksi --}}
+    <div class="dash-card">
+        <div class="dash-card-header">
+            <div class="dash-card-title">
+                <i class="fa-solid fa-chart-area" style="color:#0891B2;"></i>
+                Tren Volume Produksi per Bulan
             </div>
-            <span class="badge badge-teal">
-                <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                </svg>
-                {{ $mapLocations->count() }} lokasi
-            </span>
         </div>
-        <div id="kdmpMap" style="height: 400px; border-radius: var(--radius-lg); overflow: hidden;"></div>
+        @if($trenProduksi->count() > 0)
+        <div style="height:280px;">
+            <canvas id="trenProduksiChart"></canvas>
+        </div>
+        @else
+        <div class="empty-state-sm">
+            <i class="fa-solid fa-chart-area" style="font-size:2rem;color:var(--gray-300);"></i>
+            <p>Belum ada data produksi tercatat</p>
+            <a href="{{ route('monitoring.index') }}" class="btn btn-sm btn-primary">Input Monitoring</a>
+        </div>
+        @endif
+    </div>
+
+    {{-- Donut Status Monitoring --}}
+    <div class="dash-card">
+        <div class="dash-card-header">
+            <div class="dash-card-title">
+                <i class="fa-solid fa-gauge-high" style="color:#0891B2;"></i>
+                Status Monitoring
+            </div>
+        </div>
+        @if($monitoringStats['total'] > 0)
+        <div style="height:220px; display:flex; align-items:center;">
+            <canvas id="donutMonitoring"></canvas>
+        </div>
+        <div class="donut-legend">
+            <div class="donut-legend-item">
+                <span class="legend-dot" style="background:#16A34A;"></span>
+                <span>On Track</span>
+                <strong>{{ $monitoringStats['on_track'] }}</strong>
+            </div>
+            <div class="donut-legend-item">
+                <span class="legend-dot" style="background:#DC2626;"></span>
+                <span>Bermasalah</span>
+                <strong>{{ $monitoringStats['bermasalah'] }}</strong>
+            </div>
+            <div class="donut-legend-item">
+                <span class="legend-dot" style="background:#D97706;"></span>
+                <span>Vakum</span>
+                <strong>{{ $monitoringStats['vakum'] }}</strong>
+            </div>
+            <div class="donut-legend-item">
+                <span class="legend-dot" style="background:#2563EB;"></span>
+                <span>Selesai</span>
+                <strong>{{ $monitoringStats['selesai'] }}</strong>
+            </div>
+        </div>
+        @else
+        <div class="empty-state-sm">
+            <i class="fa-solid fa-gauge-high" style="font-size:2rem;color:var(--gray-300);"></i>
+            <p>Belum ada data monitoring</p>
+        </div>
+        @endif
     </div>
 </div>
 
-<!-- Data Tables Links -->
-<div class="grid grid-cols-3 animate-fade-in-up delay-600">
-    <a href="{{ route('kdmp.index') }}" class="card" style="text-decoration:none;">
-        <div class="card-body flex items-center gap-4">
-            <div style="width:56px;height:56px;background:linear-gradient(135deg,#0891B2,#06B6D4);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;">
-                <svg style="width:28px;height:28px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-            </div>
-            <div>
-                <h3 style="margin:0;color:var(--gray-800);">Kuesioner KDMP</h3>
-                <p class="text-muted text-sm" style="margin:0;">{{ $totalKdmp }} data tersimpan</p>
-            </div>
+{{-- Tabel Rekap Status Monitoring Terkini --}}
+<div class="dash-card animate-fade-in-up delay-600">
+    <div class="dash-card-header">
+        <div class="dash-card-title">
+            <i class="fa-solid fa-table-list" style="color:#0891B2;"></i>
+            Rekap Status Monitoring Terkini (Per Lokasi)
         </div>
-    </a>
-    
-    <a href="{{ route('masyarakat.index') }}" class="card" style="text-decoration:none;">
-        <div class="card-body flex items-center gap-4">
-            <div style="width:56px;height:56px;background:linear-gradient(135deg,#10B981,#059669);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;">
-                <svg style="width:28px;height:28px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-            </div>
-            <div>
-                <h3 style="margin:0;color:var(--gray-800);">Kuesioner Masyarakat</h3>
-                <p class="text-muted text-sm" style="margin:0;">{{ $totalMasyarakat }} data tersimpan</p>
-            </div>
-        </div>
-    </a>
-    
-    <a href="{{ route('sppg.index') }}" class="card" style="text-decoration:none;">
-        <div class="card-body flex items-center gap-4">
-            <div style="width:56px;height:56px;background:linear-gradient(135deg,#F59E0B,#D97706);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;">
-                <svg style="width:28px;height:28px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                </svg>
-            </div>
-            <div>
-                <h3 style="margin:0;color:var(--gray-800);">Kuesioner SPPG</h3>
-                <p class="text-muted text-sm" style="margin:0;">{{ $totalSppg }} data tersimpan</p>
-            </div>
-        </div>
-    </a>
+        <a href="{{ route('monitoring.index') }}" class="dash-link">Lihat Semua →</a>
+    </div>
+    @if($monitoringTerkini->count() > 0)
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Nama KDMP</th>
+                    <th>Kabupaten</th>
+                    <th>Komoditas</th>
+                    <th style="text-align:center">Periode</th>
+                    <th style="text-align:center">Progres Fisik</th>
+                    <th style="text-align:center">Volume Panen</th>
+                    <th style="text-align:center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($monitoringTerkini as $record)
+                <tr>
+                    <td class="font-semibold">{{ $record->kdmp->nama_kdkmp ?? '-' }}</td>
+                    <td>{{ $record->kdmp->kabupaten ?? '-' }}</td>
+                    <td>{{ $record->kdmp->komoditas ?? '-' }}</td>
+                    <td class="text-center text-sm" style="color:var(--gray-500);">{{ $record->periode_label }}</td>
+                    <td class="text-center">
+                        @if($record->progres_fisik !== null)
+                        <div class="progress-mini">
+                            <div class="progress-mini-bar" style="width:{{ min($record->progres_fisik, 100) }}%;
+                                background: {{ $record->progres_fisik >= 80 ? '#16A34A' : ($record->progres_fisik >= 50 ? '#D97706' : '#DC2626') }};">
+                            </div>
+                        </div>
+                        <span style="font-size:0.75rem;color:var(--gray-600);">{{ $record->progres_fisik }}%</span>
+                        @else
+                        <span style="color:var(--gray-300);">-</span>
+                        @endif
+                    </td>
+                    <td class="text-center text-sm">
+                        {{ $record->volume_panen_kg ? number_format($record->volume_panen_kg, 0) . ' kg' : '-' }}
+                    </td>
+                    <td class="text-center">
+                        <span class="status-chip {{ $record->status_color }}">
+                            {!! $record->status_icon !!} {{ $record->status_label }}
+                        </span>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @else
+    <div class="empty-state-sm">
+        <i class="fa-solid fa-table-list" style="font-size:2rem;color:var(--gray-300);"></i>
+        <p style="color:var(--gray-500);">Belum ada data monitoring yang tercatat.</p>
+        <a href="{{ route('monitoring.index') }}" class="btn btn-sm btn-primary">Mulai Input Monitoring</a>
+    </div>
+    @endif
 </div>
+
 @endsection
 
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-.scoring-stat-card {
-    background: var(--gray-100);
-    border-radius: var(--radius-lg);
-    padding: 1rem;
-    text-align: center;
+/* ============================================================
+   EXECUTIVE HEADER
+   ============================================================ */
+.exec-header {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.exec-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--kkp-navy);
+    margin: 0;
+}
+.exec-subtitle {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    margin: 0.25rem 0 0;
+}
+.exec-meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.exec-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-full);
+    font-size: 0.78rem;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+.exec-badge.primary {
+    background: rgba(8,145,178,0.08);
+    border-color: rgba(8,145,178,0.2);
+    color: #0891B2;
 }
 
-.scoring-stat-card.success { background: rgba(16, 185, 129, 0.1); }
-.scoring-stat-card.primary { background: rgba(59, 130, 246, 0.1); }
-.scoring-stat-card.warning { background: rgba(245, 158, 11, 0.1); }
-.scoring-stat-card.danger { background: rgba(239, 68, 68, 0.1); }
-
-.scoring-stat-number {
-    font-size: 1.75rem;
+/* ============================================================
+   SECTION DIVIDER
+   ============================================================ */
+.section-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.section-divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+}
+.section-divider-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
     font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    white-space: nowrap;
+}
+
+/* ============================================================
+   KPI GRID — 6 kolom (scoring)
+   ============================================================ */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+.kpi-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+.kpi-card {
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+.kpi-card::after {
+    content: '';
+    position: absolute;
+    right: -12px;
+    bottom: -12px;
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+}
+.kpi-icon {
+    font-size: 1.4rem;
+    opacity: 0.85;
+    flex-shrink: 0;
+}
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+.kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-top: 0.15rem;
+}
+.kpi-sub {
+    font-size: 0.68rem;
+    opacity: 0.7;
+    margin-top: 0.1rem;
+}
+
+/* KPI Colors */
+.kpi-total        { background: linear-gradient(135deg, #0D2137, #1e3a5a); }
+.kpi-sangat-layak { background: linear-gradient(135deg, #15803D, #16A34A); }
+.kpi-layak        { background: linear-gradient(135deg, #1D4ED8, #2563EB); }
+.kpi-cukup        { background: linear-gradient(135deg, #B45309, #D97706); }
+.kpi-tidak        { background: linear-gradient(135deg, #B91C1C, #DC2626); }
+.kpi-belum        { background: linear-gradient(135deg, #4B5563, #6B7280); }
+.kpi-ontrack      { background: linear-gradient(135deg, #15803D, #16A34A); }
+.kpi-bermasalah   { background: linear-gradient(135deg, #B91C1C, #DC2626); }
+.kpi-volume       { background: linear-gradient(135deg, #0891B2, #06B6D4); }
+.kpi-nilai        { background: linear-gradient(135deg, #7C3AED, #8B5CF6); }
+
+/* ============================================================
+   DASHBOARD CARDS
+   ============================================================ */
+.dash-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+.dash-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.dash-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+.dash-link {
+    font-size: 0.8rem;
+    color: #0891B2;
+    text-decoration: none;
+    font-weight: 500;
+}
+.dash-link:hover { text-decoration: underline; }
+
+/* ============================================================
+   GRID LAYOUTS
+   ============================================================ */
+.dash-grid-70-30 {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+/* ============================================================
+   MAP LEGEND
+   ============================================================ */
+.map-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+    color: var(--gray-500);
+}
+.legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   DONUT LEGEND
+   ============================================================ */
+.donut-legend {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.donut-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--gray-600);
+}
+.donut-legend-item strong {
+    margin-left: auto;
     color: var(--gray-800);
 }
 
-.scoring-stat-label {
-    font-size: 0.8rem;
-    color: var(--gray-600);
-}
-
-.score-badge {
+/* ============================================================
+   SCORE & STATUS CHIPS
+   ============================================================ */
+.score-pill {
     display: inline-block;
-    padding: 0.2rem 0.5rem;
+    padding: 0.2rem 0.55rem;
     border-radius: var(--radius-sm);
-    font-weight: 600;
-    font-size: 0.75rem;
-}
-
-.score-badge.high { background: rgba(16, 185, 129, 0.1); color: #10B981; }
-.score-badge.medium { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
-.score-badge.low { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
-
-.total-score {
-    font-size: 1rem;
     font-weight: 700;
-    color: var(--kkp-navy);
+    font-size: 0.78rem;
 }
+.score-pill.high { background: rgba(22,163,74,0.1); color: #16A34A; }
+.score-pill.mid  { background: rgba(217,119,6,0.1); color: #D97706; }
+.score-pill.low  { background: rgba(220,38,38,0.1); color: #DC2626; }
 
-.status-badge {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.55rem;
     border-radius: var(--radius-full);
     font-weight: 600;
     font-size: 0.7rem;
     white-space: nowrap;
 }
+.status-chip.success { background: rgba(22,163,74,0.1); color: #16A34A; }
+.status-chip.primary { background: rgba(37,99,235,0.1); color: #2563EB; }
+.status-chip.warning { background: rgba(217,119,6,0.1); color: #D97706; }
+.status-chip.danger  { background: rgba(220,38,38,0.1); color: #DC2626; }
+.status-chip.secondary { background: var(--gray-100); color: var(--gray-500); }
 
-.status-badge.success { background: rgba(16, 185, 129, 0.1); color: #059669; }
-.status-badge.primary { background: rgba(59, 130, 246, 0.1); color: #2563EB; }
-.status-badge.warning { background: rgba(245, 158, 11, 0.1); color: #D97706; }
-.status-badge.danger { background: rgba(239, 68, 68, 0.1); color: #DC2626; }
+/* ============================================================
+   PROGRESS MINI BAR
+   ============================================================ */
+.progress-mini {
+    width: 70px;
+    height: 5px;
+    background: var(--gray-200);
+    border-radius: 99px;
+    overflow: hidden;
+    margin: 0 auto 3px;
+}
+.progress-mini-bar {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.6s ease;
+}
 
-.empty-state-mini {
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state-sm {
     text-align: center;
-    padding: 2rem;
+    padding: 2rem 1rem;
+    color: var(--gray-500);
+}
+.empty-state-sm p {
+    margin: 0.5rem 0 1rem;
+    font-size: 0.85rem;
 }
 
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1280px) {
+    .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
 @media (max-width: 1024px) {
-    .grid-cols-5 { grid-template-columns: repeat(3, 1fr); }
+    .dash-grid-70-30 { grid-template-columns: 1fr; }
+    .kpi-grid-4 { grid-template-columns: repeat(2, 1fr); }
 }
-
 @media (max-width: 768px) {
-    .grid-cols-5 { grid-template-columns: repeat(2, 1fr); }
-    
-    #kdmpMap {
-        height: 280px !important;
-    }
-
-    .scoring-stat-number {
-        font-size: 1.35rem;
-    }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .exec-header { flex-direction: column; }
+    .kpi-value { font-size: 1.25rem; }
 }
-
 @media (max-width: 480px) {
-    .grid-cols-5 { grid-template-columns: 1fr; }
-    
-    .scoring-stat-card {
-        padding: 0.75rem;
-    }
-
-    .scoring-stat-number {
-        font-size: 1.15rem;
-    }
-
-    .scoring-stat-label {
-        font-size: 0.7rem;
-    }
-
-    #kdmpMap {
-        height: 220px !important;
-    }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .kpi-grid-4 { grid-template-columns: 1fr 1fr; }
 }
 </style>
 @endpush
 
-
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const colors = {
-        teal: '#0891B2',
-        cyan: '#06B6D4',
-        navy: '#0D2137',
-        green: '#10B981',
-        amber: '#F59E0B',
-        red: '#EF4444'
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ============================================================
+    // PETA SEBARAN LOKASI
+    // ============================================================
+    const mapLocations = @json($mapLocations);
+    const statusColors = {
+        'SANGAT LAYAK'  : '#16A34A',
+        'LAYAK'         : '#2563EB',
+        'CUKUP LAYAK'   : '#D97706',
+        'TIDAK LAYAK'   : '#DC2626',
+        'BELUM DINILAI' : '#9CA3AF',
     };
 
-    const komoditasData = @json($komoditasData);
-    new Chart(document.getElementById('komoditasChart'), {
-        type: 'doughnut',
-        data: {
-            labels: Object.keys(komoditasData),
-            datasets: [{ data: Object.values(komoditasData), backgroundColor: [colors.teal, colors.green, colors.amber, colors.red] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-    });
-
-    const progresData = @json($progresData);
-    new Chart(document.getElementById('progresChart'), {
-        type: 'bar',
-        data: { labels: Object.keys(progresData), datasets: [{ label: 'Progres (%)', data: Object.values(progresData), backgroundColor: colors.teal, borderRadius: 8 }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
-    });
-
-    const hambatanData = @json($hambatanCounts);
-    new Chart(document.getElementById('hambatanChart'), {
-        type: 'bar',
-        data: { labels: Object.keys(hambatanData), datasets: [{ label: 'Jumlah', data: Object.values(hambatanData), backgroundColor: colors.amber, borderRadius: 8 }] },
-        options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
-    });
-
-    const instalasiData = @json($instalasiData);
-    new Chart(document.getElementById('instalasiChart'), {
-        type: 'radar',
-        data: { labels: Object.keys(instalasiData), datasets: [{ label: 'Terpasang', data: Object.values(instalasiData), backgroundColor: 'rgba(8, 145, 178, 0.2)', borderColor: colors.teal, pointBackgroundColor: colors.teal }] },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
-
-    const mapLocations = @json($mapLocations);
     if (mapLocations.length > 0) {
-        const map = L.map('kdmpMap').setView([-2.5, 118], 5);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        const map = L.map('kdmpMap').setView([-7.5, 112], 7);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
         mapLocations.forEach(loc => {
-            L.marker([parseFloat(loc.lat), parseFloat(loc.lng)])
-                .bindPopup(`<b style="color: #0891B2;">${loc.name}</b><br>${loc.location}<br>Komoditas: ${loc.commodity || '-'}`)
-                .addTo(map);
+            if (!loc.lat || !loc.lng) return;
+            const color = statusColors[loc.status] ?? '#9CA3AF';
+            const marker = L.circleMarker([parseFloat(loc.lat), parseFloat(loc.lng)], {
+                radius: 7,
+                fillColor: color,
+                color: 'white',
+                weight: 1.5,
+                opacity: 1,
+                fillOpacity: 0.9,
+            });
+            const scoreText = loc.score ? `<br><b>Skor:</b> ${parseFloat(loc.score).toFixed(1)}` : '';
+            marker.bindPopup(`
+                <div style="min-width:180px;font-size:13px;">
+                    <b style="color:#0891B2;">${loc.name}</b><br>
+                    <span style="color:#6B7280;">${loc.kabupaten}, ${loc.provinsi}</span><br>
+                    Komoditas: ${loc.komoditas || '-'}
+                    ${scoreText}
+                    <br><span style="display:inline-block;margin-top:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;background:${color}20;color:${color};">${loc.status}</span>
+                </div>
+            `);
+            marker.addTo(map);
         });
     } else {
-        document.getElementById('kdmpMap').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--gray-400);">Belum ada data lokasi</div>';
+        document.getElementById('kdmpMap').innerHTML =
+            '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9CA3AF;">Belum ada data lokasi</div>';
     }
+
+    // ============================================================
+    // DONUT — KOMPOSISI KELAYAKAN
+    // ============================================================
+    const donutKelEl = document.getElementById('donutKelayakan');
+    if (donutKelEl) {
+        new Chart(donutKelEl, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sangat Layak', 'Layak', 'Cukup Layak', 'Tidak Layak'],
+                datasets: [{
+                    data: [
+                        {{ $scoringStats['sangat_layak'] }},
+                        {{ $scoringStats['layak'] }},
+                        {{ $scoringStats['cukup_layak'] }},
+                        {{ $scoringStats['tidak_layak'] }},
+                    ],
+                    backgroundColor: ['#16A34A', '#2563EB', '#D97706', '#DC2626'],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    hoverOffset: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '68%',
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // ============================================================
+    // DONUT — STATUS MONITORING
+    // ============================================================
+    const donutMonEl = document.getElementById('donutMonitoring');
+    if (donutMonEl) {
+        new Chart(donutMonEl, {
+            type: 'doughnut',
+            data: {
+                labels: ['On Track', 'Bermasalah', 'Vakum', 'Selesai'],
+                datasets: [{
+                    data: [
+                        {{ $monitoringStats['on_track'] }},
+                        {{ $monitoringStats['bermasalah'] }},
+                        {{ $monitoringStats['vakum'] }},
+                        {{ $monitoringStats['selesai'] }},
+                    ],
+                    backgroundColor: ['#16A34A', '#DC2626', '#D97706', '#2563EB'],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    hoverOffset: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '68%',
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // ============================================================
+    // LINE CHART — TREN PRODUKSI
+    // ============================================================
+    const trenEl = document.getElementById('trenProduksiChart');
+    if (trenEl) {
+        const trenData = @json($trenProduksi);
+        new Chart(trenEl, {
+            type: 'line',
+            data: {
+                labels: trenData.map(d => d.label),
+                datasets: [{
+                    label: 'Volume Panen (kg)',
+                    data: trenData.map(d => d.volume),
+                    borderColor: '#0891B2',
+                    backgroundColor: 'rgba(8,145,178,0.08)',
+                    borderWidth: 2.5,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#0891B2',
+                    fill: true,
+                    tension: 0.4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.parsed.y.toLocaleString('id-ID')} kg`
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: { callback: v => v.toLocaleString('id-ID') }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
 });
 </script>
 @endpush
