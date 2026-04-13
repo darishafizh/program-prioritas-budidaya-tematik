@@ -280,6 +280,6 @@ class MonitoringController extends Controller
         ];
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('monitoring.pdf', compact('kdmpList', 'tahun', 'bulan', 'bulanList', 'search'))->setPaper('a4', 'landscape');
-        return $pdf->download('Data_Lokasi_Budidaya_' . ($bulanList[$bulan] ?? $bulan) . '_' . $tahun . '.pdf');
+        return $pdf->stream('Data_Lokasi_Budidaya_' . ($bulanList[$bulan] ?? $bulan) . '_' . $tahun . '.pdf');
     }
 }

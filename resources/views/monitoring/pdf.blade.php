@@ -43,15 +43,96 @@
         .text-right {
             text-align: right;
         }
+
+        /* Kop Surat Styles */
+        .kop-table {
+            border: none;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .kop-table th,
+        .kop-table td {
+            border: none;
+            padding: 0;
+            background: transparent;
+        }
+
+        .kop-logo {
+            width: 90px;
+            text-align: left;
+        }
+
+        .kop-logo img {
+            width: 80px;
+            height: auto;
+        }
+
+        .kop-text {
+            text-align: center;
+            vertical-align: middle;
+            padding-right: 90px;
+            /* Balance the logo width so text is visually centered */
+        }
+
+        .kop-line {
+            border: none;
+            border-top: 3px solid #000;
+            border-bottom: 1px solid #000;
+            height: 2px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+
+        /* Footer / Page Number */
+        footer {
+            position: fixed;
+            bottom: -20px;
+            left: 0px;
+            right: 0px;
+            height: 30px;
+            font-size: 10px;
+            color: #555;
+            text-align: right;
+        }
+
+        .pagenum:before {
+            content: counter(page);
+        }
     </style>
 </head>
 
 <body>
+    <footer>
+        <span class="pagenum"></span>
+    </footer>
+
+    <div class="header-kop">
+        @php
+            $path = public_path('logo-kkp.png');
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_get_contents($path);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        @endphp
+        <table class="kop-table">
+            <tr>
+                <td class="kop-logo">
+                    <img src="{{ $base64 }}" alt="Logo KKP">
+                </td>
+                <td class="kop-text">
+                    <h1 style="font-size:18px; margin:0 0 5px 0;">KEMENTERIAN KELAUTAN DAN PERIKANAN</h1>
+                    <h2 style="font-size:16px; margin:0; font-weight:normal;">BIRO PERENCANAAN</h2>
+                </td>
+            </tr>
+        </table>
+        <hr class="kop-line">
+    </div>
+
     <div class="page-title">
-        <h2>Data Lokasi Budidaya</h2>
-        <p>Periode: {{ $bulanList[$bulan] ?? $bulan }} {{ $tahun }}</p>
+        <h3 style="margin-bottom: 5px;">DATA LOKASI BUDIDAYA TEMATIK</h3>
+        <p style="margin: 0; font-size: 11px;">Periode: {{ $bulanList[$bulan] ?? $bulan }} {{ $tahun }}</p>
         @if($search)
-            <p>Pencarian: "{{ $search }}"</p>
+            <p style="margin: 2px 0 0; font-size: 11px;">Pencarian: "{{ $search }}"</p>
         @endif
     </div>
 
@@ -60,9 +141,9 @@
             <tr>
                 <th rowspan="2" style="width: 30px;">No</th>
                 <th rowspan="2">KDKMP</th>
-                <th colspan="2">Hasil panen</th>
+                <th colspan="2">Hasil Panen</th>
                 <th rowspan="2">Biaya Opr</th>
-                <th rowspan="2">Harga jual</th>
+                <th rowspan="2">Harga Jual</th>
             </tr>
             <tr>
                 <th>Volume (kg)</th>
