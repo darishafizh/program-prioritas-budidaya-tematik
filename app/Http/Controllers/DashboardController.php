@@ -13,38 +13,36 @@ class DashboardController extends Controller
 {
     /**
      * Executive Summary Dashboard
-     * Fokus: (1) Indikasi Kelayakan Lokasi, (2) Monitoring Evaluasi Produksi
+     * Fokus: (1) Lokasi Budidaya, (2) Monitoring Evaluasi Produksi
      */
     public function index()
     {
         // ============================================================
-        // BAGIAN 1: INDIKASI KELAYAKAN LOKASI (dari LocationScore)
+        // BAGIAN 1: LOKASI BUDIDAYA (100 Lokasi KDMP yang sudah ditetapkan)
         // ============================================================
 
         $totalLokasi = Kdmp::count();
+        $totalBerkoordinat = Kdmp::whereNotNull('lat')->whereNotNull('long')->count();
 
-        $scoringStats = [
-            'total'       => LocationScore::count(),
-            'sangat_layak'=> LocationScore::where('status', 'SANGAT LAYAK')->count(),
-            'layak'       => LocationScore::where('status', 'LAYAK')->count(),
-            'cukup_layak' => LocationScore::where('status', 'CUKUP LAYAK')->count(),
-            'tidak_layak' => LocationScore::where('status', 'TIDAK LAYAK')->count(),
-            'avg_score'   => round(LocationScore::avg('total_score') ?? 0, 1),
-        ];
+        // Sebaran per Komoditas
+        $sebaranKomoditas = Kdmp::select('komoditas', DB::raw('count(*) as total'))
+            ->whereNotNull('komoditas')
+            ->where('komoditas', '!=', '')
+            ->groupBy('komoditas')
+            ->orderByDesc('total')
+            ->get();
 
-        // Belum dinilai = lokasi di master yang belum ada di location_scores
-        $scoringStats['belum_dinilai'] = $totalLokasi - $scoringStats['total'];
+        // Warna per komoditas (palette konsisten)
+        $komoditasPalette = ['#0891B2', '#16A34A', '#D97706', '#8B5CF6', '#DC2626', '#F59E0B', '#EC4899', '#6366F1'];
+        $komoditasColors = [];
+        foreach ($sebaranKomoditas as $i => $kom) {
+            $komoditasColors[$kom->komoditas] = $komoditasPalette[$i % count($komoditasPalette)];
+        }
 
-        // Top 5 lokasi terbaik
-        $topLocations = LocationScore::orderByDesc('total_score')->limit(5)->get();
-
-        // Peta: semua 100 lokasi KDMP dengan status scoring (preload untuk hindari N+1)
-        $allScores = LocationScore::all()->keyBy('kdmp_id');
-
+        // Peta: semua 100 lokasi KDMP (sudah lokasi tetap, bukan indikasi)
         $mapLocations = Kdmp::whereNotNull('lat')->whereNotNull('long')
             ->get()
-            ->map(function ($item) use ($allScores) {
-                $score = $allScores->get($item->id);
+            ->map(function ($item) {
                 return [
                     'id'        => $item->id,
                     'name'      => $item->nama_kdkmp ?? 'KDMP Tanpa Nama',
@@ -53,13 +51,11 @@ class DashboardController extends Controller
                     'komoditas' => $item->komoditas,
                     'lat'       => $item->lat,
                     'lng'       => $item->long,
-                    'status'    => $score ? $score->status : 'BELUM DINILAI',
-                    'score'     => $score ? $score->total_score : null,
                 ];
             })
             ->values();
 
-        // Distribusi per Provinsi (untuk referensi)
+        // Distribusi per Provinsi
         $sebaranProvinsi = Kdmp::select('provinsi', DB::raw('count(*) as total'))
             ->whereNotNull('provinsi')
             ->groupBy('provinsi')
@@ -132,10 +128,11 @@ class DashboardController extends Controller
             ->values();
 
         return view('dashboard.index', compact(
-            // Bagian 1: Scoring
+            // Bagian 1: Lokasi Budidaya
             'totalLokasi',
-            'scoringStats',
-            'topLocations',
+            'totalBerkoordinat',
+            'sebaranKomoditas',
+            'komoditasColors',
             'mapLocations',
             'sebaranProvinsi',
             // Bagian 2: Monitoring
@@ -153,6 +150,15 @@ class DashboardController extends Controller
     {
         $type = $request->get('type', 'all');
         $data = [];
+
+        if ($type === 'all' || $type === 'komoditas') {
+            $data['komoditas'] = Kdmp::select('komoditas', DB::raw('count(*) as total'))
+                ->whereNotNull('komoditas')
+                ->where('komoditas', '!=', '')
+                ->groupBy('komoditas')
+                ->orderByDesc('total')
+                ->get();
+        }
 
         if ($type === 'all' || $type === 'scoring') {
             $data['scoring'] = [
