@@ -21,9 +21,13 @@ class LokasiBudidayaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_koperasi' => 'required|string|max:255',
-            'lokasi' => 'required|string|max:255',
-            'volume_hasil_panen' => 'required|numeric|min:0',
+            'nama_koperasi'     => 'required|string|max:255',
+            'provinsi'          => 'required|string|max:255',
+            'kabupaten_kota'    => 'nullable|string|max:255',
+            'kecamatan'         => 'nullable|string|max:255',
+            'desa'              => 'nullable|string|max:255',
+            'volume'            => 'required|numeric|min:0',
+            'hasil_panen_kg'    => 'required|numeric|min:0',
             'nilai_hasil_panen' => 'required|numeric|min:0',
             'biaya_operasional' => 'required|numeric|min:0',
             'harga_jual_per_kg' => 'required|numeric|min:0',
@@ -43,9 +47,13 @@ class LokasiBudidayaController extends Controller
     public function update(Request $request, LokasiBudidaya $lokasiBudidaya)
     {
         $validated = $request->validate([
-            'nama_koperasi' => 'required|string|max:255',
-            'lokasi' => 'required|string|max:255',
-            'volume_hasil_panen' => 'required|numeric|min:0',
+            'nama_koperasi'     => 'required|string|max:255',
+            'provinsi'          => 'required|string|max:255',
+            'kabupaten_kota'    => 'nullable|string|max:255',
+            'kecamatan'         => 'nullable|string|max:255',
+            'desa'              => 'nullable|string|max:255',
+            'volume'            => 'required|numeric|min:0',
+            'hasil_panen_kg'    => 'required|numeric|min:0',
             'nilai_hasil_panen' => 'required|numeric|min:0',
             'biaya_operasional' => 'required|numeric|min:0',
             'harga_jual_per_kg' => 'required|numeric|min:0',
