@@ -38,13 +38,13 @@ class DashboardController extends Controller
         // Top 5 lokasi terbaik
         $topLocations = LocationScore::orderByDesc('total_score')->limit(5)->get();
 
-        // Peta: semua 100 lokasi KDMP dengan status scoring (jika ada)
-        $scoredIds = LocationScore::pluck('kdmp_id')->toArray();
+        // Peta: semua 100 lokasi KDMP dengan status scoring (preload untuk hindari N+1)
+        $allScores = LocationScore::all()->keyBy('kdmp_id');
 
         $mapLocations = Kdmp::whereNotNull('lat')->whereNotNull('long')
             ->get()
-            ->map(function ($item) use ($scoredIds) {
-                $score = isset($scoredIds) ? LocationScore::where('kdmp_id', $item->id)->first() : null;
+            ->map(function ($item) use ($allScores) {
+                $score = $allScores->get($item->id);
                 return [
                     'id'        => $item->id,
                     'name'      => $item->nama_kdkmp ?? 'KDMP Tanpa Nama',
