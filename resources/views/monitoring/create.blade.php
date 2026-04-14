@@ -161,6 +161,41 @@
         </div>
     </div>
 
+    {{-- Section 3b: KPI Tambahan --}}
+    <div class="monitoring-form-card">
+        <div class="monitoring-form-header">
+            <div class="monitoring-form-header-icon" style="background: rgba(139, 92, 246, 0.1); color: #8B5CF6;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="monitoring-form-title">Indikator Kinerja (KPI)</h3>
+                <p class="monitoring-form-desc">Data survival rate dan utilisasi kolam (opsional)</p>
+            </div>
+        </div>
+        <div class="monitoring-form-body">
+            <div class="grid grid-cols-3">
+                <div class="form-group">
+                    <label class="form-label">Survival Rate (%)</label>
+                    <input type="number" name="survival_rate" min="0" max="100" step="0.01"
+                        value="{{ old('survival_rate') }}" class="form-control" placeholder="0-100">
+                    <small style="color:var(--gray-400);font-size:0.72rem;">Tingkat kelangsungan hidup ikan</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Jumlah Kolam Aktif</label>
+                    <input type="number" name="jumlah_kolam_aktif" min="0"
+                        value="{{ old('jumlah_kolam_aktif') }}" class="form-control" placeholder="Kolam aktif">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label">Jumlah Kolam Total</label>
+                    <input type="number" name="jumlah_kolam_total" min="0"
+                        value="{{ old('jumlah_kolam_total') }}" class="form-control" placeholder="Total kolam">
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Section 4: Catatan & Kendala --}}
     <div class="monitoring-form-card">
         <div class="monitoring-form-header">

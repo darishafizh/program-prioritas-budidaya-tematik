@@ -20,6 +20,9 @@ class MonitoringRecord extends Model
         'nilai_produksi',
         'biaya_operasional',
         'jumlah_pembudidaya_aktif',
+        'survival_rate',
+        'jumlah_kolam_aktif',
+        'jumlah_kolam_total',
         'kendala',
         'tindak_lanjut',
         'catatan',
@@ -31,6 +34,7 @@ class MonitoringRecord extends Model
         'volume_panen_kg' => 'decimal:2',
         'nilai_produksi' => 'decimal:2',
         'biaya_operasional' => 'decimal:2',
+        'survival_rate' => 'decimal:2',
     ];
 
     // ==========================================
@@ -129,6 +133,60 @@ class MonitoringRecord extends Model
     public function getProfitAttribute(): float
     {
         return (float) $this->nilai_produksi - (float) $this->biaya_operasional;
+    }
+
+    // ==========================================
+    // KPI COMPUTED ACCESSORS
+    // ==========================================
+
+    /**
+     * Biaya per kg produksi
+     */
+    public function getBiayaPerKgAttribute(): ?float
+    {
+        if (!$this->volume_panen_kg || (float) $this->volume_panen_kg == 0) return null;
+        return (float) $this->biaya_operasional / (float) $this->volume_panen_kg;
+    }
+
+    /**
+     * Utilisasi kolam (%)
+     */
+    public function getUtilisasiKolamAttribute(): ?float
+    {
+        if (!$this->jumlah_kolam_total || $this->jumlah_kolam_total == 0) return null;
+        return round(($this->jumlah_kolam_aktif / $this->jumlah_kolam_total) * 100, 1);
+    }
+
+    /**
+     * Produksi per kolam aktif
+     */
+    public function getProduksiPerKolamAttribute(): ?float
+    {
+        if (!$this->jumlah_kolam_aktif || $this->jumlah_kolam_aktif == 0) return null;
+        return round((float) $this->volume_panen_kg / $this->jumlah_kolam_aktif, 2);
+    }
+
+    /**
+     * Status SR → warna (danger/warning/success)
+     */
+    public function getSrStatusAttribute(): string
+    {
+        if ($this->survival_rate === null) return 'secondary';
+        if ($this->survival_rate < 70) return 'danger';
+        if ($this->survival_rate <= 80) return 'warning';
+        return 'success';
+    }
+
+    /**
+     * Apakah lokasi ini prioritas intervensi?
+     * SR rendah + produksi rendah + ada kendala
+     */
+    public function getIsPrioritasAttribute(): bool
+    {
+        return $this->survival_rate !== null
+            && $this->survival_rate < 70
+            && (float) $this->volume_panen_kg < 100
+            && !empty($this->kendala);
     }
 
     // ==========================================

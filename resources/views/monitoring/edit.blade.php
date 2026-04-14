@@ -71,6 +71,25 @@
                 </div>
             </div>
 
+            {{-- KPI Tambahan --}}
+            <div class="grid grid-cols-3">
+                <div class="form-group">
+                    <label class="form-label">Survival Rate (%)</label>
+                    <input type="number" name="survival_rate" min="0" max="100" step="0.01"
+                        value="{{ old('survival_rate', $record->survival_rate) }}" class="form-control" placeholder="0-100">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Jumlah Kolam Aktif</label>
+                    <input type="number" name="jumlah_kolam_aktif" min="0"
+                        value="{{ old('jumlah_kolam_aktif', $record->jumlah_kolam_aktif) }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Jumlah Kolam Total</label>
+                    <input type="number" name="jumlah_kolam_total" min="0"
+                        value="{{ old('jumlah_kolam_total', $record->jumlah_kolam_total) }}" class="form-control">
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="form-label">Kendala</label>
                 <textarea name="kendala" rows="3" class="form-control">{{ old('kendala', $record->kendala) }}</textarea>
