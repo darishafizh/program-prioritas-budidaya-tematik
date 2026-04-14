@@ -481,74 +481,81 @@
     gap: 0.75rem;
     margin-bottom: 1.25rem;
 }
+
+/* Map Dark Mode Override */
+[data-theme="dark"] .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(90%) contrast(90%);
+}
 .kpi-card {
+    background: var(--bg-surface);
     border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
     padding: 1rem 1.1rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: white;
+    color: var(--text-primary);
     position: relative;
     overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-slow);
+    box-shadow: var(--shadow-sm);
 }
 .kpi-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-}
-.kpi-card::after {
-    content: '';
-    position: absolute;
-    right: -12px;
-    bottom: -12px;
-    width: 60px;
-    height: 60px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 50%;
+    box-shadow: var(--shadow-md);
+    border-color: var(--gray-300);
 }
 .kpi-icon {
-    font-size: 1.4rem;
-    opacity: 0.85;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
     flex-shrink: 0;
 }
 .kpi-value {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 700;
-    line-height: 1;
+    line-height: 1.1;
+    color: var(--gray-900);
+    letter-spacing: -0.02em;
 }
 .kpi-label {
     font-size: 0.75rem;
     font-weight: 600;
-    opacity: 0.9;
+    color: var(--gray-500);
     margin-top: 0.15rem;
 }
 .kpi-sub {
     font-size: 0.68rem;
-    opacity: 0.7;
+    color: var(--gray-400);
     margin-top: 0.1rem;
 }
 
-/* KPI Colors */
-.kpi-total        { background: linear-gradient(135deg, #0D2137, #1e3a5a); }
-.kpi-sangat-layak { background: linear-gradient(135deg, #15803D, #16A34A); }
-.kpi-layak        { background: linear-gradient(135deg, #1D4ED8, #2563EB); }
-.kpi-cukup        { background: linear-gradient(135deg, #B45309, #D97706); }
-.kpi-tidak        { background: linear-gradient(135deg, #B91C1C, #DC2626); }
-.kpi-belum        { background: linear-gradient(135deg, #4B5563, #6B7280); }
-.kpi-ontrack      { background: linear-gradient(135deg, #15803D, #16A34A); }
-.kpi-bermasalah   { background: linear-gradient(135deg, #B91C1C, #DC2626); }
-.kpi-volume       { background: linear-gradient(135deg, #0891B2, #06B6D4); }
-.kpi-nilai        { background: linear-gradient(135deg, #7C3AED, #8B5CF6); }
+/* KPI Colors for Icons */
+.kpi-total .kpi-icon        { background: rgba(13, 33, 55, 0.1); color: #0D2137; }
+.kpi-sangat-layak .kpi-icon { background: rgba(22, 163, 74, 0.1); color: #16A34A; }
+.kpi-layak .kpi-icon        { background: rgba(37, 99, 235, 0.1); color: #2563EB; }
+.kpi-cukup .kpi-icon        { background: rgba(217, 119, 6, 0.1); color: #D97706; }
+.kpi-tidak .kpi-icon        { background: rgba(220, 38, 38, 0.1); color: #DC2626; }
+.kpi-belum .kpi-icon        { background: rgba(107, 114, 128, 0.1); color: #6B7280; }
+.kpi-ontrack .kpi-icon      { background: rgba(22, 163, 74, 0.1); color: #16A34A; }
+.kpi-bermasalah .kpi-icon   { background: rgba(220, 38, 38, 0.1); color: #DC2626; }
+.kpi-volume .kpi-icon       { background: rgba(8, 145, 178, 0.1); color: #0891B2; }
+.kpi-nilai .kpi-icon        { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
 
 /* ============================================================
    DASHBOARD CARDS
    ============================================================ */
 .dash-card {
-    background: white;
+    background: var(--bg-surface);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--gray-200);
+    border: 1px solid var(--border-color);
     padding: 1.25rem;
     margin-bottom: 1.25rem;
+    transition: background-color var(--transition-slow), border-color var(--transition-slow);
 }
 .dash-card-header {
     display: flex;

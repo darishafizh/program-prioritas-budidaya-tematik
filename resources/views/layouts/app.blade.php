@@ -26,6 +26,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     @stack('styles')
+    
+    <!-- Theme Initializer (Anti-FOUC) -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    </script>
 </head>
 <body>
     <script>
@@ -47,9 +56,25 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
+                    <div class="ms-4 d-none d-md-block">
+                        <h5 class="mb-0 fw-bold" style="color: var(--gray-900); letter-spacing: -0.01em;">Halo, {{ Auth::user()->name ?? 'Pengguna' }} 👋</h5>
+                    </div>
                 </div>
                 <div class="topbar-right">
-                    <div class="topbar-date">
+                    <!-- Theme Toggle -->
+                    <button class="topbar-toggle" onclick="toggleTheme()" id="theme-toggle-btn" title="Ganti Tema">
+                        <!-- Moon Icon for Light Mode -->
+                        <svg id="theme-icon-dark" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                        <!-- Sun Icon for Dark Mode -->
+                        <svg id="theme-icon-light" style="display: none;" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </button>
+                    <!-- /Theme Toggle -->
+
+                    <div class="topbar-date d-none d-sm-flex">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
@@ -125,6 +150,31 @@
             if (window.innerWidth > 768) {
                 document.querySelector('.sidebar').classList.remove('sidebar-open');
             }
+        });
+
+        // Theme Toggle Logic
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                document.getElementById('theme-icon-light').style.display = 'block';
+                document.getElementById('theme-icon-dark').style.display = 'none';
+            } else {
+                document.getElementById('theme-icon-dark').style.display = 'block';
+                document.getElementById('theme-icon-light').style.display = 'none';
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        // Initialize theme icons on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const theme = document.documentElement.getAttribute('data-theme') || 'light';
+            updateThemeIcon(theme);
         });
     </script>
     
