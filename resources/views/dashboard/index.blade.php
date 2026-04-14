@@ -23,65 +23,49 @@
 </div>
 
 {{-- ============================================================ --}}
-{{-- BAGIAN 1: INDIKASI KELAYAKAN LOKASI --}}
+{{-- BAGIAN 1: LOKASI BUDIDAYA --}}
 {{-- ============================================================ --}}
 <div class="section-divider animate-fade-in-up delay-100">
     <div class="section-divider-line"></div>
     <span class="section-divider-label">
-        <i class="fa-solid fa-star-half-stroke"></i>
-        INDIKASI KELAYAKAN LOKASI
+        <i class="fa-solid fa-map-location-dot"></i>
+        LOKASI BUDIDAYA
     </span>
     <div class="section-divider-line"></div>
 </div>
 
-{{-- KPI Scoring --}}
-<div class="kpi-grid animate-fade-in-up delay-200">
+{{-- KPI Lokasi Budidaya --}}
+<div class="kpi-grid-4 animate-fade-in-up delay-200">
     <div class="kpi-card kpi-total">
         <div class="kpi-icon"><i class="fa-solid fa-map-pin"></i></div>
         <div class="kpi-body">
-            <div class="kpi-value">{{ number_format($scoringStats['total']) }}</div>
-            <div class="kpi-label">Lokasi Sudah Dinilai</div>
-            <div class="kpi-sub">dari {{ $totalLokasi }} total lokasi</div>
-        </div>
-    </div>
-    <div class="kpi-card kpi-sangat-layak">
-        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
-        <div class="kpi-body">
-            <div class="kpi-value">{{ $scoringStats['sangat_layak'] }}</div>
-            <div class="kpi-label">Sangat Layak</div>
-            <div class="kpi-sub">Prioritas utama</div>
+            <div class="kpi-value">{{ number_format($totalLokasi) }}</div>
+            <div class="kpi-label">Total Lokasi KDMP</div>
+            <div class="kpi-sub">Lokasi budidaya terdaftar</div>
         </div>
     </div>
     <div class="kpi-card kpi-layak">
-        <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="kpi-icon"><i class="fa-solid fa-earth-asia"></i></div>
         <div class="kpi-body">
-            <div class="kpi-value">{{ $scoringStats['layak'] }}</div>
-            <div class="kpi-label">Layak</div>
-            <div class="kpi-sub">Dapat dilanjutkan</div>
+            <div class="kpi-value">{{ $sebaranProvinsi->count() }}</div>
+            <div class="kpi-label">Provinsi</div>
+            <div class="kpi-sub">Sebaran wilayah</div>
         </div>
     </div>
-    <div class="kpi-card kpi-cukup">
-        <div class="kpi-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+    <div class="kpi-card kpi-volume">
+        <div class="kpi-icon"><i class="fa-solid fa-fish"></i></div>
         <div class="kpi-body">
-            <div class="kpi-value">{{ $scoringStats['cukup_layak'] }}</div>
-            <div class="kpi-label">Cukup Layak</div>
-            <div class="kpi-sub">Perlu pengembangan</div>
+            <div class="kpi-value">{{ $sebaranKomoditas->count() }}</div>
+            <div class="kpi-label">Jenis Komoditas</div>
+            <div class="kpi-sub">{{ $sebaranKomoditas->pluck('komoditas')->implode(', ') }}</div>
         </div>
     </div>
-    <div class="kpi-card kpi-tidak">
-        <div class="kpi-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+    <div class="kpi-card kpi-ontrack">
+        <div class="kpi-icon"><i class="fa-solid fa-location-crosshairs"></i></div>
         <div class="kpi-body">
-            <div class="kpi-value">{{ $scoringStats['tidak_layak'] }}</div>
-            <div class="kpi-label">Tidak Layak</div>
-            <div class="kpi-sub">Perlu evaluasi</div>
-        </div>
-    </div>
-    <div class="kpi-card kpi-belum">
-        <div class="kpi-icon"><i class="fa-solid fa-clock"></i></div>
-        <div class="kpi-body">
-            <div class="kpi-value">{{ $scoringStats['belum_dinilai'] }}</div>
-            <div class="kpi-label">Belum Dinilai</div>
-            <div class="kpi-sub">Menunggu assessment</div>
+            <div class="kpi-value">{{ $totalBerkoordinat }}</div>
+            <div class="kpi-label">Terverifikasi Koordinat</div>
+            <div class="kpi-sub">{{ $totalLokasi > 0 ? round($totalBerkoordinat / $totalLokasi * 100) : 0 }}% dari total lokasi</div>
         </div>
     </div>
 </div>
@@ -93,115 +77,75 @@
         <div class="dash-card-header">
             <div class="dash-card-title">
                 <i class="fa-solid fa-map-location-dot" style="color:#0891B2;"></i>
-                Peta Sebaran Lokasi KDMP
+                Peta Sebaran 100 Lokasi KDMP
             </div>
             <div class="map-legend">
-                <span class="legend-dot" style="background:#16A34A;"></span><span>Sangat Layak</span>
-                <span class="legend-dot" style="background:#2563EB;"></span><span>Layak</span>
-                <span class="legend-dot" style="background:#D97706;"></span><span>Cukup Layak</span>
-                <span class="legend-dot" style="background:#DC2626;"></span><span>Tidak Layak</span>
-                <span class="legend-dot" style="background:#9CA3AF;"></span><span>Belum Dinilai</span>
+                @foreach($sebaranKomoditas as $i => $kom)
+                <span class="legend-dot" style="background:{{ $komoditasColors[$kom->komoditas] ?? '#9CA3AF' }};"></span><span>{{ $kom->komoditas }} ({{ $kom->total }})</span>
+                @endforeach
             </div>
         </div>
         <div id="kdmpMap" style="height:400px; border-radius: var(--radius-lg); overflow:hidden;"></div>
     </div>
 
-    {{-- Donut Chart Kelayakan --}}
+    {{-- Donut Chart Komoditas --}}
     <div class="dash-card">
         <div class="dash-card-header">
             <div class="dash-card-title">
                 <i class="fa-solid fa-chart-pie" style="color:#0891B2;"></i>
-                Komposisi Kelayakan
+                Sebaran Komoditas
             </div>
         </div>
-        @if($scoringStats['total'] > 0)
         <div style="height:260px; display:flex; align-items:center;">
-            <canvas id="donutKelayakan"></canvas>
+            <canvas id="donutKomoditas"></canvas>
         </div>
         <div class="donut-legend">
+            @foreach($sebaranKomoditas as $kom)
             <div class="donut-legend-item">
-                <span class="legend-dot" style="background:#16A34A;"></span>
-                <span>Sangat Layak</span>
-                <strong>{{ $scoringStats['sangat_layak'] }}</strong>
+                <span class="legend-dot" style="background:{{ $komoditasColors[$kom->komoditas] ?? '#9CA3AF' }};"></span>
+                <span>{{ $kom->komoditas }}</span>
+                <strong>{{ $kom->total }} lokasi</strong>
             </div>
-            <div class="donut-legend-item">
-                <span class="legend-dot" style="background:#2563EB;"></span>
-                <span>Layak</span>
-                <strong>{{ $scoringStats['layak'] }}</strong>
-            </div>
-            <div class="donut-legend-item">
-                <span class="legend-dot" style="background:#D97706;"></span>
-                <span>Cukup Layak</span>
-                <strong>{{ $scoringStats['cukup_layak'] }}</strong>
-            </div>
-            <div class="donut-legend-item">
-                <span class="legend-dot" style="background:#DC2626;"></span>
-                <span>Tidak Layak</span>
-                <strong>{{ $scoringStats['tidak_layak'] }}</strong>
-            </div>
+            @endforeach
         </div>
-        @else
-        <div class="empty-state-sm">
-            <i class="fa-solid fa-chart-pie" style="font-size:2rem;color:var(--gray-300);"></i>
-            <p>Belum ada data scoring</p>
-            <a href="{{ route('scoring.index') }}" class="btn btn-sm btn-primary">Generate Scoring</a>
-        </div>
-        @endif
     </div>
 </div>
 
-{{-- Top 5 Lokasi Terbaik --}}
-@if($topLocations->count() > 0)
+{{-- Sebaran per Provinsi --}}
+@if($sebaranProvinsi->count() > 0)
 <div class="dash-card animate-fade-in-up delay-400">
     <div class="dash-card-header">
         <div class="dash-card-title">
-            <i class="fa-solid fa-trophy" style="color:#D97706;"></i>
-            Top 5 Lokasi Terbaik
+            <i class="fa-solid fa-building-columns" style="color:#D97706;"></i>
+            Sebaran Lokasi per Provinsi
         </div>
-        <a href="{{ route('scoring.index') }}" class="dash-link">Lihat Semua →</a>
     </div>
     <div class="table-responsive">
         <table class="data-table">
             <thead>
                 <tr>
                     <th style="width:40px">#</th>
-                    <th>Nama KDMP</th>
-                    <th>Kecamatan</th>
-                    <th>Kabupaten</th>
-                    <th style="text-align:center">Skor KDMP</th>
-                    <th style="text-align:center">Total Skor</th>
-                    <th style="text-align:center">Status</th>
+                    <th>Provinsi</th>
+                    <th style="text-align:center">Jumlah Lokasi</th>
+                    <th style="text-align:center">Persentase</th>
+                    <th>Distribusi</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($topLocations as $i => $score)
+                @foreach($sebaranProvinsi as $i => $prov)
                 <tr>
+                    <td class="text-center" style="color:var(--gray-400);">{{ $i + 1 }}</td>
+                    <td class="font-semibold">{{ $prov->provinsi }}</td>
                     <td class="text-center">
-                        @if($i === 0)
-                            <i class="fa-solid fa-medal" style="color:#F59E0B;"></i>
-                        @elseif($i === 1)
-                            <i class="fa-solid fa-medal" style="color:#9CA3AF;"></i>
-                        @elseif($i === 2)
-                            <i class="fa-solid fa-medal" style="color:#B45309;"></i>
-                        @else
-                            <span style="color:var(--gray-400);">{{ $i + 1 }}</span>
-                        @endif
+                        <span class="score-pill high">{{ $prov->total }}</span>
                     </td>
-                    <td class="font-semibold">{{ $score->kdmp->nama_kdkmp ?? '-' }}</td>
-                    <td>{{ $score->kecamatan }}</td>
-                    <td>{{ $score->kabupaten }}</td>
-                    <td class="text-center">
-                        <span class="score-pill {{ $score->kdmp_score >= 70 ? 'high' : ($score->kdmp_score >= 50 ? 'mid' : 'low') }}">
-                            {{ number_format($score->kdmp_score, 0) }}
-                        </span>
+                    <td class="text-center text-sm" style="color:var(--gray-600);">
+                        {{ $totalLokasi > 0 ? round($prov->total / $totalLokasi * 100, 1) : 0 }}%
                     </td>
-                    <td class="text-center font-bold" style="color:var(--kkp-navy);">
-                        {{ number_format($score->total_score, 1) }}
-                    </td>
-                    <td class="text-center">
-                        <span class="status-chip {{ $score->status_color }}">
-                            {!! $score->status_icon !!} {{ $score->status }}
-                        </span>
+                    <td>
+                        <div class="progress-mini" style="width:120px;">
+                            <div class="progress-mini-bar" style="width:{{ $totalLokasi > 0 ? round($prov->total / $totalLokasi * 100) : 0 }}%; background: #0891B2;"></div>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
@@ -721,16 +665,10 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     // ============================================================
-    // PETA SEBARAN LOKASI
+    // PETA SEBARAN LOKASI (warna per komoditas)
     // ============================================================
     const mapLocations = @json($mapLocations);
-    const statusColors = {
-        'SANGAT LAYAK'  : '#16A34A',
-        'LAYAK'         : '#2563EB',
-        'CUKUP LAYAK'   : '#D97706',
-        'TIDAK LAYAK'   : '#DC2626',
-        'BELUM DINILAI' : '#9CA3AF',
-    };
+    const komoditasColors = @json($komoditasColors);
 
     if (mapLocations.length > 0) {
         const map = L.map('kdmpMap').setView([-7.5, 112], 7);
@@ -740,7 +678,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         mapLocations.forEach(loc => {
             if (!loc.lat || !loc.lng) return;
-            const color = statusColors[loc.status] ?? '#9CA3AF';
+            const color = komoditasColors[loc.komoditas] ?? '#9CA3AF';
             const marker = L.circleMarker([parseFloat(loc.lat), parseFloat(loc.lng)], {
                 radius: 7,
                 fillColor: color,
@@ -749,40 +687,39 @@ document.addEventListener('DOMContentLoaded', function () {
                 opacity: 1,
                 fillOpacity: 0.9,
             });
-            const scoreText = loc.score ? `<br><b>Skor:</b> ${parseFloat(loc.score).toFixed(1)}` : '';
             marker.bindPopup(`
                 <div style="min-width:180px;font-size:13px;">
                     <b style="color:#0891B2;">${loc.name}</b><br>
                     <span style="color:#6B7280;">${loc.kabupaten}, ${loc.provinsi}</span><br>
-                    Komoditas: ${loc.komoditas || '-'}
-                    ${scoreText}
-                    <br><span style="display:inline-block;margin-top:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;background:${color}20;color:${color};">${loc.status}</span>
+                    <span style="display:inline-block;margin-top:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;background:${color}20;color:${color};">${loc.komoditas || '-'}</span>
                 </div>
             `);
             marker.addTo(map);
         });
+
+        // Auto-fit bounds to all markers
+        const bounds = mapLocations
+            .filter(l => l.lat && l.lng)
+            .map(l => [parseFloat(l.lat), parseFloat(l.lng)]);
+        if (bounds.length > 0) map.fitBounds(bounds, { padding: [30, 30] });
     } else {
         document.getElementById('kdmpMap').innerHTML =
             '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9CA3AF;">Belum ada data lokasi</div>';
     }
 
     // ============================================================
-    // DONUT — KOMPOSISI KELAYAKAN
+    // DONUT — SEBARAN KOMODITAS
     // ============================================================
-    const donutKelEl = document.getElementById('donutKelayakan');
-    if (donutKelEl) {
-        new Chart(donutKelEl, {
+    const donutKomEl = document.getElementById('donutKomoditas');
+    if (donutKomEl) {
+        const komData = @json($sebaranKomoditas);
+        new Chart(donutKomEl, {
             type: 'doughnut',
             data: {
-                labels: ['Sangat Layak', 'Layak', 'Cukup Layak', 'Tidak Layak'],
+                labels: komData.map(k => k.komoditas),
                 datasets: [{
-                    data: [
-                        {{ $scoringStats['sangat_layak'] }},
-                        {{ $scoringStats['layak'] }},
-                        {{ $scoringStats['cukup_layak'] }},
-                        {{ $scoringStats['tidak_layak'] }},
-                    ],
-                    backgroundColor: ['#16A34A', '#2563EB', '#D97706', '#DC2626'],
+                    data: komData.map(k => k.total),
+                    backgroundColor: komData.map(k => komoditasColors[k.komoditas] ?? '#9CA3AF'),
                     borderWidth: 2,
                     borderColor: '#fff',
                     hoverOffset: 6,
