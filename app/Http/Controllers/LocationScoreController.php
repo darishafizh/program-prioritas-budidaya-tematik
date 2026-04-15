@@ -37,7 +37,7 @@ class LocationScoreController extends Controller
         }
 
         // Get ranked results
-        $scores = $query->ranked()->paginate(15);
+        $scores = $query->ranked()->get();
 
         // Get filter options
         $statusOptions = ['SANGAT LAYAK', 'LAYAK', 'CUKUP LAYAK', 'TIDAK LAYAK'];

@@ -105,7 +105,7 @@
     <div class="action-alerts-grid animate-fade-in-up delay-300">
         <div class="action-alert-card bg-red-soft">
             <div class="alert-icon text-red"><i class="fa-solid fa-heart-crack"></i></div>
-            <div class="alert-info">
+            <div class="alert-detail">
                 <h3>{{ $lokasiSRRendah }} Lokasi</h3>
                 <p>Survival Rate Rendah (< 70%)</p>
             </div>
@@ -113,7 +113,7 @@
         </div>
         <div class="action-alert-card bg-orange-soft">
             <div class="alert-icon text-orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <div class="alert-info">
+            <div class="alert-detail">
                 <h3>{{ $lokasiNonOptimal }} Lokasi</h3>
                 <p>Utilisasi Kolam Tidak Optimal (< 50%)</p>
             </div>
@@ -121,7 +121,7 @@
         </div>
         <div class="action-alert-card bg-gray-soft">
             <div class="alert-icon text-gray"><i class="fa-solid fa-bed"></i></div>
-            <div class="alert-info">
+            <div class="alert-detail">
                 <h3>{{ $lokasiVakum }} Lokasi</h3>
                 <p>Status Vakum / Tidak Aktif</p>
             </div>
@@ -689,8 +689,8 @@
     flex-shrink: 0;
 }
 [data-theme="dark"] .alert-icon { background: var(--gray-800); }
-.alert-info h3 { margin: 0; font-size: 1.1rem; font-weight: 800; line-height: 1.2; }
-.alert-info p { margin: 0; font-size: 0.75rem; font-weight: 500; opacity: 0.8; }
+.alert-detail h3 { margin: 0; font-size: 1.1rem; font-weight: 800; line-height: 1.2; }
+.alert-detail p { margin: 0; font-size: 0.75rem; font-weight: 500; opacity: 0.8; }
 .alert-action {
     margin-left: auto;
     font-size: 0.75rem;
@@ -705,6 +705,17 @@
 }
 .alert-action:hover { transform: translateX(3px); }
 [data-theme="dark"] .alert-action { background: var(--gray-800); }
+
+/* Dark mode alert cards */
+[data-theme="dark"] .bg-red-soft { background: rgba(220, 38, 38, 0.12); border-color: rgba(220, 38, 38, 0.25); }
+[data-theme="dark"] .bg-orange-soft { background: rgba(217, 119, 6, 0.12); border-color: rgba(217, 119, 6, 0.25); }
+[data-theme="dark"] .bg-gray-soft { background: rgba(107, 114, 128, 0.12); border-color: rgba(107, 114, 128, 0.25); }
+[data-theme="dark"] .alert-detail h3 { color: #F3F4F6; }
+[data-theme="dark"] .alert-detail p { color: #D1D5DB; }
+[data-theme="dark"] .text-red { color: #F87171; }
+[data-theme="dark"] .text-orange { color: #FBBF24; }
+[data-theme="dark"] .text-gray { color: #9CA3AF; }
+.action-alert-card { user-select: none; -webkit-user-select: none; }
 
 .national-priority-list {
     padding: 0.5rem 1rem 1rem;
@@ -852,67 +863,7 @@
     margin-bottom: 1.25rem;
 }
 
-/* --- KPI Cards --- */
-.kpi-card {
-    background: var(--bg-surface);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    padding: 1rem 1.1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    position: relative;
-    overflow: hidden;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-    box-shadow: var(--shadow-sm);
-}
-.kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-.kpi-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.15rem;
-    flex-shrink: 0;
-}
-.kpi-value {
-    font-size: 1.3rem;
-    font-weight: 700;
-    line-height: 1.1;
-    color: var(--gray-900);
-    letter-spacing: -0.02em;
-}
-.kpi-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--gray-500);
-    margin-top: 0.15rem;
-}
-.kpi-sub {
-    font-size: 0.65rem;
-    color: var(--gray-400);
-    margin-top: 0.1rem;
-}
 
-/* KPI Colors */
-.kpi-produksi .kpi-icon  { background: rgba(8,145,178,0.1); color: #0891B2; }
-.kpi-perkolam .kpi-icon  { background: rgba(99,102,241,0.1); color: #6366F1; }
-.kpi-utilisasi .kpi-icon { background: rgba(139,92,246,0.1); color: #8B5CF6; }
-.kpi-sr .kpi-icon         { background: rgba(22,163,74,0.1); color: #16A34A; }
-.kpi-sr.warning .kpi-icon { background: rgba(217,119,6,0.1); color: #D97706; }
-.kpi-sr.danger .kpi-icon  { background: rgba(220,38,38,0.1); color: #DC2626; }
-.kpi-biaya .kpi-icon      { background: rgba(236,72,153,0.1); color: #EC4899; }
-.kpi-aktif .kpi-icon      { background: rgba(16,185,129,0.1); color: #10B981; }
-
-/* SR class on card border */
-.kpi-card.kpi-sr.success { border-left: 3px solid #16A34A; }
-.kpi-card.kpi-sr.warning { border-left: 3px solid #D97706; }
-.kpi-card.kpi-sr.danger  { border-left: 3px solid #DC2626; }
 
 /* --- Health Bar --- */
 .health-bar {

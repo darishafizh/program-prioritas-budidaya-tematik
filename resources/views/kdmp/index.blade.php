@@ -101,36 +101,6 @@
     /* Custom Badge Colors to match theme */
     .bg-info { background-color: var(--kkp-cyan) !important; }
     .bg-success { background-color: var(--kkp-success) !important; }
-
-    /* DataTables Customization */
-    .dataTables_wrapper .dataTables_length label {
-        font-weight: normal;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .dataTables_wrapper .dataTables_length select {
-        width: auto !important;
-        padding: 2px 4px !important;
-        appearance: auto !important;
-        background-image: none !important;
-        border-radius: 3px !important;
-        border: 1px solid var(--gray-300) !important;
-        font-size: 1rem !important;
-        display: inline-block !important;
-        margin: 0 !important;
-    }
-    .dataTables_wrapper .dataTables_filter input {
-        border-radius: 6px;
-        padding: 6px 12px;
-        border: 1px solid var(--gray-300);
-    }
-    .dataTables_length, .dataTables_filter {
-        margin-bottom: 1rem;
-    }
-    div.dataTables_wrapper div.dataTables_filter {
-        text-align: right;
-    }
 </style>
 @endpush
 

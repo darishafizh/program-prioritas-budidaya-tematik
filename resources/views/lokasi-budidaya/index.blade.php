@@ -38,13 +38,13 @@
     @endif
 
     <!-- Data Table -->
-    <div class="card">
+    <div class="card shadow-sm border-0" style="border-radius: 12px;">
         <div class="card-body">
             <div class="table-responsive">
-                <table id="lokasiTable" class="table display" style="width:100%">
+                <table id="lokasiTable" class="table table-hover w-100 table-sm align-middle">
                     <thead>
                         <tr>
-                            <th rowspan="2" class="text-center" style="vertical-align: middle;">No</th>
+                            <th rowspan="2" class="text-center" style="vertical-align: middle;" width="40">No</th>
                             <th rowspan="2" style="vertical-align: middle;">KDKMP</th>
                             <th colspan="2" class="text-center">Hasil Panen</th>
                             <th rowspan="2" class="text-end" style="vertical-align: middle;">Biaya Opr</th>
@@ -102,7 +102,7 @@
 @endsection
 
 @push('styles')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <style>
         /* Override theme styles — light header with dark text */
         table.dataTable thead th,
@@ -114,6 +114,25 @@
             border-bottom: 1px solid #dee2e6 !important;
         }
 
+        [data-theme="dark"] table.dataTable thead th,
+        [data-theme="dark"] table.dataTable thead td,
+        [data-theme="dark"] .table thead th,
+        [data-theme="dark"] .table thead td {
+            background: #1F2937 !important;
+            color: #E5E7EB !important;
+            border-bottom: 1px solid #374151 !important;
+        }
+
+        [data-theme="dark"] table.dataTable tbody td {
+            background: var(--bg-surface) !important;
+            color: #D1D5DB !important;
+            border-color: #374151 !important;
+        }
+
+        [data-theme="dark"] table.dataTable tbody tr:hover td {
+            background: #1F2937 !important;
+        }
+
         table.dataTable thead .sorting::before,
         table.dataTable thead .sorting::after,
         table.dataTable thead .sorting_asc::before,
@@ -122,25 +141,36 @@
         table.dataTable thead .sorting_desc::after {
             color: #666 !important;
         }
+
+        [data-theme="dark"] table.dataTable thead .sorting::before,
+        [data-theme="dark"] table.dataTable thead .sorting::after,
+        [data-theme="dark"] table.dataTable thead .sorting_asc::before,
+        [data-theme="dark"] table.dataTable thead .sorting_asc::after,
+        [data-theme="dark"] table.dataTable thead .sorting_desc::before,
+        [data-theme="dark"] table.dataTable thead .sorting_desc::after {
+            color: #9CA3AF !important;
+        }
     </style>
 @endpush
 
 @push('scripts')
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#lokasiTable').DataTable({
                 language: {
                     search: "Cari:",
-                    lengthMenu: "Tampilkan _MENU_ data",
+                    lengthMenu: "Tampilkan _MENU_ Data",
                     info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-                    infoEmpty: "Tidak ada data",
-                    infoFiltered: "(filter dari _MAX_ data)",
+                    infoEmpty: "Menampilkan 0 data",
+                    infoFiltered: "(difilter dari _MAX_ total data)",
                     zeroRecords: "Tidak ada data yang cocok",
                     paginate: { first: "<<", last: ">>", next: ">", previous: "<" }
                 },
                 pageLength: 10,
+                dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
                 orderCellsTop: true,
                 order: [[0, 'asc']],
                 columnDefs: [{ orderable: false, targets: [6] }]

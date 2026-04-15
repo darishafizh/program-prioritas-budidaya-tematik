@@ -32,7 +32,7 @@ class MonitoringController extends Controller
             });
         }
 
-        $kdmpList = $query->orderBy('no')->paginate(20)->withQueryString();
+        $kdmpList = $query->orderBy('no')->get();
 
         // Statistik ringkasan berdasarkan record periode terpilih
         $recordsPeriode = MonitoringRecord::where('tahun', $tahun)->where('bulan', $bulan);

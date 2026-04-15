@@ -1345,6 +1345,81 @@ a:hover {
     color: white;
 }
 
+/* KPI Cards */
+.kpi-card {
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    padding: 1rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+}
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+.kpi-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+.kpi-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--gray-900);
+    letter-spacing: -0.02em;
+}
+[data-theme="dark"] .kpi-value {
+    color: #E5E7EB;
+}
+.kpi-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    margin-top: 0.15rem;
+}
+[data-theme="dark"] .kpi-label {
+    color: #9CA3AF;
+}
+.kpi-sub {
+    font-size: 0.65rem;
+    color: var(--gray-400);
+    margin-top: 0.1rem;
+}
+
+/* KPI Colors */
+.kpi-produksi .kpi-icon  { background: rgba(8,145,178,0.1); color: #0891B2; }
+.kpi-perkolam .kpi-icon  { background: rgba(99,102,241,0.1); color: #6366F1; }
+.kpi-utilisasi .kpi-icon { background: rgba(139,92,246,0.1); color: #8B5CF6; }
+.kpi-sr .kpi-icon         { background: rgba(22,163,74,0.1); color: #16A34A; }
+.kpi-sr.warning .kpi-icon { background: rgba(217,119,6,0.1); color: #D97706; }
+.kpi-sr.danger .kpi-icon  { background: rgba(220,38,38,0.1); color: #DC2626; }
+.kpi-biaya .kpi-icon      { background: rgba(236,72,153,0.1); color: #EC4899; }
+.kpi-aktif .kpi-icon      { background: rgba(16,185,129,0.1); color: #10B981; }
+
+[data-theme="dark"] .kpi-card { border-color: #374151; }
+
+/* KPI Card left border accent */
+.kpi-card.kpi-produksi  { border-left: 3px solid #0891B2; }
+.kpi-card.kpi-perkolam  { border-left: 3px solid #6366F1; }
+.kpi-card.kpi-utilisasi { border-left: 3px solid #8B5CF6; }
+.kpi-card.kpi-biaya     { border-left: 3px solid #EC4899; }
+.kpi-card.kpi-aktif     { border-left: 3px solid #10B981; }
+.kpi-card.kpi-sr.success { border-left: 3px solid #16A34A; }
+.kpi-card.kpi-sr.warning { border-left: 3px solid #D97706; }
+.kpi-card.kpi-sr.danger  { border-left: 3px solid #DC2626; }
+
 /* Stat Cards */
 .stat-card {
     padding: var(--spacing-lg);
@@ -2620,29 +2695,55 @@ textarea.form-control {
 
 .dataTables_wrapper .dataTables_length,
 .dataTables_wrapper .dataTables_filter {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 1rem;
 }
 
-.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_length label {
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    width: auto !important;
+    padding: 2px 4px !important;
+    appearance: auto !important;
+    background-image: none !important;
+    border-radius: 3px !important;
+    border: 1px solid var(--gray-300) !important;
+    font-size: 1rem !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    background: var(--bg-surface, white);
+    color: var(--text-primary, inherit);
+    transition: all var(--transition-fast);
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
+    outline: none;
+    border-color: var(--kkp-teal) !important;
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+}
+
 .dataTables_wrapper .dataTables_filter input {
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: 2px solid var(--gray-200);
-    border-radius: var(--radius-lg);
-    background: var(--gray-50);
+    border-radius: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--gray-300);
+    background: var(--bg-surface, white);
+    color: var(--text-primary, inherit);
     font-size: 0.875rem;
     transition: all var(--transition-fast);
 }
 
-.dataTables_wrapper .dataTables_length select:focus,
 .dataTables_wrapper .dataTables_filter input:focus {
     outline: none;
     border-color: var(--kkp-teal);
-    background: white;
-    box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.1);
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
 }
 
-.dataTables_wrapper .dataTables_filter input {
-    min-width: 250px;
+div.dataTables_wrapper div.dataTables_filter {
+    text-align: right;
 }
 
 .dataTables_wrapper .dataTables_info {

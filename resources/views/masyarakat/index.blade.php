@@ -26,7 +26,7 @@
 </div>
 
 <!-- Data Table -->
-<div class="card">
+<div class="card shadow-sm border-0" style="border-radius: 12px;">
     <div class="card-body">
         <div class="table-responsive">
         <table id="masyarakatTable" class="table display" style="width:100%">
@@ -75,12 +75,13 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 @endpush
 
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script>
 $(document).ready(function() {
