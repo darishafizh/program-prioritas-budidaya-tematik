@@ -8,9 +8,17 @@
 <div class="monev-header animate-fade-in-up">
     <div>
         <h1 class="monev-title">Dashboard Monev</h1>
-        <p class="monev-subtitle">Program Budidaya Tematik · Monitoring & Evaluasi</p>
+        <p class="monev-subtitle">Program Budidaya Tematik · Decision-Driven Monitoring</p>
     </div>
     <div class="monev-meta">
+        @php
+            $txtMasalah = $distribusiMasalah->count() > 0 ? $distribusiMasalah->keys()->first() : 'Tidak ada masalah signifikan';
+            $lokasiKritis = $detailLokasi->where('is_prioritas', true)->count();
+        @endphp
+        <div class="insight-badge pulse">
+            <i class="fa-solid fa-lightbulb" style="color: #F59E0B;"></i>
+            <strong>Insight:</strong> {{ $lokasiKritis }} lokasi butuh intervensi | Kendala dominan: {{ $txtMasalah }}
+        </div>
         <span class="monev-badge">
             <i class="fa-regular fa-calendar"></i>
             {{ now()->locale('id')->isoFormat('D MMMM YYYY') }}
@@ -88,6 +96,39 @@
 {{-- ============================================================ --}}
 <div class="tab-content active" id="tab-executive">
 
+    {{-- ACTIONABLE ALERTS --}}
+    @php
+        $lokasiNonOptimal = $detailLokasi->where('utilisasi', '<', 50)->whereNotNull('utilisasi')->count();
+        $lokasiSRRendah = $srDistribution['danger'] ?? 0;
+        $lokasiVakum = $statusBreakdown['vakum'] ?? 0;
+    @endphp
+    <div class="action-alerts-grid animate-fade-in-up delay-300">
+        <div class="action-alert-card bg-red-soft">
+            <div class="alert-icon text-red"><i class="fa-solid fa-heart-crack"></i></div>
+            <div class="alert-info">
+                <h3>{{ $lokasiSRRendah }} Lokasi</h3>
+                <p>Survival Rate Rendah (< 70%)</p>
+            </div>
+            <button onclick="switchTab('teknis'); document.getElementById('tableSearch').value='merah'; setTimeout(()=>document.getElementById('tableSearch').dispatchEvent(new Event('input')), 100);" class="alert-action text-red btn-link border-0 bg-transparent p-0">Lihat Detail <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+        <div class="action-alert-card bg-orange-soft">
+            <div class="alert-icon text-orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="alert-info">
+                <h3>{{ $lokasiNonOptimal }} Lokasi</h3>
+                <p>Utilisasi Kolam Tidak Optimal (< 50%)</p>
+            </div>
+            <button onclick="switchTab('teknis')" class="alert-action text-orange btn-link border-0 bg-transparent p-0">Tinjau Utilisasi <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+        <div class="action-alert-card bg-gray-soft">
+            <div class="alert-icon text-gray"><i class="fa-solid fa-bed"></i></div>
+            <div class="alert-info">
+                <h3>{{ $lokasiVakum }} Lokasi</h3>
+                <p>Status Vakum / Tidak Aktif</p>
+            </div>
+            <button onclick="switchTab('teknis'); document.getElementById('tableSearch').value='vakum'; setTimeout(()=>document.getElementById('tableSearch').dispatchEvent(new Event('input')), 100);" class="alert-action text-gray btn-link border-0 bg-transparent p-0">Periksa Status <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+
     {{-- KPI Cards --}}
     <div class="kpi-grid-6 animate-fade-in-up delay-300">
         <div class="kpi-card kpi-produksi">
@@ -140,31 +181,10 @@
         </div>
     </div>
 
-    {{-- Program Health Bar --}}
-    <div class="health-bar animate-fade-in-up delay-300">
-        <div class="health-bar-inner {{ $programHealth }}">
-            <div class="health-indicator">
-                @if($programHealth === 'success')
-                    <i class="fa-solid fa-circle-check"></i> Status Program: <strong>BAIK</strong>
-                @elseif($programHealth === 'warning')
-                    <i class="fa-solid fa-triangle-exclamation"></i> Status Program: <strong>PERLU PERHATIAN</strong>
-                @else
-                    <i class="fa-solid fa-circle-exclamation"></i> Status Program: <strong>KRITIS</strong>
-                @endif
-            </div>
-            <div class="health-stats">
-                <span><strong>{{ $totalMonitored }}</strong> dilaporkan</span>
-                <span class="health-dot success"></span><span>On Track: {{ $statusBreakdown['on_track'] }}</span>
-                <span class="health-dot warning"></span><span>Vakum: {{ $statusBreakdown['vakum'] }}</span>
-                <span class="health-dot danger"></span><span>Bermasalah: {{ $statusBreakdown['bermasalah'] }}</span>
-            </div>
-        </div>
-    </div>
-
-    {{-- Map + SR Summary --}}
+    {{-- Map + Prioritas Nasional --}}
     <div class="dash-grid-70-30 animate-fade-in-up delay-400">
-        <div class="dash-card">
-            <div class="dash-card-header">
+        <div class="dash-card p-0 overflow-hidden">
+            <div class="dash-card-header p-3 mb-0 border-bottom">
                 <div class="dash-card-title">
                     <i class="fa-solid fa-map-location-dot" style="color:#0891B2;"></i>
                     Peta Sebaran Lokasi (Berdasarkan Status SR)
@@ -176,73 +196,53 @@
                     <span class="legend-item"><span class="legend-dot" style="background:#9CA3AF;"></span> Belum ada data</span>
                 </div>
             </div>
-            <div id="monevMap" style="height:420px; border-radius: var(--radius-lg); overflow:hidden;"></div>
+            <div id="monevMap" style="height:460px;"></div>
         </div>
 
         <div class="dash-card">
             <div class="dash-card-header">
                 <div class="dash-card-title">
-                    <i class="fa-solid fa-signal" style="color:#0891B2;"></i>
-                    Ringkasan Status
+                    <i class="fa-solid fa-fire" style="color:#DC2626;"></i>
+                    Prioritas Nasional (Intervensi)
                 </div>
             </div>
-
-            {{-- Status Donut --}}
-            <div style="height:200px; display:flex; align-items:center; justify-content:center;">
-                <canvas id="donutStatus"></canvas>
+            <div class="national-priority-list">
+                @if($prioritasIntervensi->count() > 0)
+                    @foreach($prioritasIntervensi->take(6) as $idx => $p)
+                        <div class="priority-item {{ $idx < 3 ? 'high-priority' : 'medium-priority' }}">
+                            <div class="priority-rank">{{ $idx + 1 }}</div>
+                            <div class="priority-detail">
+                                <h4 class="text-truncate" style="max-width:180px;" title="{{ $p['nama'] }}">{{ $p['nama'] }}</h4>
+                                <p class="text-truncate" style="max-width:180px;">{{ $p['kabupaten'] }}, {{ $p['provinsi'] }}</p>
+                            </div>
+                            <div class="priority-badge">
+                                {{ number_format($p['sr'], 1) }}% SR
+                            </div>
+                        </div>
+                    @endforeach
+                    @if($prioritasIntervensi->count() > 6)
+                        <button onclick="switchTab('teknis')" class="btn btn-sm btn-light w-100 mt-2 text-danger fw-bold">Lihat Semua ({{ $prioritasIntervensi->count() }})</button>
+                    @endif
+                @else
+                    <div class="empty-state-sm py-5">
+                        <i class="fa-solid fa-check-circle" style="color:#16A34A; font-size:2.5rem; margin-bottom:1rem;"></i>
+                        <h6 class="mb-1 text-success">Kondisi Terkendali</h6>
+                        <p class="text-muted text-center" style="font-size:0.8rem">Tidak ada lokasi prioritas mendesak saat ini.</p>
+                    </div>
+                @endif
             </div>
-            <div class="status-summary-list">
-                <div class="status-summary-item">
-                    <span class="status-dot success"></span>
-                    <span>On Track</span>
-                    <strong>{{ $statusBreakdown['on_track'] }}</strong>
+            
+            <div class="mt-3 p-3 bg-gray-soft rounded border">
+                <div class="dash-card-title mb-2" style="font-size:0.8rem;">
+                    <i class="fa-solid fa-circle-check text-success"></i> Status Keseluruhan
                 </div>
-                <div class="status-summary-item">
-                    <span class="status-dot danger"></span>
-                    <span>Bermasalah</span>
-                    <strong>{{ $statusBreakdown['bermasalah'] }}</strong>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span style="font-size:0.8rem; color:var(--gray-600);">On Track</span>
+                    <strong style="font-size:0.85rem;">{{ $statusBreakdown['on_track'] }}</strong>
                 </div>
-                <div class="status-summary-item">
-                    <span class="status-dot warning"></span>
-                    <span>Vakum</span>
-                    <strong>{{ $statusBreakdown['vakum'] }}</strong>
-                </div>
-                <div class="status-summary-item">
-                    <span class="status-dot primary"></span>
-                    <span>Selesai</span>
-                    <strong>{{ $statusBreakdown['selesai'] }}</strong>
-                </div>
-            </div>
-
-            <div class="sr-distribution">
-                <div class="dash-card-title" style="font-size:0.85rem; margin: 1rem 0 0.5rem;">
-                    <i class="fa-solid fa-heart-pulse" style="color:#0891B2;"></i>
-                    Distribusi Survival Rate
-                </div>
-                <div class="sr-bars">
-                    @php
-                        $srTotal = max(array_sum($srDistribution), 1);
-                    @endphp
-                    <div class="sr-bar-row">
-                        <span class="sr-bar-label success">SR > 80%</span>
-                        <div class="sr-bar-track"><div class="sr-bar-fill success" style="width:{{ ($srDistribution['success'] / $srTotal) * 100 }}%;"></div></div>
-                        <span class="sr-bar-count">{{ $srDistribution['success'] }}</span>
-                    </div>
-                    <div class="sr-bar-row">
-                        <span class="sr-bar-label warning">70-80%</span>
-                        <div class="sr-bar-track"><div class="sr-bar-fill warning" style="width:{{ ($srDistribution['warning'] / $srTotal) * 100 }}%;"></div></div>
-                        <span class="sr-bar-count">{{ $srDistribution['warning'] }}</span>
-                    </div>
-                    <div class="sr-bar-row">
-                        <span class="sr-bar-label danger">SR < 70%</span>
-                        <div class="sr-bar-track"><div class="sr-bar-fill danger" style="width:{{ ($srDistribution['danger'] / $srTotal) * 100 }}%;"></div></div>
-                        <span class="sr-bar-count">{{ $srDistribution['danger'] }}</span>
-                    </div>
-                    <div class="sr-bar-row">
-                        <span class="sr-bar-label secondary">N/A</span>
-                        <div class="sr-bar-track"><div class="sr-bar-fill secondary" style="width:{{ ($srDistribution['unknown'] / $srTotal) * 100 }}%;"></div></div>
-                        <span class="sr-bar-count">{{ $srDistribution['unknown'] }}</span>
-                    </div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span style="font-size:0.8rem; color:var(--gray-600);">Bermasalah</span>
+                    <strong style="font-size:0.85rem; color:#DC2626;">{{ $statusBreakdown['bermasalah'] }}</strong>
                 </div>
             </div>
         </div>
@@ -254,7 +254,93 @@
 {{-- ============================================================ --}}
 <div class="tab-content" id="tab-manajerial">
 
-    {{-- Row 1: Produksi per Wilayah + Tren Produksi --}}
+    {{-- Row 1: Gap Analysis & Leaderboard --}}
+    <div class="dash-grid-60-40 animate-fade-in-up">
+        <div class="dash-card gap-analysis-card">
+            <div class="dash-card-header mb-3 border-bottom pb-2">
+                <div class="dash-card-title">
+                    <i class="fa-solid fa-bullseye" style="color:#0891B2;"></i>
+                    Analisis Gap Nasional <span class="badge border bg-light text-muted ms-2" style="font-size:0.6rem">Mockup Visual</span>
+                </div>
+            </div>
+            <div class="gap-container px-2">
+                <div class="gap-item mb-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <strong style="font-size:0.85rem">Realisasi vs Target Produksi</strong>
+                        <span class="text-success fw-bold" style="font-size:0.85rem">78% Terpenuhi</span>
+                    </div>
+                    <div class="progress" style="height: 12px; border-radius:10px;">
+                        <div class="progress-bar" role="progressbar" style="width: 78%; background-color:#0891B2;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1" style="font-size:0.75rem; color:var(--gray-500);">
+                        <span>Realisasi: {{ number_format($totalProduksi, 0, ',', '.') }} kg</span>
+                        <span>Target: {{ number_format($totalProduksi * 1.28, 0, ',', '.') }} kg</span>
+                    </div>
+                </div>
+                
+                <div class="gap-item mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <strong style="font-size:0.85rem">Supply Aktual vs Estimasi Demand</strong>
+                        <span class="text-warning fw-bold" style="font-size:0.85rem">Defisit 35%</span>
+                    </div>
+                    <div class="progress" style="height: 12px; border-radius:10px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1" style="font-size:0.75rem; color:var(--gray-500);">
+                        <span>Kapasitas Supply: 65%</span>
+                        <span>Demand Pasar Lokal/Ekspor</span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 p-3 rounded" style="background: rgba(8,145,178,0.05); border:1px solid rgba(8,145,178,0.2);">
+                <div class="d-flex align-items-start gap-2">
+                    <i class="fa-solid fa-lightbulb mt-1" style="color:#0891B2;"></i>
+                    <span style="font-size:0.8rem; color:var(--gray-700); line-height:1.4;">
+                        <strong>Rekomendasi Manajerial:</strong> Defisit supply dapat ditutup dengan mereaktivasi {{ $statusBreakdown['vakum'] ?? 0 }} lokasi vakum serta menyelesaikan 
+                        "<strong class="text-danger">{{ $distribusiMasalah->count() > 0 ? $distribusiMasalah->keys()->first() : 'Operasional' }}</strong>" 
+                        sebagai masalah paling dominan di area produksi.
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dash-card p-0 overflow-hidden d-flex flex-column">
+            <div class="dash-card-header p-3 border-bottom mb-0">
+                <div class="dash-card-title">
+                    <i class="fa-solid fa-trophy" style="color:#D97706;"></i>
+                    Leaderboard Kelayakan Wilayah
+                </div>
+            </div>
+            <div class="d-flex flex-grow-1">
+                <div class="w-50 border-end" style="background:#f8fafc;">
+                    <div class="text-center py-2 border-bottom mb-2" style="font-size:0.7rem; font-weight:700; color:var(--gray-500); letter-spacing:1px; text-transform:uppercase;">Top 5 Terbaik (SR)</div>
+                    <div class="px-3 pb-3">
+                        @foreach($perbandinganWilayah->sortByDesc('avg_sr')->take(5) as $idx => $wil)
+                        <div class="d-flex align-items-center mb-2 {{ $idx == 0 ? 'bg-success text-white rounded p-1 shadow-sm' : '' }}">
+                            <div class="fw-bold fs-6 me-2 {{ $idx == 0 ? 'text-white' : 'text-muted' }}" style="width:20px; text-align:center;">{{ $idx+1 }}</div>
+                            <div class="flex-grow-1 text-truncate" style="font-size:0.8rem;" title="{{ $wil->provinsi }}">{{ $wil->provinsi }}</div>
+                            <div class="fw-bold" style="font-size:0.8rem;">{{ number_format($wil->avg_sr, 0) }}%</div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="w-50" style="background:#fffcfc;">
+                    <div class="text-center py-2 border-bottom mb-2" style="font-size:0.7rem; font-weight:700; color:#DC2626; letter-spacing:1px; text-transform:uppercase;">Bottom 5 (SR)</div>
+                    <div class="px-3 pb-3">
+                        @foreach($perbandinganWilayah->sortBy('avg_sr')->take(5) as $idx => $wil)
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="fw-bold fs-6 me-2 text-danger" style="width:20px; text-align:center;">{{ $idx+1 }}</div>
+                            <div class="flex-grow-1 text-truncate" style="font-size:0.8rem;" title="{{ $wil->provinsi }}">{{ $wil->provinsi }}</div>
+                            <div class="fw-bold text-danger" style="font-size:0.8rem;">{{ number_format($wil->avg_sr, 0) }}%</div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Row 2: Produksi per Wilayah + Tren Produksi --}}
     <div class="dash-grid-50-50 animate-fade-in-up">
         <div class="dash-card">
             <div class="dash-card-header">
@@ -264,7 +350,7 @@
                 </div>
             </div>
             @if($produksiPerProvinsi->count() > 0)
-            <div style="height:320px;">
+            <div style="height:300px;">
                 <canvas id="barProduksiWilayah"></canvas>
             </div>
             @else
@@ -282,7 +368,7 @@
                 </div>
             </div>
             @if($trenProduksi->count() > 0)
-            <div style="height:320px;">
+            <div style="height:300px;">
                 <canvas id="lineTrenProduksi"></canvas>
             </div>
             @else
@@ -294,20 +380,20 @@
         </div>
     </div>
 
-    {{-- Row 2: Distribusi Masalah + Perbandingan --}}
+    {{-- Row 3: Distribusi Masalah + Perbandingan --}}
     <div class="dash-grid-40-60 animate-fade-in-up">
         <div class="dash-card">
-            <div class="dash-card-header">
+            <div class="dash-card-header mb-1">
                 <div class="dash-card-title">
                     <i class="fa-solid fa-circle-exclamation" style="color:#D97706;"></i>
                     Distribusi Permasalahan
                 </div>
             </div>
             @if($distribusiMasalah->count() > 0)
-            <div style="height:280px; display:flex; align-items:center;">
+            <div style="height:250px; display:flex; align-items:center;">
                 <canvas id="donutMasalah"></canvas>
             </div>
-            <div class="donut-legend" style="margin-top:0.5rem;">
+            <div class="donut-legend mt-2">
                 @php
                     $masalahColors = ['#DC2626','#D97706','#0891B2','#16A34A','#8B5CF6','#EC4899','#6366F1','#F59E0B'];
                 @endphp
@@ -330,7 +416,7 @@
             <div class="dash-card-header">
                 <div class="dash-card-title">
                     <i class="fa-solid fa-ranking-star" style="color:#8B5CF6;"></i>
-                    Perbandingan Performa Wilayah
+                    Perbandingan Performa Wilayah Historis
                 </div>
             </div>
             @if($perbandinganWilayah->count() > 0)
@@ -388,6 +474,7 @@
                         <th class="sortable text-center" data-sort="progres">Progres</th>
                         <th class="text-center">Status</th>
                         <th>Permasalahan</th>
+                        <th class="text-center">Prioritas</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -459,10 +546,19 @@
                                 <span style="color:var(--gray-400); font-size:0.78rem;">Tidak ada</span>
                             @endif
                         </td>
+                        <td class="text-center">
+                            @if($loc['is_prioritas'])
+                                <span class="badge py-1 px-2" style="background:#DC2626; font-size:0.65rem; font-weight:700; letter-spacing:1px;">TINGGI</span>
+                            @elseif($loc['sr'] !== null && $loc['sr'] < 75)
+                                <span class="badge py-1 px-2 text-dark" style="background:#FBBF24; font-size:0.65rem; font-weight:700; letter-spacing:1px;">SEDANG</span>
+                            @else
+                                <span class="badge py-1 px-2" style="background:#10B981; font-size:0.65rem; font-weight:700; letter-spacing:1px;">RENDAH</span>
+                            @endif
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center" style="padding:2rem; color:var(--gray-400);">
+                        <td colspan="9" class="text-center" style="padding:2rem; color:var(--gray-400);">
                             <i class="fa-solid fa-inbox" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
                             Belum ada data monitoring. <a href="{{ route('monitoring.create') }}">Mulai Input</a>
                         </td>
@@ -534,6 +630,117 @@
     background: rgba(8,145,178,0.08);
     border-color: rgba(8,145,178,0.2);
     color: #0891B2;
+}
+
+/* --- Decision Elements CSS --- */
+.insight-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    color: #B45309;
+}
+[data-theme="dark"] .insight-badge { color: #FBBF24; }
+.pulse {
+    animation: slow-pulse 2s infinite;
+}
+@keyframes slow-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+    70% { box-shadow: 0 0 0 5px rgba(245, 158, 11, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+.action-alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.action-alert-card {
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    border: 1px solid transparent;
+}
+.bg-red-soft { background: rgba(220, 38, 38, 0.05); border-color: rgba(220, 38, 38, 0.15); }
+.bg-orange-soft { background: rgba(217, 119, 6, 0.05); border-color: rgba(217, 119, 6, 0.15); }
+.bg-gray-soft { background: rgba(107, 114, 128, 0.05); border-color: rgba(107, 114, 128, 0.15); }
+.text-red { color: #DC2626; }
+.text-orange { color: #D97706; }
+.text-gray { color: #4B5563; }
+
+.alert-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+}
+[data-theme="dark"] .alert-icon { background: var(--gray-800); }
+.alert-info h3 { margin: 0; font-size: 1.1rem; font-weight: 800; line-height: 1.2; }
+.alert-info p { margin: 0; font-size: 0.75rem; font-weight: 500; opacity: 0.8; }
+.alert-action {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-md);
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+.alert-action:hover { transform: translateX(3px); }
+[data-theme="dark"] .alert-action { background: var(--gray-800); }
+
+.national-priority-list {
+    padding: 0.5rem 1rem 1rem;
+}
+.priority-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--border-color);
+}
+.priority-item:last-child { border-bottom: none; }
+.priority-rank {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: var(--gray-200);
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-right: 0.75rem;
+}
+.priority-item.high-priority .priority-rank { background: #FEE2E2; color: #DC2626; }
+.priority-item.medium-priority .priority-rank { background: #FEF3C7; color: #D97706; }
+.priority-detail h4 { margin: 0; font-size: 0.8rem; font-weight: 600; color: var(--text-primary); }
+.priority-detail p { margin: 0; font-size: 0.7rem; color: var(--gray-500); }
+.priority-badge {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: #FEE2E2;
+    color: #DC2626;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
 }
 
 /* --- Filter Bar --- */
@@ -804,6 +1011,12 @@
 .dash-grid-40-60 {
     display: grid;
     grid-template-columns: 2fr 3fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+.dash-grid-60-40 {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
     gap: 1.25rem;
     margin-bottom: 1.25rem;
 }
@@ -1142,10 +1355,12 @@
 @media (max-width: 1024px) {
     .dash-grid-70-30,
     .dash-grid-50-50,
-    .dash-grid-40-60 { grid-template-columns: 1fr; }
+    .dash-grid-40-60,
+    .dash-grid-60-40 { grid-template-columns: 1fr; }
     .kpi-grid-6 { grid-template-columns: repeat(2, 1fr); }
     .filter-form { flex-direction: column; }
     .filter-group { min-width: unset; }
+    .action-alerts-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
     .monev-header { flex-direction: column; }
