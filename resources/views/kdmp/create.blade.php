@@ -368,38 +368,102 @@
 </form>
 @endsection
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    /* Select2 theme override to match app design */
+    .select2-container--default .select2-selection--single {
+        height: 44px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background: var(--bg-surface);
+        padding: 6px 12px;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 30px;
+        color: var(--gray-700);
+        padding-left: 0;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 42px;
+    }
+    .select2-dropdown {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        padding: 8px 12px;
+    }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #0891B2;
+    }
+    .select2-results__option {
+        padding: 8px 12px;
+        font-size: 0.875rem;
+    }
+
+    /* Dark mode support */
+    [data-theme="dark"] .select2-container--default .select2-selection--single {
+        background: var(--bg-surface);
+        border-color: #374151;
+    }
+    [data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #E5E7EB;
+    }
+    [data-theme="dark"] .select2-dropdown {
+        background: var(--bg-surface);
+        border-color: #374151;
+    }
+    [data-theme="dark"] .select2-container--default .select2-search--dropdown .select2-search__field {
+        background: #1F2937;
+        border-color: #374151;
+        color: #E5E7EB;
+    }
+    [data-theme="dark"] .select2-results__option {
+        color: #E5E7EB;
+    }
+    [data-theme="dark"] .select2-container--default .select2-results__option[aria-selected=true] {
+        background: #374151;
+    }
+</style>
+@endpush
+
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const selector = document.getElementById('kdmp_id_selector');
-    if (!selector) return;
+$(document).ready(function () {
+    // Initialize Select2 on the KDKMP selector
+    $('#kdmp_id_selector').select2({
+        placeholder: '-- Cari dan pilih nama KDKMP --',
+        allowClear: true,
+        width: '100%'
+    });
 
-    selector.addEventListener('change', function () {
-        const selected = this.options[this.selectedIndex];
-        if (!selected.value) return;
+    // Auto-fill fields when KDKMP is selected
+    $('#kdmp_id_selector').on('change', function () {
+        var selected = $(this).find(':selected');
+        if (!selected.val()) return;
 
-        const nama      = selected.getAttribute('data-nama') || '';
-        const desa      = selected.getAttribute('data-desa') || '';
-        const kabupaten = selected.getAttribute('data-kabupaten') || '';
-        const provinsi  = selected.getAttribute('data-provinsi') || '';
-        const komoditas = selected.getAttribute('data-komoditas') || '';
-        const lat       = selected.getAttribute('data-lat') || '';
-        const long_     = selected.getAttribute('data-long') || '';
-
-        // Auto-fill form fields
-        const setVal = (name, value) => {
-            const el = document.querySelector(`[name="${name}"]`);
-            if (el) el.value = value;
+        var fields = {
+            'nama_koperasi': selected.data('nama') || '',
+            'desa':          selected.data('desa') || '',
+            'kabupaten':     selected.data('kabupaten') || '',
+            'provinsi':      selected.data('provinsi') || '',
+            'komoditas':     selected.data('komoditas') || ''
         };
 
-        setVal('nama_koperasi', nama);
-        setVal('desa',          desa);
-        setVal('kabupaten',     kabupaten);
-        setVal('provinsi',      provinsi);
-        setVal('komoditas',     komoditas);
+        $.each(fields, function(name, value) {
+            $('[name="' + name + '"]').val(value);
+        });
 
-        if (lat && long_) {
-            setVal('koordinat', lat + ', ' + long_);
+        var lat  = selected.data('lat') || '';
+        var long = selected.data('long') || '';
+        if (lat && long) {
+            $('[name="koordinat"]').val(lat + ', ' + long);
         }
     });
 });
