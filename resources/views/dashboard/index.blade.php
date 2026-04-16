@@ -120,7 +120,7 @@
             <button onclick="switchTab('teknis')" class="alert-action text-orange btn-link border-0 bg-transparent p-0">Tinjau Utilisasi <i class="fa-solid fa-arrow-right"></i></button>
         </div>
         <div class="action-alert-card bg-gray-soft">
-            <div class="alert-icon text-gray"><i class="fa-solid fa-bed"></i></div>
+            <div class="alert-icon text-gray"><i class="fa-solid fa-circle-pause"></i></div>
             <div class="alert-detail">
                 <h3>{{ $lokasiVakum }} Lokasi</h3>
                 <p>Status Vakum / Tidak Aktif</p>
