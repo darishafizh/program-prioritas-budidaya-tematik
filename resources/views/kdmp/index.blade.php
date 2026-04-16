@@ -7,12 +7,9 @@
         <h1 class="page-title" style="color: var(--kkp-navy);">Data KDMP</h1>
         <p class="page-subtitle">Data Lokasi Koperasi Desa Merah Putih</p>
     </div>
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb m-0">
-             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}" class="text-decoration-none text-muted">Dashboard</a></li>
-             <li class="breadcrumb-item active" aria-current="page">KDMP</li>
-        </ol>
-    </nav>
+    <x-breadcrumb :items="[
+        ['label' => 'KDMP']
+    ]" />
 </div>
 
 <!-- Data Table Card -->

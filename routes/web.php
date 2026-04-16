@@ -46,9 +46,6 @@ Route::middleware('auth')->group(function () {
     // SPPG Survey routes
     Route::resource('sppg', SppgSurveyController::class);
     
-    // Monitoring Lokasi Budidaya routes (Legacy/Unused)
-    // Route::resource('lokasi-budidaya', App\Http\Controllers\LokasiBudidayaController::class);
-
     // Monitoring records (laporan berkala per KDMP)
     Route::prefix('lokasi-budidaya')->name('monitoring.')->group(function () {
         Route::get('/', [MonitoringController::class, 'index'])->name('index');

@@ -1,7 +1,4 @@
 <aside class="sidebar" x-data="{ userMenu: false }">
-    <!-- Mobile Overlay -->
-    <div class="sidebar-overlay"></div>
-
     <!-- Sidebar Content -->
     <div class="sidebar-inner">
         <!-- Brand -->
@@ -155,3 +152,5 @@
         </div>
     </div>
 </aside>
+<!-- Mobile Overlay moved outside to avoid being trapped by CSS transform -->
+<div class="sidebar-overlay"></div>

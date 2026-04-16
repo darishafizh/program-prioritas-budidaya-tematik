@@ -48,7 +48,7 @@
                     </div>
                     <div class="form-group" style="grid-column: span 2;">
                         <label class="form-label">Role <span class="required">*</span></label>
-                        <div class="flex gap-4 mt-2">
+                        <div class="flex flex-wrap gap-4 mt-2">
                             <label class="form-check"
                                 style="flex:1; justify-content:center; padding:1rem; border:2px solid {{ $user->role == 'admin' ? 'var(--kkp-navy)' : 'var(--gray-200)' }}; cursor:pointer;">
                                 <input type="radio" name="role" value="admin" {{ old('role', $user->role) == 'admin' ? 'checked' : '' }} required class="form-check-input">
