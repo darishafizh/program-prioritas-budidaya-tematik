@@ -244,6 +244,7 @@
 @endsection
 
 @push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
     /* ===== Monitoring Form Cards ===== */
     .monitoring-form-card {
@@ -342,11 +343,101 @@
     .monitoring-form-body .grid {
         gap: 1rem;
     }
+
+    /* ===== Select2 Styles ===== */
+    .select2-container--default .select2-selection--single {
+        height: 44px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background: var(--bg-surface);
+        padding: 6px 12px;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 30px;
+        color: var(--gray-700);
+        padding-left: 0;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 42px;
+    }
+    .select2-dropdown {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+    }
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        padding: 8px 12px;
+    }
+    .select2-container--default .select2-results__option--highlighted[aria-selected] {
+        background-color: #0891B2;
+    }
+    .select2-results__option {
+        padding: 8px 12px;
+        font-size: 0.875rem;
+    }
+
+    [data-theme="dark"] .select2-container--default .select2-selection--single {
+        background: var(--bg-surface);
+        border-color: #374151;
+    }
+    [data-theme="dark"] .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #E5E7EB;
+    }
+    [data-theme="dark"] .select2-dropdown {
+        background: var(--bg-surface);
+        border-color: #374151;
+    }
+    [data-theme="dark"] .select2-container--default .select2-search--dropdown .select2-search__field {
+        background: #1F2937;
+        border-color: #374151;
+        color: #E5E7EB;
+    }
+    [data-theme="dark"] .select2-results__option {
+        color: #E5E7EB;
+    }
+    [data-theme="dark"] .select2-container--default .select2-results__option[aria-selected=true] {
+        background: #374151;
+    }
+
+    /* ===== Dark Mode Overrides ===== */
+    [data-theme="dark"] .monitoring-form-card {
+        background: var(--bg-surface);
+        border-color: #374151;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    }
+    [data-theme="dark"] .monitoring-form-header {
+        background: #1F2937;
+        border-color: #374151;
+    }
+    [data-theme="dark"] .monitoring-form-title {
+        color: #F9FAFB;
+    }
+    [data-theme="dark"] .monitoring-form-desc {
+        color: #9CA3AF;
+    }
+    [data-theme="dark"] .monitoring-alert-error {
+        background: rgba(220, 38, 38, 0.1);
+        border-color: #EF4444;
+        color: #FCA5A5;
+    }
 </style>
 @endpush
 
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    // Initialize Select2
+    $(document).ready(function() {
+        $('#kdmp_select').select2({
+            placeholder: '-- Cari dan pilih KDKMP --',
+            allowClear: true,
+            width: '100%'
+        });
+    });
+
     // Live progress bar update
     const progresInput = document.querySelector('input[name="progres_fisik"]');
     const progresBar = document.getElementById('progresBar');

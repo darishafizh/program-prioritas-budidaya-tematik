@@ -16,31 +16,31 @@ class KdmpSurveyController extends Controller
     public function index(Request $request)
     {
         $query = Kdmp::query();
-        
+
         // Filter by search
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('nama_kdkmp', 'like', "%{$search}%")
-                  ->orWhere('kabupaten', 'like', "%{$search}%")
-                  ->orWhere('provinsi', 'like', "%{$search}%")
-                  ->orWhere('ketua_anggota', 'like', "%{$search}%")
-                  ->orWhere('nama_penyuluh', 'like', "%{$search}%");
+                    ->orWhere('kabupaten', 'like', "%{$search}%")
+                    ->orWhere('provinsi', 'like', "%{$search}%")
+                    ->orWhere('ketua_anggota', 'like', "%{$search}%")
+                    ->orWhere('nama_penyuluh', 'like', "%{$search}%");
             });
         }
-        
+
         // Filter by province
         if ($provinsi = $request->get('provinsi')) {
             $query->where('provinsi', $provinsi);
         }
-        
+
         // Filter by commodity
         if ($komoditas = $request->get('komoditas')) {
             $query->where('komoditas', $komoditas);
         }
-        
+
         $kdmpLocations = $query->orderBy('no', 'asc')->get();
         $provinces = Province::orderBy('name')->pluck('name', 'id');
-        
+
         return view('kdmp.index', compact('kdmpLocations', 'provinces'));
     }
 
@@ -60,13 +60,15 @@ class KdmpSurveyController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kdmp_id'     => 'nullable|exists:kdmp,id',
+            'kdmp_id' => 'nullable|exists:kdmp,id',
             'verifikator' => 'nullable|string|max:255',
-            'responden'   => 'nullable|string|max:255',
+            'responden' => 'nullable|string|max:255',
             'nama_koperasi' => 'required|string|max:255',
-            'kabupaten'   => 'required|string|max:255',
-            'provinsi'    => 'required|string|max:255',
-            'komoditas'   => 'nullable|in:Lele,Nila',
+            'desa' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
+            'kabupaten' => 'required|string|max:255',
+            'provinsi' => 'required|string|max:255',
+            'komoditas' => 'nullable|in:Lele,Nila',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -79,9 +81,9 @@ class KdmpSurveyController extends Controller
             }
         }
 
-        $validated['hambatan_koperasi']   = $request->input('hambatan_koperasi', []);
+        $validated['hambatan_koperasi'] = $request->input('hambatan_koperasi', []);
         $validated['kendala_pembangunan'] = $request->input('kendala_pembangunan', []);
-        $validated['tujuan_penjualan']    = $request->input('tujuan_penjualan', []);
+        $validated['tujuan_penjualan'] = $request->input('tujuan_penjualan', []);
 
         $survey = KdmpSurvey::create($validated);
 
@@ -105,7 +107,7 @@ class KdmpSurveyController extends Controller
     public function edit(KdmpSurvey $kdmp)
     {
         $provinces = Province::orderBy('name')->get();
-        $kdmpList  = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'desa', 'kabupaten', 'provinsi', 'komoditas', 'long', 'lat']);
+        $kdmpList = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'desa', 'kabupaten', 'provinsi', 'komoditas', 'long', 'lat']);
         return view('kdmp.edit', compact('kdmp', 'provinces', 'kdmpList'));
     }
 
@@ -115,18 +117,20 @@ class KdmpSurveyController extends Controller
     public function update(Request $request, KdmpSurvey $kdmp)
     {
         $validated = $request->validate([
-            'kdmp_id'     => 'nullable|exists:kdmp,id',
+            'kdmp_id' => 'nullable|exists:kdmp,id',
             'verifikator' => 'nullable|string|max:255',
-            'responden'   => 'nullable|string|max:255',
+            'responden' => 'nullable|string|max:255',
             'nama_koperasi' => 'required|string|max:255',
-            'kabupaten'   => 'required|string|max:255',
-            'provinsi'    => 'required|string|max:255',
-            'komoditas'   => 'nullable|in:Lele,Nila',
+            'desa' => 'nullable|string|max:255',
+            'kecamatan' => 'nullable|string|max:255',
+            'kabupaten' => 'required|string|max:255',
+            'provinsi' => 'required|string|max:255',
+            'komoditas' => 'nullable|in:Lele,Nila',
         ]);
 
-        $validated['hambatan_koperasi']   = $request->input('hambatan_koperasi', []);
+        $validated['hambatan_koperasi'] = $request->input('hambatan_koperasi', []);
         $validated['kendala_pembangunan'] = $request->input('kendala_pembangunan', []);
-        $validated['tujuan_penjualan']    = $request->input('tujuan_penjualan', []);
+        $validated['tujuan_penjualan'] = $request->input('tujuan_penjualan', []);
 
         $kdmp->update($validated);
 
@@ -141,7 +145,7 @@ class KdmpSurveyController extends Controller
     public function destroy(KdmpSurvey $kdmp)
     {
         $kdmp->delete();
-        
+
         return redirect()
             ->route('kdmp.index')
             ->with('success', 'Kuesioner KDMP berhasil dihapus!');
