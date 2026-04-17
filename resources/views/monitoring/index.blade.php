@@ -6,12 +6,6 @@
             <h1 class="page-title">Monitoring Lokasi Budidaya Tematik</h1>
             <p class="page-subtitle">Pemantauan dan evaluasi perkembangan 100 KDMP Bioflok</p>
         </div>
-        <a href="{{ route('monitoring.create') }}" class="btn btn-primary">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Tambah Laporan
-        </a>
     </div>
 
     {{-- Stats Cards --}}
@@ -107,7 +101,18 @@
 
     {{-- Tabel KDMP --}}
     <div class="card shadow-sm border-0" style="border-radius: 12px;">
-        <div class="card-body" style="padding:0;">
+        <div class="card-body">
+
+            <!-- Toolbar: Add Button -->
+            <div class="d-flex justify-content-end mb-3">
+                 <a href="{{ route('monitoring.create') }}" class="btn btn-sm btn-success d-flex align-items-center gap-2 rounded-pill px-4 shadow-sm">
+                    <svg style="width:18px;height:18px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span class="fw-bold">Tambah Laporan</span>
+                </a>
+            </div>
+
             <div class="table-responsive">
                 <table id="monitoringTable" class="table table-hover table-sm align-middle w-100 mb-0">
                     <thead>
