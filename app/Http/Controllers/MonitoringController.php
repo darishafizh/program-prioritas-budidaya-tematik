@@ -46,6 +46,8 @@ class MonitoringController extends Controller
             'vakum' => (clone $recordsPeriode)->where('status_lokasi', 'vakum')->count(),
             'total_panen' => (clone $recordsPeriode)->sum('volume_panen_kg'),
             'total_nilai' => (clone $recordsPeriode)->sum('nilai_produksi'),
+            'total_biaya' => (clone $recordsPeriode)->sum('biaya_operasional'),
+            'keuntungan' => (clone $recordsPeriode)->sum('nilai_produksi') - (clone $recordsPeriode)->sum('biaya_operasional'),
         ];
 
         // Daftar tahun yang tersedia di data
@@ -255,6 +257,24 @@ class MonitoringController extends Controller
         return redirect()->route('monitoring.show', $kdmpId)
             ->with('success', 'Laporan telah dihapus.');
     }
+    /**
+     * Export PDF detail per lokasi KDMP
+     */
+    public function exportPdfDetail(Kdmp $kdmp)
+    {
+        $records = MonitoringRecord::where('kdmp_id', $kdmp->id)
+            ->with('user')
+            ->orderByDesc('tahun')
+            ->orderByDesc('bulan')
+            ->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('monitoring.pdf-detail', compact('kdmp', 'records'))
+            ->setPaper('a4', 'landscape');
+
+        $filename = 'Detail_Monitoring_' . str_replace(' ', '_', $kdmp->nama_kdkmp) . '.pdf';
+        return $pdf->stream($filename);
+    }
+
     /**
      * Export data monitoring ke PDF
      */

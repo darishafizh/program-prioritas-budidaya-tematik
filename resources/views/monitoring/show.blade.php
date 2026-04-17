@@ -7,13 +7,24 @@
         <p class="page-subtitle">{{ $kdmp->desa }}, {{ $kdmp->kabupaten }}, {{ $kdmp->provinsi }} &bull; {{ $kdmp->komoditas }}</p>
     </div>
     <div class="flex gap-2">
+        <a href="{{ route('monitoring.pdf-detail', $kdmp->id) }}" class="btn btn-primary" target="_blank" style="background:#EF4444; border-color:#EF4444;">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            Export PDF
+        </a>
         <a href="{{ route('monitoring.create', ['kdmp_id' => $kdmp->id]) }}" class="btn btn-primary">+ Tambah Laporan</a>
         <a href="{{ route('monitoring.index') }}" class="btn btn-outline">← Kembali</a>
     </div>
 </div>
 
 {{-- Info KDMP --}}
-<div class="grid grid-cols-4 mb-5">
+@php
+    $totalNilai = $records->sum('nilai_produksi');
+    $totalBiaya = $records->sum('biaya_operasional');
+    $keuntungan = $totalNilai - $totalBiaya;
+@endphp
+<div class="grid grid-cols-5 mb-5">
     <div class="stat-card card-gradient-teal">
         <div class="stat-card-content">
             <h3>Total Laporan</h3>
@@ -29,7 +40,7 @@
     <div class="stat-card card-gradient-navy">
         <div class="stat-card-content">
             <h3>Total Nilai</h3>
-            <div class="stat-card-value" style="font-size:1.2rem;">Rp {{ number_format($records->sum('nilai_produksi'),0,',','.') }}</div>
+            <div class="stat-card-value" style="font-size:1.2rem;">Rp {{ number_format($totalNilai,0,',','.') }}</div>
         </div>
     </div>
     <div class="stat-card card-gradient-warning">
@@ -41,6 +52,13 @@
             @else
             <div class="stat-card-value" style="font-size:1rem;">Belum Ada</div>
             @endif
+        </div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, {{ $keuntungan >= 0 ? '#059669, #10B981' : '#DC2626, #EF4444' }}); color: #fff;">
+        <div class="stat-card-content">
+            <h3>Keuntungan</h3>
+            <div class="stat-card-value" style="font-size:1.2rem;">Rp {{ number_format($keuntungan,0,',','.') }}</div>
+            <p style="font-size:0.75rem; opacity:0.85; margin-top:0.25rem;">Nilai Produksi - Biaya Opr</p>
         </div>
     </div>
 </div>

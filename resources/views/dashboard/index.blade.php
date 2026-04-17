@@ -107,7 +107,7 @@
             <div class="alert-icon text-red"><i class="fa-solid fa-heart-crack"></i></div>
             <div class="alert-detail">
                 <h3>{{ $lokasiSRRendah }} Lokasi</h3>
-                <p>Survival Rate Rendah (< 70%)</p>
+                <p>Survival Rate Rendah (&lt;&nbsp;70%)</p>
             </div>
             <button onclick="switchTab('teknis'); document.getElementById('tableSearch').value='merah'; setTimeout(()=>document.getElementById('tableSearch').dispatchEvent(new Event('input')), 100);" class="alert-action text-red btn-link border-0 bg-transparent p-0">Lihat Detail <i class="fa-solid fa-arrow-right"></i></button>
         </div>
@@ -115,7 +115,7 @@
             <div class="alert-icon text-orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
             <div class="alert-detail">
                 <h3>{{ $lokasiNonOptimal }} Lokasi</h3>
-                <p>Utilisasi Kolam Tidak Optimal (< 50%)</p>
+                <p>Utilisasi Kolam Tidak Optimal (&lt;&nbsp;50%)</p>
             </div>
             <button onclick="switchTab('teknis')" class="alert-action text-orange btn-link border-0 bg-transparent p-0">Tinjau Utilisasi <i class="fa-solid fa-arrow-right"></i></button>
         </div>
@@ -715,7 +715,6 @@
 [data-theme="dark"] .text-red { color: #F87171; }
 [data-theme="dark"] .text-orange { color: #FBBF24; }
 [data-theme="dark"] .text-gray { color: #9CA3AF; }
-.action-alert-card { user-select: none; -webkit-user-select: none; }
 
 .national-priority-list {
     padding: 0.5rem 1rem 1rem;
