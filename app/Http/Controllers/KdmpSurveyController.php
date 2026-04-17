@@ -69,17 +69,24 @@ class KdmpSurveyController extends Controller
             'kabupaten' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
             'komoditas' => 'nullable|in:Lele,Nila',
+            'lat' => 'nullable|string|max:255',
+            'long' => 'nullable|string|max:255',
         ]);
 
         $validated['user_id'] = Auth::id();
 
-        // Auto-fill koordinat dari master KDMP jika belum diisi
-        if (!empty($validated['kdmp_id']) && empty($request->koordinat)) {
+        // Auto-fill koordinat dari input lat, long
+        if ($request->filled('lat') || $request->filled('long')) {
+            $validated['koordinat'] = implode(', ', array_filter([$request->lat, $request->long]));
+        } // Atay auto-fill dari master KDMP jika belum diisi
+        elseif (!empty($validated['kdmp_id'])) {
             $masterKdmp = Kdmp::find($validated['kdmp_id']);
             if ($masterKdmp && $masterKdmp->lat && $masterKdmp->long) {
                 $validated['koordinat'] = $masterKdmp->lat . ', ' . $masterKdmp->long;
             }
         }
+        
+        unset($validated['lat'], $validated['long']);
 
         $validated['hambatan_koperasi'] = $request->input('hambatan_koperasi', []);
         $validated['kendala_pembangunan'] = $request->input('kendala_pembangunan', []);
@@ -126,11 +133,19 @@ class KdmpSurveyController extends Controller
             'kabupaten' => 'required|string|max:255',
             'provinsi' => 'required|string|max:255',
             'komoditas' => 'nullable|in:Lele,Nila',
+            'lat' => 'nullable|string|max:255',
+            'long' => 'nullable|string|max:255',
         ]);
 
         $validated['hambatan_koperasi'] = $request->input('hambatan_koperasi', []);
         $validated['kendala_pembangunan'] = $request->input('kendala_pembangunan', []);
         $validated['tujuan_penjualan'] = $request->input('tujuan_penjualan', []);
+
+        // Update koordinat
+        if ($request->filled('lat') || $request->filled('long')) {
+            $validated['koordinat'] = implode(', ', array_filter([$request->lat, $request->long]));
+        }
+        unset($validated['lat'], $validated['long']);
 
         $kdmp->update($validated);
 

@@ -242,7 +242,15 @@
                                 <td class="text-center">6</td>
                                 <td>Lokasi (koordinat)</td>
                                 <td>
-                                    <input type="text" name="koordinat" class="form-control" placeholder="-6.123, 106.456">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <input type="text" name="lat" class="form-control" placeholder="Lat (-6.123)">
+                                        </div>
+                                        <div>
+                                            <input type="text" name="long" class="form-control"
+                                                placeholder="Long (106.456)">
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -523,9 +531,9 @@
 
                 var lat = selected.data('lat') || '';
                 var long = selected.data('long') || '';
-                if (lat && long) {
-                    $('[name="koordinat"]').val(lat + ', ' + long);
-                }
+
+                $('[name="lat"]').val(lat);
+                $('[name="long"]').val(long);
 
                 // Trigger wilayah autofill via custom event to Alpine
                 window.dispatchEvent(new CustomEvent('autofill-wilayah', {
