@@ -7,7 +7,8 @@ use App\Http\Controllers\SppgSurveyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LocationScoreController;
-use App\Http\Controllers\MonitoringController;
+use App\Http\Controllers\ProduksiController;
+use App\Http\Controllers\ProgresFisikController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -46,19 +47,32 @@ Route::middleware('auth')->group(function () {
     // SPPG Survey routes
     Route::resource('sppg', SppgSurveyController::class);
     
-    // Monitoring records (laporan berkala per KDMP)
-    Route::prefix('lokasi-budidaya')->name('monitoring.')->group(function () {
-        Route::get('/', [MonitoringController::class, 'index'])->name('index');
-        Route::get('/pdf', [MonitoringController::class, 'exportPdf'])->name('pdf');
-        Route::get('/create', [MonitoringController::class, 'create'])->name('create');
-        Route::post('/', [MonitoringController::class, 'store'])->name('store');
-        Route::get('/kdmp/{kdmp}/pdf', [MonitoringController::class, 'exportPdfDetail'])->name('pdf-detail');
-        Route::get('/kdmp/{monitoring}', [MonitoringController::class, 'show'])->name('show');
-        Route::get('/{monitoring}/edit', [MonitoringController::class, 'edit'])->name('edit');
-        Route::put('/{monitoring}', [MonitoringController::class, 'update'])->name('update');
-        Route::delete('/{monitoring}', [MonitoringController::class, 'destroy'])->name('destroy');
+    // Produksi records (laporan berkala per KDMP)
+    Route::prefix('produksi')->name('produksi.')->group(function () {
+        Route::get('/', [ProduksiController::class, 'index'])->name('index');
+        Route::get('/pdf', [ProduksiController::class, 'exportPdf'])->name('pdf');
+        Route::get('/create', [ProduksiController::class, 'create'])->name('create');
+        Route::post('/', [ProduksiController::class, 'store'])->name('store');
+        Route::get('/kdmp/{kdmp}/pdf', [ProduksiController::class, 'exportPdfDetail'])->name('pdf-detail');
+        Route::get('/kdmp/{monitoring}', [ProduksiController::class, 'show'])->name('show');
+        Route::get('/{monitoring}/edit', [ProduksiController::class, 'edit'])->name('edit');
+        Route::put('/{monitoring}', [ProduksiController::class, 'update'])->name('update');
+        Route::delete('/{monitoring}', [ProduksiController::class, 'destroy'])->name('destroy');
     });
     
+    // Progres Fisik routes
+    Route::prefix('progres-fisik')->name('progres-fisik.')->group(function () {
+        Route::get('/', [ProgresFisikController::class, 'index'])->name('index');
+        Route::get('/pdf', [ProgresFisikController::class, 'exportPdf'])->name('pdf');
+        Route::get('/create', [ProgresFisikController::class, 'create'])->name('create');
+        Route::post('/', [ProgresFisikController::class, 'store'])->name('store');
+        Route::get('/kdmp/{kdmp}', [ProgresFisikController::class, 'show'])->name('show');
+        Route::get('/kdmp/{kdmp}/pdf', [ProgresFisikController::class, 'exportPdfDetail'])->name('pdf-detail');
+        Route::get('/{record}/edit', [ProgresFisikController::class, 'edit'])->name('edit');
+        Route::put('/{record}', [ProgresFisikController::class, 'update'])->name('update');
+        Route::delete('/{record}', [ProgresFisikController::class, 'destroy'])->name('destroy');
+    });
+
     // Scoring Dashboard routes
     Route::prefix('scoring')->name('scoring.')->group(function () {
         Route::get('/', [LocationScoreController::class, 'index'])->name('index');

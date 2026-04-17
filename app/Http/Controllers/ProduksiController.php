@@ -7,7 +7,7 @@ use App\Models\MonitoringRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class MonitoringController extends Controller
+class ProduksiController extends Controller
 {
     /**
      * Dashboard monitoring — tampilkan semua lokasi KDMP beserta status terakhir
@@ -34,21 +34,41 @@ class MonitoringController extends Controller
 
         $kdmpList = $query->orderBy('no')->get();
 
-        // Statistik ringkasan berdasarkan record periode terpilih
         $recordsPeriode = MonitoringRecord::where('tahun', $tahun)->where('bulan', $bulan);
+        $allRecords = (clone $recordsPeriode)->get();
+        $targetKeuntungan = 15000000;
+        $onTrackCount = 0;
+        $underperformCount = 0;
+
+        foreach ($allRecords as $rec) {
+            $keuntungan = (float) $rec->nilai_produksi - (float) $rec->biaya_operasional;
+            if ($keuntungan >= $targetKeuntungan) {
+                $onTrackCount++;
+            } else {
+                $underperformCount++;
+            }
+        }
 
         $stats = [
             'total_kdmp' => Kdmp::count(),
-            'sudah_lapor' => MonitoringRecord::where('tahun', $tahun)->where('bulan', $bulan)->count(),
-            'on_track' => (clone $recordsPeriode)->where('status_lokasi', 'on_track')->count(),
-            'bermasalah' => (clone $recordsPeriode)->where('status_lokasi', 'bermasalah')->count(),
-            'selesai' => (clone $recordsPeriode)->where('status_lokasi', 'selesai')->count(),
-            'vakum' => (clone $recordsPeriode)->where('status_lokasi', 'vakum')->count(),
-            'total_panen' => (clone $recordsPeriode)->sum('volume_panen_kg'),
-            'total_nilai' => (clone $recordsPeriode)->sum('nilai_produksi'),
-            'total_biaya' => (clone $recordsPeriode)->sum('biaya_operasional'),
-            'keuntungan' => (clone $recordsPeriode)->sum('nilai_produksi') - (clone $recordsPeriode)->sum('biaya_operasional'),
+            'sudah_lapor' => $allRecords->count(),
+            'on_track' => $onTrackCount,
+            'underperforming' => $underperformCount,
+            'total_panen' => $allRecords->sum('volume_panen_kg'),
+            'total_nilai' => $allRecords->sum('nilai_produksi'),
         ];
+
+        // Hitung rata-rata per lokasi dari seluruh lokasi yang punya record
+        $jumlahLokasi = $allRecords->count() ?: 1; // avoid division by zero
+
+        $stats['avg_volume'] = round((float) $allRecords->sum('volume_panen_kg') / $jumlahLokasi, 0);
+        $stats['avg_nilai'] = round((float) $allRecords->sum('nilai_produksi') / $jumlahLokasi, 0);
+
+        // avg harga jual = total nilai / total volume (harga per kg)
+        $totalVolume = (float) $allRecords->sum('volume_panen_kg');
+        $stats['avg_harga_jual'] = $totalVolume > 0
+            ? round((float) $allRecords->sum('nilai_produksi') / $totalVolume, 0)
+            : 0;
 
         // Daftar tahun yang tersedia di data
         $tahunList = range(2024, (int) date('Y') + 1);
@@ -68,7 +88,7 @@ class MonitoringController extends Controller
             12 => 'Desember',
         ];
 
-        return view('monitoring.index', compact(
+        return view('produksi.index', compact(
             'kdmpList',
             'stats',
             'tahun',
@@ -121,7 +141,7 @@ class MonitoringController extends Controller
             ];
         });
 
-        return view('monitoring.show', compact('kdmp', 'records', 'chartData', 'bulanList'));
+        return view('produksi.show', compact('kdmp', 'records', 'chartData', 'bulanList'));
     }
 
     /**
@@ -149,7 +169,7 @@ class MonitoringController extends Controller
         ];
         $tahunList = range(2024, (int) date('Y') + 1);
 
-        return view('monitoring.create', compact('kdmpList', 'kdmpSelected', 'bulanList', 'tahunList'));
+        return view('produksi.create', compact('kdmpList', 'kdmpSelected', 'bulanList', 'tahunList'));
     }
 
     /**
@@ -165,7 +185,9 @@ class MonitoringController extends Controller
             'progres_fisik' => 'required|integer|between:0,100',
             'volume_panen_kg' => 'nullable|numeric|min:0',
             'nilai_produksi' => 'nullable|numeric|min:0',
-            'biaya_operasional' => 'nullable|numeric|min:0',
+            'biaya_pakan' => 'nullable|numeric|min:0',
+            'biaya_bibit' => 'nullable|numeric|min:0',
+            'biaya_lainnya' => 'nullable|numeric|min:0',
             'jumlah_pembudidaya_aktif' => 'nullable|integer|min:0',
             'survival_rate' => 'nullable|numeric|min:0|max:100',
             'jumlah_kolam_aktif' => 'nullable|integer|min:0',
@@ -189,9 +211,13 @@ class MonitoringController extends Controller
                 ->withErrors(['periode' => 'Laporan untuk KDMP ini pada periode ' . $validated['bulan'] . '/' . $validated['tahun'] . ' sudah ada. Gunakan edit untuk memperbarui.']);
         }
 
+        $validated['biaya_operasional'] = (float)($validated['biaya_pakan'] ?? 0) 
+                                        + (float)($validated['biaya_bibit'] ?? 0) 
+                                        + (float)($validated['biaya_lainnya'] ?? 0);
+
         MonitoringRecord::create($validated);
 
-        return redirect()->route('monitoring.index')
+        return redirect()->route('produksi.index')
             ->with('success', 'Laporan monitoring berhasil disimpan!');
     }
 
@@ -219,7 +245,7 @@ class MonitoringController extends Controller
         ];
         $tahunList = range(2024, (int) date('Y') + 1);
 
-        return view('monitoring.edit', compact('record', 'bulanList', 'tahunList'));
+        return view('produksi.edit', compact('record', 'bulanList', 'tahunList'));
     }
 
     /**
@@ -232,7 +258,9 @@ class MonitoringController extends Controller
             'progres_fisik' => 'required|integer|between:0,100',
             'volume_panen_kg' => 'nullable|numeric|min:0',
             'nilai_produksi' => 'nullable|numeric|min:0',
-            'biaya_operasional' => 'nullable|numeric|min:0',
+            'biaya_pakan' => 'nullable|numeric|min:0',
+            'biaya_bibit' => 'nullable|numeric|min:0',
+            'biaya_lainnya' => 'nullable|numeric|min:0',
             'jumlah_pembudidaya_aktif' => 'nullable|integer|min:0',
             'survival_rate' => 'nullable|numeric|min:0|max:100',
             'jumlah_kolam_aktif' => 'nullable|integer|min:0',
@@ -242,9 +270,13 @@ class MonitoringController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
+        $validated['biaya_operasional'] = (float)($validated['biaya_pakan'] ?? 0) 
+                                        + (float)($validated['biaya_bibit'] ?? 0) 
+                                        + (float)($validated['biaya_lainnya'] ?? 0);
+
         $monitoring->update($validated);
 
-        return redirect()->route('monitoring.show', $monitoring->kdmp_id)
+        return redirect()->route('produksi.show', $monitoring->kdmp_id)
             ->with('success', 'Laporan monitoring berhasil diperbarui!');
     }
 
@@ -256,7 +288,7 @@ class MonitoringController extends Controller
         $kdmpId = $monitoring->kdmp_id;
         $monitoring->delete();
 
-        return redirect()->route('monitoring.show', $kdmpId)
+        return redirect()->route('produksi.show', $kdmpId)
             ->with('success', 'Laporan telah dihapus.');
     }
     /**
@@ -270,7 +302,7 @@ class MonitoringController extends Controller
             ->orderByDesc('bulan')
             ->get();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('monitoring.pdf-detail', compact('kdmp', 'records'))
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('produksi.pdf-detail', compact('kdmp', 'records'))
             ->setPaper('a4', 'landscape');
 
         $filename = 'Detail_Monitoring_' . str_replace(' ', '_', $kdmp->nama_kdkmp) . '.pdf';
@@ -307,7 +339,7 @@ class MonitoringController extends Controller
             9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
         ];
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('monitoring.pdf', compact('kdmpList', 'tahun', 'bulan', 'bulanList', 'search'))->setPaper('a4', 'landscape');
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('produksi.pdf', compact('kdmpList', 'tahun', 'bulan', 'bulanList', 'search'))->setPaper('a4', 'landscape');
         return $pdf->stream('Data_Lokasi_Budidaya_' . ($bulanList[$bulan] ?? $bulan) . '_' . $tahun . '.pdf');
     }
 }

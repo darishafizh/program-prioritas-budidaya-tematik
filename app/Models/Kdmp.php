@@ -49,4 +49,12 @@ class Kdmp extends Model
     {
         return $this->hasMany(MonitoringRecord::class);
     }
+
+    /**
+     * Record progres fisik periodik lokasi ini
+     */
+    public function progresFisikRecords()
+    {
+        return $this->hasMany(ProgresFisikRecord::class);
+    }
 }

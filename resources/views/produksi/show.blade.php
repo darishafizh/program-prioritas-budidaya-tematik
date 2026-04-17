@@ -622,6 +622,12 @@
         color: var(--gray-700);
     }
 
+    .record-note.catatan {
+        background: rgba(59,130,246,0.04);
+        border-left: 3px solid #3B82F6;
+        color: var(--gray-700);
+    }
+
     .record-note strong {
         font-weight: 600;
         white-space: nowrap;
@@ -693,8 +699,10 @@
     [data-theme="dark"] .record-action-btn { background: #1F2937; border-color: #374151; color: #9CA3AF; }
     [data-theme="dark"] .record-note.kendala { background: rgba(239,68,68,0.08); }
     [data-theme="dark"] .record-note.tindak-lanjut { background: rgba(16,185,129,0.08); }
+    [data-theme="dark"] .record-note.catatan { background: rgba(59,130,246,0.08); }
     [data-theme="dark"] .record-note strong { color: #D1D5DB; }
     [data-theme="dark"] .record-stat strong { color: #D1D5DB; }
+    [data-theme="dark"] .bg-light { background: rgba(255,255,255,0.05) !important; color: #E5E7EB !important; border: 1px solid #374151; }
 
     /* Responsive */
     @media (max-width: 1024px) {
@@ -748,15 +756,15 @@
             </div>
         </div>
         <div class="detail-hero-actions">
-            <a href="{{ route('monitoring.pdf-detail', $kdmp->id) }}" class="hero-btn hero-btn-danger" target="_blank" title="Export PDF">
+            <a href="{{ route('produksi.pdf-detail', $kdmp->id) }}" class="hero-btn hero-btn-danger" target="_blank" title="Export PDF">
                 <i class="fa-solid fa-file-pdf"></i>
                 <span>PDF</span>
             </a>
-            <a href="{{ route('monitoring.create', ['kdmp_id' => $kdmp->id]) }}" class="hero-btn hero-btn-primary">
+            <a href="{{ route('produksi.create', ['kdmp_id' => $kdmp->id]) }}" class="hero-btn hero-btn-primary">
                 <i class="fa-solid fa-plus"></i>
                 <span>Tambah Laporan</span>
             </a>
-            <a href="{{ route('monitoring.index') }}" class="hero-btn hero-btn-outline">
+            <a href="{{ route('produksi.index') }}" class="hero-btn hero-btn-outline">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>Kembali</span>
             </a>
@@ -905,30 +913,44 @@
                         </span>
                     </div>
                     <div class="record-stats-grid">
-                        <div class="record-stat">
-                            <i class="fa-solid fa-chart-line"></i>
-                            Progres: <strong>{{ $record->progres_fisik }}%</strong>
-                        </div>
-                        <div class="record-stat">
-                            <i class="fa-solid fa-fish"></i>
-                            Panen: <strong>{{ number_format($record->volume_panen_kg,0,',','.') }} kg</strong>
-                        </div>
-                        <div class="record-stat">
-                            <i class="fa-solid fa-sack-dollar"></i>
-                            Nilai: <strong>Rp {{ number_format($record->nilai_produksi,0,',','.') }}</strong>
-                        </div>
-                        <div class="record-stat">
+                        @php
+                            $hargaJual = $record->volume_panen_kg > 0 ? $record->nilai_produksi / $record->volume_panen_kg : 0;
+                            $keuntungan = (float) $record->nilai_produksi - (float) $record->biaya_operasional;
+                        @endphp
+                        
+                        <div class="record-stat w-100">
                             <i class="fa-solid fa-users"></i>
                             Pembudidaya: <strong>{{ $record->jumlah_pembudidaya_aktif }} orang</strong>
+                            
+                            <span style="display:inline-block; margin-left: 1rem;">
+                                <i class="fa-solid fa-money-bill-trend-up"></i>
+                                Keuntungan: <strong style="color: {{ $keuntungan >= 0 ? '#059669' : '#DC2626' }}">Rp {{ number_format($keuntungan,0,',','.') }}</strong>
+                            </span>
+                        </div>
+                        
+                        <div class="record-stat" style="width: 100%; border-top: 1px dashed var(--gray-200);">
+                            <i class="fa-solid fa-fish"></i>
+                            Rincian Panen:
+                            <span class="ms-1 px-2 py-1 rounded bg-light" style="font-size:0.7rem">Volume: <strong>{{ number_format($record->volume_panen_kg,0,',','.') }} kg</strong></span>
+                            <span class="ms-1 px-2 py-1 rounded bg-light" style="font-size:0.7rem">Nilai: <strong>Rp {{ number_format($record->nilai_produksi,0,',','.') }}</strong></span>
+                            <span class="ms-1 px-2 py-1 rounded" style="font-size:0.7rem; background:rgba(16,185,129,0.1); color:#059669;">Target Jual: <strong>Rp {{ number_format($hargaJual,0,',','.') }} / kg</strong></span>
+                        </div>
+                        <div class="record-stat" style="width: 100%; border-top: 1px dashed var(--gray-200); ">
+                            <i class="fa-solid fa-wallet"></i>
+                            Rincian Biaya:
+                            <span class="ms-1 px-2 py-1 rounded bg-light" style="font-size:0.7rem">Pakan: <strong>Rp {{ number_format($record->biaya_pakan,0,',','.') }}</strong></span>
+                            <span class="ms-1 px-2 py-1 rounded bg-light" style="font-size:0.7rem">Bibit: <strong>Rp {{ number_format($record->biaya_bibit,0,',','.') }}</strong></span>
+                            <span class="ms-1 px-2 py-1 rounded bg-light" style="font-size:0.7rem">Lainnya: <strong>Rp {{ number_format($record->biaya_lainnya,0,',','.') }}</strong></span>
+                            <span class="ms-1 px-2 py-1 rounded" style="font-size:0.7rem; background:rgba(239,68,68,0.1); color:#DC2626;">Total Opr: <strong>Rp {{ number_format($record->biaya_operasional,0,',','.') }}</strong></span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="record-actions">
-                <a href="{{ route('monitoring.edit', $record->id) }}" class="record-action-btn">
+                <a href="{{ route('produksi.edit', $record->id) }}" class="record-action-btn">
                     <i class="fa-solid fa-pen-to-square" style="font-size:0.68rem;"></i> Edit
                 </a>
-                <form action="{{ route('monitoring.destroy', $record->id) }}" method="POST" onsubmit="return confirm('Yakin hapus laporan ini?')">
+                <form action="{{ route('produksi.destroy', $record->id) }}" method="POST" onsubmit="return confirm('Yakin hapus laporan ini?')">
                     @csrf @method('DELETE')
                     <button type="submit" class="record-action-btn danger">
                         <i class="fa-solid fa-trash-can" style="font-size:0.68rem;"></i> Hapus
@@ -936,7 +958,7 @@
                 </form>
             </div>
         </div>
-        @if($record->kendala || $record->tindak_lanjut)
+        @if($record->kendala || $record->tindak_lanjut || $record->catatan)
         <div class="record-notes">
             @if($record->kendala)
             <div class="record-note kendala">
@@ -950,6 +972,12 @@
                 <span>{{ $record->tindak_lanjut }}</span>
             </div>
             @endif
+            @if($record->catatan)
+            <div class="record-note catatan">
+                <strong>Catatan:</strong>
+                <span>{{ $record->catatan }}</span>
+            </div>
+            @endif
         </div>
         @endif
     </div>
@@ -960,7 +988,7 @@
         </div>
         <h4>Belum Ada Laporan</h4>
         <p>Belum ada laporan monitoring untuk KDMP ini.</p>
-        <a href="{{ route('monitoring.create', ['kdmp_id' => $kdmp->id]) }}" class="btn btn-primary">
+        <a href="{{ route('produksi.create', ['kdmp_id' => $kdmp->id]) }}" class="btn btn-primary">
             <i class="fa-solid fa-plus" style="font-size:0.75rem;"></i>
             Tambah Laporan Pertama
         </a>

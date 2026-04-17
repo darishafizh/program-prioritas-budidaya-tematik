@@ -7,7 +7,7 @@
         <h1 class="page-title">Tambah Laporan Monitoring</h1>
         <p class="page-subtitle">Input laporan perkembangan periodik lokasi KDMP</p>
     </div>
-    <a href="{{ route('monitoring.index') }}" class="btn btn-outline">
+    <a href="{{ route('produksi.index') }}" class="btn btn-outline">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
         </svg>
@@ -34,7 +34,7 @@
 </div>
 @endif
 
-<form action="{{ route('monitoring.store') }}" method="POST">
+<form action="{{ route('produksi.store') }}" method="POST">
     @csrf
 
     {{-- Section 1: Informasi Lokasi --}}
@@ -75,8 +75,8 @@
                 </svg>
             </div>
             <div>
-                <h3 class="monitoring-form-title">Periode & Status</h3>
-                <p class="monitoring-form-desc">Tentukan periode laporan dan status lokasi saat ini</p>
+                <h3 class="monitoring-form-title">Periode</h3>
+                <p class="monitoring-form-desc">Tentukan periode laporan</p>
             </div>
         </div>
         <div class="monitoring-form-body">
@@ -98,25 +98,8 @@
                     </select>
                 </div>
             </div>
-            <div class="grid grid-cols-2">
-                <div class="form-group">
-                    <label class="form-label">Status Lokasi <span class="required">*</span></label>
-                    <select name="status_lokasi" class="form-control form-select" required>
-                        <option value="on_track"   {{ old('status_lokasi') === 'on_track'   ? 'selected' : '' }}>✅ On Track</option>
-                        <option value="bermasalah" {{ old('status_lokasi') === 'bermasalah' ? 'selected' : '' }}>❌ Bermasalah</option>
-                        <option value="selesai"    {{ old('status_lokasi') === 'selesai'    ? 'selected' : '' }}>✔️ Selesai</option>
-                        <option value="vakum"      {{ old('status_lokasi') === 'vakum'      ? 'selected' : '' }}>⚠️ Vakum</option>
-                    </select>
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label class="form-label">Progres Fisik (%) <span class="required">*</span></label>
-                    <input type="number" name="progres_fisik" min="0" max="100"
-                        value="{{ old('progres_fisik', 0) }}" class="form-control" required>
-                    <div class="monitoring-progress-bar" style="margin-top:8px;">
-                        <div class="monitoring-progress-fill" id="progresBar" style="width:0%;"></div>
-                    </div>
-                </div>
-            </div>
+                <input type="hidden" name="status_lokasi" value="on_track">
+                <input type="hidden" name="progres_fisik" value="100">
         </div>
     </div>
 
@@ -134,7 +117,21 @@
             </div>
         </div>
         <div class="monitoring-form-body">
-            <div class="grid grid-cols-2">
+            <div class="grid grid-cols-3">
+                <div class="form-group">
+                    <label class="form-label">Biaya Pakan (Rp)</label>
+                    <input type="number" name="biaya_pakan" min="0" value="{{ old('biaya_pakan', 0) }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Biaya Bibit (Rp)</label>
+                    <input type="number" name="biaya_bibit" min="0" value="{{ old('biaya_bibit', 0) }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Biaya Lainnya (Rp)</label>
+                    <input type="number" name="biaya_lainnya" min="0" value="{{ old('biaya_lainnya', 0) }}" class="form-control">
+                </div>
+            </div>
+            <div class="grid grid-cols-3 mt-2">
                 <div class="form-group">
                     <label class="form-label">Volume Panen (kg)</label>
                     <input type="number" name="volume_panen_kg" min="0" step="0.01"
@@ -144,13 +141,6 @@
                     <label class="form-label">Nilai Produksi (Rp)</label>
                     <input type="number" name="nilai_produksi" min="0"
                         value="{{ old('nilai_produksi', 0) }}" class="form-control">
-                </div>
-            </div>
-            <div class="grid grid-cols-2">
-                <div class="form-group">
-                    <label class="form-label">Biaya Operasional (Rp)</label>
-                    <input type="number" name="biaya_operasional" min="0"
-                        value="{{ old('biaya_operasional', 0) }}" class="form-control">
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">Jumlah Pembudidaya Aktif</label>
@@ -227,7 +217,7 @@
 
     {{-- Submit Actions --}}
     <div class="monitoring-form-actions">
-        <a href="{{ route('monitoring.index') }}" class="btn btn-outline">
+        <a href="{{ route('produksi.index') }}" class="btn btn-outline">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>

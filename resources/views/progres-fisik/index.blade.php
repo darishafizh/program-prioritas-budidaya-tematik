@@ -1,0 +1,247 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="page-header-row">
+    <div>
+        <h1 class="page-title">Progres Fisik Pembangunan</h1>
+        <p class="page-subtitle">Monitoring progres pembangunan infrastruktur 100 KDMP Bioflok</p>
+    </div>
+</div>
+
+{{-- KPI Summary Cards --}}
+<div class="grid grid-cols-4 mb-5">
+    <div class="kpi-card kpi-produksi">
+        <div class="kpi-icon"><i class="fa-solid fa-building" style="font-size:1rem;"></i></div>
+        <div>
+            <div class="kpi-value">{{ $stats['total_kdmp'] }}</div>
+            <div class="kpi-label">TOTAL KDMP</div>
+            <div class="kpi-sub">Sudah melapor: {{ $stats['sudah_lapor'] }}</div>
+        </div>
+    </div>
+    <div class="kpi-card kpi-sr success">
+        <div class="kpi-icon"><i class="fa-solid fa-circle-check" style="font-size:1rem;"></i></div>
+        <div>
+            <div class="kpi-value">{{ $stats['selesai'] }}</div>
+            <div class="kpi-label">SELESAI</div>
+            <div class="kpi-sub">Progres 100%</div>
+        </div>
+    </div>
+    <div class="kpi-card kpi-aktif">
+        <div class="kpi-icon"><i class="fa-solid fa-hammer" style="font-size:1rem;"></i></div>
+        <div>
+            <div class="kpi-value">{{ $stats['berjalan'] }}</div>
+            <div class="kpi-label">SEDANG BERJALAN</div>
+            <div class="kpi-sub">Progres ≥ 50%</div>
+        </div>
+    </div>
+    <div class="kpi-card kpi-perkolam">
+        <div class="kpi-icon"><i class="fa-solid fa-chart-simple" style="font-size:1rem;"></i></div>
+        <div>
+            <div class="kpi-value">{{ $stats['rata_rata'] }}%</div>
+            <div class="kpi-label">RATA-RATA PROGRES</div>
+            <div class="kpi-sub">Seluruh lokasi periode ini</div>
+        </div>
+    </div>
+</div>
+
+{{-- Filter --}}
+<div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
+    <div class="card-body">
+        <form method="GET" action="{{ route('progres-fisik.index') }}" class="d-flex gap-3 flex-wrap align-items-end">
+            <div class="form-group mb-0" style="min-width:200px;">
+                <label class="form-label">Cari KDMP</label>
+                <input type="text" name="search" value="{{ $search }}" class="form-control" placeholder="Nama, kabupaten, provinsi...">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label class="form-label">Bulan</label>
+                <select name="bulan" class="form-control form-select">
+                    @foreach($bulanList as $num => $nama)
+                        <option value="{{ $num }}" {{ $bulan == $num ? 'selected' : '' }}>{{ $nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label class="form-label">Tahun</label>
+                <select name="tahun" class="form-control form-select">
+                    @foreach($tahunList as $t)
+                        <option value="{{ $t }}" {{ $tahun == $t ? 'selected' : '' }}>{{ $t }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{{ route('progres-fisik.index') }}" class="btn btn-outline">Reset</a>
+            <a href="{{ route('progres-fisik.pdf', request()->query()) }}" class="btn btn-primary" target="_blank" style="background:#EF4444; border-color:#EF4444;">
+                <i class="fa-solid fa-file-pdf mr-1"></i> Export PDF
+            </a>
+        </form>
+    </div>
+</div>
+
+{{-- Tabel KDMP --}}
+<div class="card shadow-sm border-0" style="border-radius: 12px;">
+    <div class="card-body">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{{ route('progres-fisik.create') }}" class="btn btn-sm btn-success d-flex align-items-center gap-2 rounded-pill px-4 shadow-sm">
+                <i class="fa-solid fa-plus"></i>
+                <span class="fw-bold">Tambah Data Progres</span>
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table id="progresFisikTable" class="table table-hover table-sm align-middle w-100 mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:40px; text-align:center;">No</th>
+                        <th style="text-align:center;">KDKMP</th>
+                        <th style="text-align:center;">Bangunan</th>
+                        <th style="text-align:center;">Kolam</th>
+                        <th style="text-align:center;">Listrik</th>
+                        <th style="text-align:center;">Air</th>
+                        <th style="text-align:center;">Aerasi</th>
+                        <th style="text-align:center;">Rata-rata</th>
+                        <th style="text-align:center; width:120px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($kdmpList as $kdmp)
+                        @php
+                            $lastRecord = $kdmp->progresFisikRecords->first();
+                            $avg = $lastRecord ? $lastRecord->average_progress : 0;
+                        @endphp
+                        <tr>
+                            <td class="text-center fw-bold text-muted">{{ $kdmp->no }}</td>
+                            <td>
+                                <div class="fw-bold">{{ $kdmp->nama_kdkmp }}</div>
+                                <div class="text-muted" style="font-size:0.8em;">{{ $kdmp->kabupaten }}, {{ $kdmp->provinsi }}</div>
+                            </td>
+                            <td class="text-center">
+                                @if($lastRecord)
+                                    <div class="d-flex align-items-center gap-1 justify-content-center">
+                                        <div style="width:50px;height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden;">
+                                            <div style="width:{{ $lastRecord->progres_bangunan }}%;height:100%;background:#0891B2;border-radius:3px;"></div>
+                                        </div>
+                                        <span style="font-size:0.75rem;font-weight:600;">{{ $lastRecord->progres_bangunan }}%</span>
+                                    </div>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if($lastRecord)
+                                    <div class="d-flex align-items-center gap-1 justify-content-center">
+                                        <div style="width:50px;height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden;">
+                                            <div style="width:{{ $lastRecord->progres_kolam }}%;height:100%;background:#10B981;border-radius:3px;"></div>
+                                        </div>
+                                        <span style="font-size:0.75rem;font-weight:600;">{{ $lastRecord->progres_kolam }}%</span>
+                                    </div>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if($lastRecord)
+                                    <div class="d-flex align-items-center gap-1 justify-content-center">
+                                        <div style="width:50px;height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden;">
+                                            <div style="width:{{ $lastRecord->progres_listrik }}%;height:100%;background:#F59E0B;border-radius:3px;"></div>
+                                        </div>
+                                        <span style="font-size:0.75rem;font-weight:600;">{{ $lastRecord->progres_listrik }}%</span>
+                                    </div>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if($lastRecord)
+                                    <div class="d-flex align-items-center gap-1 justify-content-center">
+                                        <div style="width:50px;height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden;">
+                                            <div style="width:{{ $lastRecord->progres_air }}%;height:100%;background:#3B82F6;border-radius:3px;"></div>
+                                        </div>
+                                        <span style="font-size:0.75rem;font-weight:600;">{{ $lastRecord->progres_air }}%</span>
+                                    </div>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if($lastRecord)
+                                    <div class="d-flex align-items-center gap-1 justify-content-center">
+                                        <div style="width:50px;height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden;">
+                                            <div style="width:{{ $lastRecord->progres_aerasi }}%;height:100%;background:#8B5CF6;border-radius:3px;"></div>
+                                        </div>
+                                        <span style="font-size:0.75rem;font-weight:600;">{{ $lastRecord->progres_aerasi }}%</span>
+                                    </div>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if($lastRecord)
+                                    <span class="badge badge-{{ $avg >= 100 ? 'success' : ($avg >= 50 ? 'primary' : ($avg > 0 ? 'warning' : 'secondary')) }}" style="font-size:0.8rem; padding:0.3rem 0.6rem; border-radius:var(--radius-full); background:{{ $avg >= 100 ? 'rgba(16,185,129,0.1)' : ($avg >= 50 ? 'rgba(59,130,246,0.1)' : ($avg > 0 ? 'rgba(245,158,11,0.1)' : 'var(--gray-100)')) }}; color:{{ $avg >= 100 ? '#059669' : ($avg >= 50 ? '#2563EB' : ($avg > 0 ? '#D97706' : 'var(--gray-500)')) }}; font-weight:700;">
+                                        {{ $avg }}%
+                                    </span>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex gap-1 justify-content-center">
+                                    <a href="{{ route('progres-fisik.show', $kdmp->id) }}" class="btn btn-sm btn-primary">Detail</a>
+                                    <a href="{{ route('progres-fisik.create', ['kdmp_id' => $kdmp->id]) }}" class="btn btn-sm btn-outline" title="Tambah data">+</a>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" style="text-align:center;padding:2rem;color:var(--gray-400);">Tidak ada KDMP ditemukan</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('styles')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<style>
+    .table thead, .table thead th, .table thead td, .table th {
+        color: #333 !important; background: #f0f0f0 !important;
+    }
+    [data-theme="dark"] .table thead, [data-theme="dark"] .table thead th,
+    [data-theme="dark"] .table thead td, [data-theme="dark"] .table th {
+        color: #E5E7EB !important; background: #1F2937 !important; border-color: #374151 !important;
+    }
+    [data-theme="dark"] .table tbody td {
+        background: var(--bg-surface) !important; color: #D1D5DB !important; border-color: #374151 !important;
+    }
+    [data-theme="dark"] .table tbody tr:hover td { background: #1F2937 !important; }
+    .table { border: 1px solid #ccc !important; border-collapse: collapse !important; }
+    .table th, .table td { border: 1px solid #ccc !important; }
+    [data-theme="dark"] .table { border-color: #374151 !important; }
+    [data-theme="dark"] .table th, [data-theme="dark"] .table td { border-color: #374151 !important; }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#progresFisikTable').DataTable({
+            language: {
+                search: "Cari:", lengthMenu: "Tampilkan _MENU_ Data",
+                info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
+                infoEmpty: "Menampilkan 0 data", infoFiltered: "(difilter dari _MAX_ total data)",
+                zeroRecords: "Tidak ada data yang cocok",
+                paginate: { first: "<<", last: ">>", next: ">", previous: "<" }
+            },
+            pageLength: 25,
+            dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
+            order: [[0, 'asc']],
+            columnDefs: [{ orderable: false, targets: [8] }]
+        });
+    });
+</script>
+@endpush
