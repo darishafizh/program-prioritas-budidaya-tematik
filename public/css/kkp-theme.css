@@ -207,14 +207,14 @@ body {
 [data-theme="dark"] .table thead,
 [data-theme="dark"] .data-table thead,
 [data-theme="dark"] table.dataTable thead {
-    background: #0f172a !important;
+    background: #164E63 !important;
 }
 
 [data-theme="dark"] .table thead th,
 [data-theme="dark"] .data-table thead th,
 [data-theme="dark"] table.dataTable thead th {
-    color: #9CA3AF !important;
-    background: #0f172a !important;
+    color: #E0F2FE !important;
+    background: #164E63 !important;
 }
 
 [data-theme="dark"] .table tbody tr,
@@ -1719,7 +1719,7 @@ textarea.form-control {
 }
 
 .table thead {
-    background: var(--gray-50);
+    background: #0E7490;
 }
 
 .table th {
@@ -1729,8 +1729,8 @@ textarea.form-control {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--gray-600);
-    border-bottom: 1px solid var(--gray-200);
+    color: #ffffff;
+    border-bottom: none;
 }
 
 .table td {
@@ -2705,6 +2705,10 @@ textarea.form-control {
     font-family: 'Manrope', sans-serif;
 }
 
+.dataTables_wrapper div.row {
+    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+}
+
 .dataTables_wrapper .dataTables_length,
 .dataTables_wrapper .dataTables_filter {
     margin-bottom: 1rem;
@@ -2877,7 +2881,7 @@ div.dataTables_wrapper div.dataTables_filter {
 }
 
 table.dataTable thead th {
-    background: linear-gradient(135deg, var(--kkp-navy) 0%, var(--kkp-navy-light) 100%) !important;
+    background: #0E7490 !important;
     color: white !important;
     font-weight: 600;
     font-size: 0.75rem;
@@ -2888,11 +2892,11 @@ table.dataTable thead th {
     vertical-align: middle !important;
 }
 
-table.dataTable thead th:first-child {
+table.dataTable thead tr:first-child th:first-child {
     border-top-left-radius: var(--radius-lg);
 }
 
-table.dataTable thead th:last-child {
+table.dataTable thead tr:first-child th:last-child {
     border-top-right-radius: var(--radius-lg);
 }
 
@@ -2950,7 +2954,7 @@ table.dataTable.no-footer {
 }
 
 .table thead {
-    background: var(--kkp-navy);
+    background: #0E7490;
     color: white;
 }
 
@@ -2962,6 +2966,7 @@ table.dataTable.no-footer {
     letter-spacing: 0.5px;
     text-align: left;
     white-space: nowrap;
+    color: #ffffff;
 }
 
 .table tbody td {
@@ -3125,7 +3130,7 @@ table.dataTable.no-footer {
 }
 
 .data-table thead {
-    background: linear-gradient(135deg, var(--kkp-navy) 0%, var(--kkp-navy-light) 100%);
+    background: #0E7490;
 }
 
 .data-table th {

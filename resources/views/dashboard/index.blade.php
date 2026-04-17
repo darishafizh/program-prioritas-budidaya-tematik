@@ -1163,14 +1163,14 @@
     font-size: 0.82rem;
 }
 .monev-table thead th {
-    background: var(--gray-100);
+    background: #0E7490;
     padding: 0.65rem 0.75rem;
     font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--gray-500);
-    border-bottom: 2px solid var(--border-color);
+    color: #ffffff;
+    border-bottom: none;
     white-space: nowrap;
     position: sticky;
     top: 0;

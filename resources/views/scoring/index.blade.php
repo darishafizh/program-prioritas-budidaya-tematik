@@ -273,9 +273,9 @@
 [data-theme="dark"] table.dataTable thead td,
 [data-theme="dark"] .table thead th,
 [data-theme="dark"] .table thead td {
-    background: #1F2937 !important;
-    color: #E5E7EB !important;
-    border-bottom: 1px solid #374151 !important;
+    background: #164E63 !important;
+    color: #E0F2FE !important;
+    border-bottom: none !important;
 }
 
 [data-theme="dark"] table.dataTable tbody td {

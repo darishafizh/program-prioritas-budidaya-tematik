@@ -12,18 +12,7 @@
         ]" />
     </div>
 
-    <!-- Page Actions -->
-    <div class="page-header">
-        <div class="page-header-content">
-            <div></div>
-            <a href="{{ route('users.create') }}" class="btn btn-success">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Tambah User
-            </a>
-        </div>
-    </div>
+
 
     <!-- Alert Messages -->
     @if(session('success'))
@@ -51,6 +40,17 @@
     <!-- Data Table -->
     <div class="card shadow-sm border-0" style="border-radius: 12px;">
         <div class="card-body">
+
+            <!-- Toolbar: Add Button -->
+            <div class="d-flex justify-content-end mb-3">
+                 <a href="{{ route('users.create') }}" class="btn btn-sm btn-success d-flex align-items-center gap-2 rounded-pill px-4 shadow-sm">
+                    <svg style="width:18px;height:18px" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span class="fw-bold">Tambah User</span>
+                </a>
+            </div>
+
             <div class="table-responsive">
             <table id="usersTable" class="table display" style="width:100%">
                 <thead>
