@@ -115,6 +115,8 @@ class MonitoringController extends Controller
                 'progres_fisik' => $r->progres_fisik,
                 'volume_panen' => (float) $r->volume_panen_kg,
                 'nilai_produksi' => (float) $r->nilai_produksi,
+                'biaya_operasional' => (float) $r->biaya_operasional,
+                'keuntungan' => (float) $r->nilai_produksi - (float) $r->biaya_operasional,
                 'status' => $r->status_lokasi,
             ];
         });
