@@ -88,6 +88,57 @@ class ProduksiController extends Controller
             12 => 'Desember',
         ];
 
+        // Siapkan Data Grafik Analitik
+        // 1. Trend Rata-rata Keseluruhan Lokasi per Bulan (Tahun Ini)
+        $trendBulanan = MonitoringRecord::where('tahun', $tahun)
+            ->selectRaw('bulan, sum(volume_panen_kg) as total_volume, sum(nilai_produksi) as total_nilai, count(id) as jumlah_lapor')
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->get();
+            
+        $chartTrend = [
+            'labels' => [],
+            'avg_volume' => [],
+            'avg_nilai' => [],
+            'avg_harga' => []
+        ];
+        
+        foreach($trendBulanan as $t) {
+            $jml = $t->jumlah_lapor > 0 ? $t->jumlah_lapor : 1;
+            $avgVol = round($t->total_volume / $jml, 0);
+            $avgNilai = round($t->total_nilai / $jml, 0);
+            $avgHarga = $t->total_volume > 0 ? round($t->total_nilai / $t->total_volume, 0) : 0;
+
+            $chartTrend['labels'][] = $bulanList[$t->bulan] ?? $t->bulan;
+            $chartTrend['avg_volume'][] = $avgVol;
+            $chartTrend['avg_nilai'][] = $avgNilai;
+            $chartTrend['avg_harga'][] = $avgHarga;
+        }
+
+        // 2. Sebaran Performa Seluruh Titik Lokasi (Scatter Plot)
+        // Menampilkan titik seluruh KDMP berdasarkan Volume, Nilai Produksi, dan Harga Jual pada bulan terpilih
+        $scatterSeries = [];
+        foreach($allRecords as $rec) {
+            $kdmp = $kdmpList->firstWhere('id', $rec->kdmp_id);
+            if ($kdmp && $rec->volume_panen_kg > 0) {
+                $hargaJual = $rec->volume_panen_kg > 0 ? round($rec->nilai_produksi / $rec->volume_panen_kg, 0) : 0;
+                $keuntungan = $rec->nilai_produksi - $rec->biaya_operasional;
+                
+                $scatterSeries[] = [
+                    'name' => $kdmp->nama_kdkmp,
+                    'data' => [
+                        [
+                            (float) $rec->volume_panen_kg, // X axis: Volume
+                            (float) $rec->nilai_produksi,   // Y axis: Nilai Produksi
+                            $hargaJual                     // Extra data
+                        ]
+                    ]
+                ];
+            }
+        }
+        
+        $chartScatter = json_encode($scatterSeries);
+
         return view('produksi.index', compact(
             'kdmpList',
             'stats',
@@ -95,7 +146,9 @@ class ProduksiController extends Controller
             'bulan',
             'tahunList',
             'bulanList',
-            'search'
+            'search',
+            'chartTrend',
+            'chartScatter'
         ));
     }
 

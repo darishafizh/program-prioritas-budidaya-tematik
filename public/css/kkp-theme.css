@@ -2706,12 +2706,13 @@ textarea.form-control {
 }
 
 .dataTables_wrapper div.row {
-    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+    padding: 0.25rem 0.25rem 0.5rem 0.25rem;
+    margin-bottom: 0 !important;
 }
 
 .dataTables_wrapper .dataTables_length,
 .dataTables_wrapper .dataTables_filter {
-    margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
 }
 
 .dataTables_wrapper .dataTables_length label {
@@ -2820,22 +2821,32 @@ div.dataTables_wrapper div.dataTables_filter {
    BOOTSTRAP 5 PAGINATION COMPACT SIZE
    ===================================================== */
 .dataTables_wrapper .pagination {
-    gap: 2px;
+    gap: 4px;
+    margin: 0;
+    flex-wrap: wrap;
+}
+
+.dataTables_wrapper .page-item:not(:first-child) .page-link {
+    margin-left: 0 !important;
+}
+
+.dataTables_wrapper .page-item {
     margin: 0;
 }
 
 .dataTables_wrapper .page-item .page-link {
-    min-width: 28px;
-    height: 28px;
-    padding: 0 6px;
-    font-size: 0.75rem;
-    line-height: 28px;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    font-size: 0.8125rem;
+    line-height: 30px;
     text-align: center;
-    border-radius: 4px !important;
+    border-radius: 6px !important;
     border: 1px solid var(--gray-200);
     color: var(--gray-600);
     background: white;
     transition: all var(--transition-fast);
+    box-shadow: none !important;
 }
 
 .dataTables_wrapper .page-item .page-link:hover {

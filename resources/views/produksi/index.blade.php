@@ -36,30 +36,20 @@
         </div>
     </div>
 
-    {{-- Stats Cards — Row 2: Rata-rata Produksi --}}
-    <div class="grid grid-cols-3 mb-5">
-        <div class="kpi-card kpi-utilisasi">
-            <div class="kpi-icon"><i class="fa-solid fa-fish" style="font-size:1rem;"></i></div>
-            <div>
-                <div class="kpi-value">{{ number_format($stats['avg_volume'], 0, ',', '.') }} <span style="font-size:0.6em;font-weight:600;">kg</span></div>
-                <div class="kpi-label">RATA-RATA VOLUME PRODUKSI</div>
-                <div class="kpi-sub">Per lokasi periode ini</div>
+    {{-- Analytical Charts --}}
+    <div class="grid grid-cols-2 lg:grid-cols-2 md:grid-cols-1 mb-4 gap-4">
+        <div class="card shadow-sm border-0" style="border-radius: 12px; height: 100%;">
+            <div class="card-body">
+                <h5 class="fw-bold mb-1" style="color: var(--kkp-navy); font-size: 1rem;">Trend Rata-rata Produksi ({{ $tahun }})</h5>
+                <p class="text-muted mb-3" style="font-size: 0.8rem;">Trend rata-rata volume dan nilai produksi seluruh KDKMP aktif</p>
+                <div id="trendChart" style="height: 280px;"></div>
             </div>
         </div>
-        <div class="kpi-card kpi-biaya">
-            <div class="kpi-icon"><i class="fa-solid fa-coins" style="font-size:1rem;"></i></div>
-            <div>
-                <div class="kpi-value" style="font-size:1.1rem;">Rp {{ number_format($stats['avg_nilai'], 0, ',', '.') }}</div>
-                <div class="kpi-label">RATA-RATA NILAI PRODUKSI</div>
-                <div class="kpi-sub">Per lokasi periode ini</div>
-            </div>
-        </div>
-        <div class="kpi-card kpi-aktif">
-            <div class="kpi-icon"><i class="fa-solid fa-tag" style="font-size:1rem;"></i></div>
-            <div>
-                <div class="kpi-value" style="font-size:1.1rem;">Rp {{ number_format($stats['avg_harga_jual'], 0, ',', '.') }}</div>
-                <div class="kpi-label">RATA-RATA HARGA JUAL</div>
-                <div class="kpi-sub">Per kg seluruh lokasi</div>
+        <div class="card shadow-sm border-0" style="border-radius: 12px; height: 100%;">
+            <div class="card-body">
+                <h5 class="fw-bold mb-1" style="color: var(--kkp-navy); font-size: 1rem;">Sebaran Performa Seluruh Lokasi</h5>
+                <p class="text-muted mb-3" style="font-size: 0.8rem;">Titik sebaran 100 KDKMP berdasar Volume (x) dan Nilai Produksi (y)</p>
+                <div id="scatterChart" style="height: 280px;"></div>
             </div>
         </div>
     </div>
@@ -68,11 +58,6 @@
     <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
         <div class="card-body">
             <form method="GET" action="{{ route('produksi.index') }}" class="d-flex gap-3 flex-wrap align-items-end">
-                <div class="form-group mb-0" style="min-width:200px;">
-                    <label class="form-label">Cari KDMP</label>
-                    <input type="text" name="search" value="{{ $search }}" class="form-control"
-                        placeholder="Nama, kabupaten, provinsi...">
-                </div>
                 <div class="form-group" style="margin:0;">
                     <label class="form-label">Bulan</label>
                     <select name="bulan" class="form-control form-select">
@@ -258,6 +243,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         $(document).ready(function () {
             $('#monitoringTable').DataTable({
@@ -276,6 +262,128 @@
                 order: [[0, 'asc']],
                 columnDefs: [{ orderable: false, targets: [7] }]
             });
+
+            // ApexCharts Setup
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#D1D5DB' : '#374151';
+            const gridColor = isDark ? '#374151' : '#E5E7EB';
+            
+            // Trend Chart
+            const trendData = {!! json_encode($chartTrend ?? ['labels'=>[],'avg_volume'=>[],'avg_nilai'=>[], 'avg_harga'=>[]]) !!};
+            if(trendData.labels && trendData.labels.length > 0) {
+                const trendOptions = {
+                    series: [{
+                        name: 'Rata-rata Volume (kg)',
+                        type: 'column',
+                        data: trendData.avg_volume
+                    }, {
+                        name: 'Rata-rata Nilai (Rp)',
+                        type: 'line',
+                        data: trendData.avg_nilai
+                    }, {
+                        name: 'Rata-rata Harga (Rp/kg)',
+                        type: 'line',
+                        data: trendData.avg_harga
+                    }],
+                    chart: {
+                        height: 280,
+                        type: 'line',
+                        toolbar: { show: false },
+                        fontFamily: 'Manrope, sans-serif'
+                    },
+                    colors: ['#0891B2', '#10B981', '#F59E0B'],
+                    stroke: { width: [0, 3, 3], curve: 'smooth' },
+                    dataLabels: { 
+                        enabled: false
+                    },
+                    labels: trendData.labels,
+                    xaxis: {
+                        labels: { style: { colors: textColor } }
+                    },
+                    yaxis: [{
+                        title: { text: 'Volume (kg)' },
+                        labels: { style: { colors: textColor } },
+                        seriesName: 'Rata-rata Volume (kg)'
+                    }, {
+                        opposite: true,
+                        title: { text: 'Nilai/Harga (Rp)' },
+                        labels: { 
+                            style: { colors: textColor }, 
+                            formatter: value => {
+                                if(value >= 1000000) return 'Rp ' + (value/1000000).toFixed(1) + 'Jt';
+                                return 'Rp ' + value;
+                            }
+                        },
+                        seriesName: 'Rata-rata Nilai (Rp)'
+                    }, {
+                        show: false, // share y axis with nilai
+                        seriesName: 'Rata-rata Nilai (Rp)'
+                    }],
+                    grid: { borderColor: gridColor },
+                    theme: { mode: isDark ? 'dark' : 'light' }
+                };
+                new ApexCharts(document.querySelector("#trendChart"), trendOptions).render();
+            } else {
+                document.querySelector("#trendChart").innerHTML = '<div class="d-flex h-100 align-items-center justify-content-center text-muted">Belum ada data tahun ini</div>';
+            }
+
+            // Scatter Plot Seluruh Lokasi
+            const scatterSeriesStr = `{!! $chartScatter ?? '[]' !!}`;
+            const scatterData = JSON.parse(scatterSeriesStr);
+            
+            if(scatterData && scatterData.length > 0) {
+                const scatterOptions = {
+                    series: scatterData,
+                    chart: {
+                        height: 280,
+                        type: 'scatter',
+                        zoom: { enabled: true, type: 'xy' },
+                        toolbar: { show: true, tools: { download: false } },
+                        fontFamily: 'Manrope, sans-serif'
+                    },
+                    colors: ['#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#3B82F6'],
+                    markers: {
+                        size: 6,
+                        strokeWidth: 1,
+                        hover: { size: 8 }
+                    },
+                    dataLabels: { enabled: false },
+                    tooltip: {
+                        custom: function({series, seriesIndex, dataPointIndex, w}) {
+                            const data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+                            return '<div style="padding: 10px; font-family: Manrope, sans-serif; font-size: 0.8rem; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 6px;">' +
+                                '<strong>' + w.globals.initialSeries[seriesIndex].name + '</strong><br/>' +
+                                '<div style="margin-top: 5px;">' +
+                                'Volume: <strong>' + data[0].toLocaleString() + ' kg</strong><br/>' +
+                                'Nilai: <strong>Rp ' + data[1].toLocaleString() + '</strong><br/>' +
+                                'Harga Jual: <strong>Rp ' + data[2].toLocaleString() + ' / kg</strong>' +
+                                '</div></div>';
+                        }
+                    },
+                    xaxis: {
+                        title: { text: 'Volume Produksi (kg)', style: { color: textColor } },
+                        labels: { style: { colors: textColor } },
+                        tickAmount: 5
+                    },
+                    yaxis: {
+                        title: { text: 'Nilai Produksi (Rp)', style: { color: textColor } },
+                        labels: { 
+                            style: { colors: textColor },
+                            formatter: value => {
+                                if(value >= 1000000) return 'Rp ' + (value/1000000).toFixed(1) + 'Jt';
+                                return value;
+                            }
+                        },
+                        tickAmount: 5
+                    },
+                    legend: { show: false }, // Hide legend because there are up to 100 series
+                    grid: { borderColor: gridColor, xaxis: { lines: { show: true } }, yaxis: { lines: { show: true } } },
+                    theme: { mode: isDark ? 'dark' : 'light' }
+                };
+                new ApexCharts(document.querySelector("#scatterChart"), scatterOptions).render();
+            } else {
+                document.querySelector("#scatterChart").innerHTML = '<div class="d-flex h-100 align-items-center justify-content-center text-muted">Belum ada data bulan ini</div>';
+            }
         });
     </script>
 @endpush
