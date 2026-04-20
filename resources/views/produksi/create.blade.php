@@ -34,7 +34,7 @@
 </div>
 @endif
 
-<form action="{{ route('produksi.store') }}" method="POST">
+<form action="{{ route('produksi.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
     {{-- Section 1: Informasi Lokasi --}}
@@ -120,32 +120,35 @@
             <div class="grid grid-cols-3">
                 <div class="form-group">
                     <label class="form-label">Biaya Pakan (Rp)</label>
-                    <input type="number" name="biaya_pakan" min="0" value="{{ old('biaya_pakan', 0) }}" class="form-control">
+                    <input type="text" class="form-control rupiah-input" data-target="biaya_pakan" value="{{ old('biaya_pakan', 0) }}" inputmode="numeric">
+                    <input type="hidden" name="biaya_pakan" value="{{ old('biaya_pakan', 0) }}">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Biaya Bibit (Rp)</label>
-                    <input type="number" name="biaya_bibit" min="0" value="{{ old('biaya_bibit', 0) }}" class="form-control">
+                    <input type="text" class="form-control rupiah-input" data-target="biaya_bibit" value="{{ old('biaya_bibit', 0) }}" inputmode="numeric">
+                    <input type="hidden" name="biaya_bibit" value="{{ old('biaya_bibit', 0) }}">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Biaya Lainnya (Rp)</label>
-                    <input type="number" name="biaya_lainnya" min="0" value="{{ old('biaya_lainnya', 0) }}" class="form-control">
+                    <input type="text" class="form-control rupiah-input" data-target="biaya_lainnya" value="{{ old('biaya_lainnya', 0) }}" inputmode="numeric">
+                    <input type="hidden" name="biaya_lainnya" value="{{ old('biaya_lainnya', 0) }}">
                 </div>
             </div>
             <div class="grid grid-cols-3 mt-2">
                 <div class="form-group">
                     <label class="form-label">Volume Panen (kg)</label>
-                    <input type="number" name="volume_panen_kg" min="0" step="0.01"
-                        value="{{ old('volume_panen_kg', 0) }}" class="form-control">
+                    <input type="text" class="form-control rupiah-input" data-target="volume_panen_kg" data-decimal="true" value="{{ old('volume_panen_kg', 0) }}" inputmode="decimal">
+                    <input type="hidden" name="volume_panen_kg" value="{{ old('volume_panen_kg', 0) }}">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Nilai Produksi (Rp)</label>
-                    <input type="number" name="nilai_produksi" min="0"
-                        value="{{ old('nilai_produksi', 0) }}" class="form-control">
+                    <input type="text" class="form-control rupiah-input" data-target="nilai_produksi" value="{{ old('nilai_produksi', 0) }}" inputmode="numeric">
+                    <input type="hidden" name="nilai_produksi" value="{{ old('nilai_produksi', 0) }}">
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">Jumlah Pembudidaya Aktif</label>
-                    <input type="number" name="jumlah_pembudidaya_aktif" min="0"
-                        value="{{ old('jumlah_pembudidaya_aktif', 0) }}" class="form-control">
+                    <input type="text" class="form-control rupiah-input" data-target="jumlah_pembudidaya_aktif" value="{{ old('jumlah_pembudidaya_aktif', 0) }}" inputmode="numeric">
+                    <input type="hidden" name="jumlah_pembudidaya_aktif" value="{{ old('jumlah_pembudidaya_aktif', 0) }}">
                 </div>
             </div>
         </div>
@@ -182,6 +185,48 @@
                     <input type="number" name="jumlah_kolam_total" min="0"
                         value="{{ old('jumlah_kolam_total') }}" class="form-control" placeholder="Total kolam">
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Section 3c: Upload Foto Dokumentasi --}}
+    <div class="monitoring-form-card">
+        <div class="monitoring-form-header">
+            <div class="monitoring-form-header-icon" style="background: rgba(236, 72, 153, 0.1); color: #EC4899;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="monitoring-form-title">Foto Dokumentasi</h3>
+                <p class="monitoring-form-desc">Upload foto kegiatan budidaya (JPG/PNG, maks. total 50 MB)</p>
+            </div>
+        </div>
+        <div class="monitoring-form-body">
+            <div class="upload-zone" id="uploadZone">
+                <input type="file" name="foto[]" id="fotoInput" multiple accept="image/jpeg,image/png" style="display:none;">
+                <div class="upload-zone-content" id="uploadPlaceholder">
+                    <div class="upload-zone-icon">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <p class="upload-zone-text">Seret & lepas foto di sini, atau <span class="upload-zone-link">pilih file</span></p>
+                    <p class="upload-zone-hint">Format: JPG, PNG · Bisa pilih lebih dari 1 file · Maks. total 50 MB</p>
+                </div>
+            </div>
+            <div class="upload-preview-grid" id="previewGrid"></div>
+            <div class="upload-info" id="uploadInfo" style="display:none;">
+                <span id="uploadCount">0 file</span>
+                <span class="upload-info-dot">·</span>
+                <span id="uploadSize">0 MB</span>
+                <span class="upload-info-dot">·</span>
+                <span id="uploadLimit">Sisa: 50 MB</span>
+                <button type="button" class="upload-clear-btn" id="clearAllBtn" title="Hapus Semua">
+                    <i class="fa-solid fa-trash-can"></i> Hapus Semua
+                </button>
+            </div>
+            <div class="upload-error" id="uploadError" style="display:none;">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span id="uploadErrorMsg"></span>
             </div>
         </div>
     </div>
@@ -407,6 +452,176 @@
     [data-theme="dark"] .monitoring-form-desc {
         color: #9CA3AF;
     }
+    /* ===== Upload Zone ===== */
+    .upload-zone {
+        border: 2px dashed var(--gray-300);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 200ms ease;
+        background: var(--gray-50);
+    }
+    .upload-zone:hover,
+    .upload-zone.dragover {
+        border-color: #EC4899;
+        background: rgba(236, 72, 153, 0.04);
+    }
+    .upload-zone-icon {
+        font-size: 2.25rem;
+        color: var(--gray-300);
+        margin-bottom: 0.75rem;
+        transition: color 200ms;
+    }
+    .upload-zone:hover .upload-zone-icon,
+    .upload-zone.dragover .upload-zone-icon {
+        color: #EC4899;
+    }
+    .upload-zone-text {
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--gray-600);
+        margin: 0 0 0.25rem;
+    }
+    .upload-zone-link {
+        color: #EC4899;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
+    .upload-zone-hint {
+        font-size: 0.75rem;
+        color: var(--gray-400);
+        margin: 0;
+    }
+
+    /* Preview Grid */
+    .upload-preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+    .upload-preview-item {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        border: 1px solid var(--gray-200);
+        background: var(--gray-100);
+    }
+    .upload-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .upload-preview-remove {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        border: none;
+        font-size: 0.65rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 150ms;
+        opacity: 0;
+    }
+    .upload-preview-item:hover .upload-preview-remove {
+        opacity: 1;
+    }
+    .upload-preview-remove:hover {
+        background: #DC2626;
+    }
+    .upload-preview-name {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 4px 6px;
+        background: linear-gradient(transparent, rgba(0,0,0,0.65));
+        color: #fff;
+        font-size: 0.62rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Upload Info Bar */
+    .upload-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        font-size: 0.78rem;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    .upload-info-dot {
+        color: var(--gray-300);
+    }
+    .upload-clear-btn {
+        margin-left: auto;
+        background: rgba(220, 38, 38, 0.08);
+        color: #DC2626;
+        border: none;
+        padding: 0.3rem 0.7rem;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 150ms;
+    }
+    .upload-clear-btn:hover {
+        background: rgba(220, 38, 38, 0.16);
+    }
+
+    /* Upload Error */
+    .upload-error {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: #FEF2F2;
+        border: 1px solid #FECACA;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        color: #DC2626;
+        font-weight: 500;
+    }
+
+    /* Dark Mode Upload */
+    [data-theme="dark"] .upload-zone {
+        background: rgba(255,255,255,0.02);
+        border-color: #374151;
+    }
+    [data-theme="dark"] .upload-zone:hover,
+    [data-theme="dark"] .upload-zone.dragover {
+        border-color: #EC4899;
+        background: rgba(236, 72, 153, 0.06);
+    }
+    [data-theme="dark"] .upload-zone-text { color: #D1D5DB; }
+    [data-theme="dark"] .upload-zone-hint { color: #6B7280; }
+    [data-theme="dark"] .upload-preview-item {
+        border-color: #374151;
+        background: #1F2937;
+    }
+    [data-theme="dark"] .upload-error {
+        background: rgba(220, 38, 38, 0.12);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #FCA5A5;
+    }
+    [data-theme="dark"] .upload-info { color: #9CA3AF; }
+
     [data-theme="dark"] .monitoring-alert-error {
         background: rgba(220, 38, 38, 0.1);
         border-color: #EF4444;
@@ -446,5 +661,243 @@
         progresInput.addEventListener('input', updateBar);
         updateBar();
     }
+
+    // ===== FOTO UPLOAD HANDLER =====
+    const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50 MB
+    const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
+    const uploadZone = document.getElementById('uploadZone');
+    const fotoInput = document.getElementById('fotoInput');
+    const previewGrid = document.getElementById('previewGrid');
+    const uploadInfo = document.getElementById('uploadInfo');
+    const uploadCount = document.getElementById('uploadCount');
+    const uploadSize = document.getElementById('uploadSize');
+    const uploadLimit = document.getElementById('uploadLimit');
+    const uploadError = document.getElementById('uploadError');
+    const uploadErrorMsg = document.getElementById('uploadErrorMsg');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+
+    let selectedFiles = []; // DataTransfer to manage FileList
+
+    // Click to open file picker
+    uploadZone.addEventListener('click', () => fotoInput.click());
+
+    // Drag & drop events
+    ['dragenter', 'dragover'].forEach(evt => {
+        uploadZone.addEventListener(evt, e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+        uploadZone.addEventListener(evt, e => { e.preventDefault(); uploadZone.classList.remove('dragover'); });
+    });
+    uploadZone.addEventListener('drop', e => {
+        const files = Array.from(e.dataTransfer.files).filter(f => ALLOWED_TYPES.includes(f.type));
+        addFiles(files);
+    });
+
+    // File input change
+    fotoInput.addEventListener('change', () => {
+        const files = Array.from(fotoInput.value ? fotoInput.files : []);
+        addFiles(files);
+    });
+
+    // Clear all
+    clearAllBtn.addEventListener('click', () => {
+        selectedFiles = [];
+        syncInputFiles();
+        renderPreviews();
+    });
+
+    function addFiles(newFiles) {
+        hideError();
+        const validFiles = newFiles.filter(f => {
+            if (!ALLOWED_TYPES.includes(f.type)) {
+                showError('Format file "' + f.name + '" tidak didukung. Hanya JPG dan PNG.');
+                return false;
+            }
+            return true;
+        });
+
+        const merged = [...selectedFiles, ...validFiles];
+        const totalSize = merged.reduce((sum, f) => sum + f.size, 0);
+
+        if (totalSize > MAX_TOTAL_SIZE) {
+            showError('Total ukuran file melebihi batas 50 MB. Silakan kurangi jumlah atau ukuran file.');
+            return;
+        }
+
+        selectedFiles = merged;
+        syncInputFiles();
+        renderPreviews();
+    }
+
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        syncInputFiles();
+        renderPreviews();
+        hideError();
+    }
+
+    function syncInputFiles() {
+        const dt = new DataTransfer();
+        selectedFiles.forEach(f => dt.items.add(f));
+        fotoInput.files = dt.files;
+    }
+
+    function renderPreviews() {
+        previewGrid.innerHTML = '';
+        const totalSize = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+
+        if (selectedFiles.length === 0) {
+            uploadInfo.style.display = 'none';
+            return;
+        }
+
+        uploadInfo.style.display = 'flex';
+        uploadCount.textContent = selectedFiles.length + ' file';
+        uploadSize.textContent = formatSize(totalSize);
+        uploadLimit.textContent = 'Sisa: ' + formatSize(MAX_TOTAL_SIZE - totalSize);
+
+        selectedFiles.forEach((file, idx) => {
+            const item = document.createElement('div');
+            item.className = 'upload-preview-item';
+
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.onload = () => URL.revokeObjectURL(img.src);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'upload-preview-remove';
+            removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            removeBtn.addEventListener('click', (e) => { e.stopPropagation(); removeFile(idx); });
+
+            const nameLabel = document.createElement('div');
+            nameLabel.className = 'upload-preview-name';
+            nameLabel.textContent = file.name;
+
+            item.appendChild(img);
+            item.appendChild(removeBtn);
+            item.appendChild(nameLabel);
+            previewGrid.appendChild(item);
+        });
+    }
+
+    function formatSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    function showError(msg) {
+        uploadError.style.display = 'flex';
+        uploadErrorMsg.textContent = msg;
+    }
+
+    function hideError() {
+        uploadError.style.display = 'none';
+    }
+
+    // ===== RUPIAH AUTO-FORMAT =====
+    function formatRupiah(angka) {
+        if (angka === '' || angka === null || angka === undefined) return '0';
+        const str = String(angka);
+        // Handle decimal
+        const parts = str.split(',');
+        let intPart = parts[0].replace(/\./g, ''); // remove existing dots
+        intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return parts.length > 1 ? intPart + ',' + parts[1] : intPart;
+    }
+
+    function parseRupiah(str) {
+        if (!str) return 0;
+        // Remove dots (thousand sep), replace comma with dot (decimal)
+        const cleaned = str.replace(/\./g, '').replace(',', '.');
+        const val = parseFloat(cleaned);
+        return isNaN(val) ? 0 : val;
+    }
+
+    document.querySelectorAll('.rupiah-input').forEach(input => {
+        const targetName = input.getAttribute('data-target');
+        const hiddenInput = document.querySelector('input[type="hidden"][name="' + targetName + '"]');
+        const allowDecimal = input.getAttribute('data-decimal') === 'true';
+
+        // Format initial value on load
+        const initVal = parseFloat(input.value) || 0;
+        if (allowDecimal && initVal % 1 !== 0) {
+            input.value = formatRupiah(String(initVal).replace('.', ','));
+        } else {
+            input.value = formatRupiah(String(Math.round(initVal)));
+        }
+
+        // Select all text on focus ONLY when value is "0"
+        input.addEventListener('focus', function() {
+            if (this.value === '0') {
+                this.select();
+            }
+        });
+
+        // Format on input
+        input.addEventListener('input', function(e) {
+            let cursorPos = this.selectionStart;
+            let oldLen = this.value.length;
+
+            // Only allow digits, dots, and comma (for decimal)
+            let raw = this.value;
+            if (allowDecimal) {
+                raw = raw.replace(/[^\d,]/g, '');
+                // Only allow one comma
+                const commaIdx = raw.indexOf(',');
+                if (commaIdx !== -1) {
+                    raw = raw.substring(0, commaIdx + 1) + raw.substring(commaIdx + 1).replace(/,/g, '');
+                    // Limit to 2 decimal places
+                    const decPart = raw.substring(commaIdx + 1);
+                    if (decPart.length > 2) {
+                        raw = raw.substring(0, commaIdx + 3);
+                    }
+                }
+            } else {
+                raw = raw.replace(/[^\d]/g, '');
+            }
+
+            // Remove leading zeros (except for "0" itself or "0,xx")
+            if (allowDecimal) {
+                const parts = raw.split(',');
+                parts[0] = parts[0].replace(/^0+/, '') || '0';
+                raw = parts.join(',');
+            } else {
+                raw = raw.replace(/^0+/, '') || '0';
+            }
+
+            const formatted = formatRupiah(raw);
+            this.value = formatted;
+
+            // Adjust cursor position
+            let newLen = formatted.length;
+            cursorPos = cursorPos + (newLen - oldLen);
+            if (cursorPos < 0) cursorPos = 0;
+            this.setSelectionRange(cursorPos, cursorPos);
+
+            // Sync hidden input with raw number
+            if (hiddenInput) {
+                hiddenInput.value = parseRupiah(formatted);
+            }
+        });
+
+        // Sync on blur too
+        input.addEventListener('blur', function() {
+            if (this.value === '' || this.value === ',') {
+                this.value = '0';
+            }
+            if (hiddenInput) {
+                hiddenInput.value = parseRupiah(this.value);
+            }
+        });
+
+        // Initial sync
+        if (hiddenInput) {
+            hiddenInput.value = parseRupiah(input.value);
+        }
+    });
 </script>
 @endpush

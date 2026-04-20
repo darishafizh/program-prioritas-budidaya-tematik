@@ -161,85 +161,65 @@
         color: #fff;
     }
 
+    /* Hero Status Badge */
+    .hero-status-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 1rem;
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: var(--radius-full);
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.9);
+    }
+
+    .hero-status-badge .status-dot-hero {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        animation: status-glow 2s ease-in-out infinite;
+    }
+
+    .hero-status-badge .status-dot-hero.success { background: #34D399; box-shadow: 0 0 6px rgba(52,211,153,0.5); }
+    .hero-status-badge .status-dot-hero.warning { background: #FBBF24; box-shadow: 0 0 6px rgba(251,191,36,0.5); }
+    .hero-status-badge .status-dot-hero.danger  { background: #F87171; box-shadow: 0 0 6px rgba(248,113,113,0.5); }
+    .hero-status-badge .status-dot-hero.primary { background: #60A5FA; box-shadow: 0 0 6px rgba(96,165,250,0.5); }
+    .hero-status-badge .status-dot-hero.secondary { background: #9CA3AF; box-shadow: 0 0 6px rgba(156,163,175,0.3); }
+
+    @keyframes status-glow {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .hero-status-label {
+        font-size: 0.7rem;
+        color: rgba(255,255,255,0.5);
+        font-weight: 500;
+        letter-spacing: 0.03em;
+    }
+
     /* KPI Metrics Row */
     .kpi-metrics-row {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 0.875rem;
         margin-bottom: 1.75rem;
     }
 
-    .kpi-metric {
-        background: var(--bg-surface);
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-lg);
-        padding: 1.125rem 1.25rem;
-        position: relative;
-        overflow: hidden;
-        transition: all 250ms ease;
-    }
-
-    .kpi-metric:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .kpi-metric::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-    }
-
-    .kpi-metric.metric-teal::before { background: linear-gradient(90deg, #0891B2, #06B6D4); }
-    .kpi-metric.metric-green::before { background: linear-gradient(90deg, #059669, #10B981); }
-    .kpi-metric.metric-navy::before { background: linear-gradient(90deg, #1E3A5F, #3B82F6); }
-    .kpi-metric.metric-amber::before { background: linear-gradient(90deg, #D97706, #F59E0B); }
-    .kpi-metric.metric-emerald::before { background: linear-gradient(90deg, #059669, #34D399); }
-    .kpi-metric.metric-rose::before { background: linear-gradient(90deg, #DC2626, #EF4444); }
-
-    .kpi-metric-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.95rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .metric-teal .kpi-metric-icon { background: rgba(8,145,178,0.1); color: #0891B2; }
-    .metric-green .kpi-metric-icon { background: rgba(16,185,129,0.1); color: #10B981; }
-    .metric-navy .kpi-metric-icon { background: rgba(59,130,246,0.1); color: #3B82F6; }
-    .metric-amber .kpi-metric-icon { background: rgba(245,158,11,0.1); color: #F59E0B; }
-    .metric-emerald .kpi-metric-icon { background: rgba(5,150,105,0.1); color: #059669; }
-    .metric-rose .kpi-metric-icon { background: rgba(239,68,68,0.1); color: #EF4444; }
-
-    .kpi-metric-label {
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: var(--gray-500);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        margin-bottom: 0.25rem;
-    }
-
-    .kpi-metric-value {
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: var(--gray-900);
-        line-height: 1.15;
-        letter-spacing: -0.02em;
-    }
-
-    .kpi-metric-sub {
-        font-size: 0.68rem;
-        color: var(--gray-400);
-        margin-top: 0.2rem;
-    }
+    /* CSS untuk kpi-metric custom telah dihapus karena menggunakan standar dashboard global (.kpi-card) */
 
     /* Chart Section */
     .chart-section {
@@ -674,12 +654,7 @@
         background: linear-gradient(135deg, #0f172a 0%, #164E63 60%, #0e7490 100%);
     }
 
-    [data-theme="dark"] .kpi-metric { 
-        background: #111827; 
-        border-color: #1F2937; 
-    }
-
-    [data-theme="dark"] .kpi-metric-value { color: #E5E7EB; }
+    /* Dark mode override kpi-metric custom dihapus */
 
     [data-theme="dark"] .chart-section,
     [data-theme="dark"] .records-section { 
@@ -770,51 +745,59 @@
             </a>
         </div>
     </div>
+    {{-- Status Terakhir Badge --}}
+    <div class="hero-status-row">
+        <span class="hero-status-label"><i class="fa-solid fa-signal" style="margin-right:3px;"></i> Status Terakhir:</span>
+        @if($lastRecord)
+        <div class="hero-status-badge">
+            <span class="status-dot-hero {{ $lastRecord->status_color }}"></span>
+            {!! $lastRecord->status_icon !!} {{ $lastRecord->status_label }}
+        </div>
+        @else
+        <div class="hero-status-badge">
+            <span class="status-dot-hero secondary"></span>
+            Belum Ada Data
+        </div>
+        @endif
+    </div>
 </div>
 
 {{-- KPI Metrics Row --}}
 <div class="kpi-metrics-row" id="kpi-metrics">
-    <div class="kpi-metric metric-teal">
-        <div class="kpi-metric-icon"><i class="fa-solid fa-clipboard-list"></i></div>
-        <div class="kpi-metric-label">Total Laporan</div>
-        <div class="kpi-metric-value">{{ $records->count() }}</div>
-        <div class="kpi-metric-sub">periode tercatat</div>
-    </div>
-    <div class="kpi-metric metric-green">
-        <div class="kpi-metric-icon"><i class="fa-solid fa-fish"></i></div>
-        <div class="kpi-metric-label">Total Panen</div>
-        <div class="kpi-metric-value">{{ number_format($records->sum('volume_panen_kg'),0,',','.') }}</div>
-        <div class="kpi-metric-sub">kilogram</div>
-    </div>
-    <div class="kpi-metric metric-navy">
-        <div class="kpi-metric-icon"><i class="fa-solid fa-coins"></i></div>
-        <div class="kpi-metric-label">Total Nilai</div>
-        <div class="kpi-metric-value" style="font-size:1.1rem;">Rp {{ number_format($totalNilai,0,',','.') }}</div>
-        <div class="kpi-metric-sub">nilai produksi</div>
-    </div>
-    <div class="kpi-metric metric-amber">
-        <div class="kpi-metric-icon"><i class="fa-solid fa-signal"></i></div>
-        <div class="kpi-metric-label">Status Terakhir</div>
-        @if($lastRecord)
-        <div class="kpi-metric-value" style="font-size:1rem;">
-            <span class="status-pill {{ $lastRecord->status_color }}" style="font-size:0.78rem;">
-                {!! $lastRecord->status_icon !!} {{ $lastRecord->status_label }}
-            </span>
+    <div class="kpi-card kpi-produksi">
+        <div class="kpi-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $records->count() }}</div>
+            <div class="kpi-label">Total Laporan</div>
+            <div class="kpi-sub">periode tercatat</div>
         </div>
-        @else
-        <div class="kpi-metric-value" style="font-size:0.9rem; color: var(--gray-400);">Belum Ada</div>
-        @endif
-        <div class="kpi-metric-sub">kondisi saat ini</div>
     </div>
-    <div class="kpi-metric {{ $keuntungan >= 0 ? 'metric-emerald' : 'metric-rose' }}">
-        <div class="kpi-metric-icon">
-            <i class="fa-solid {{ $keuntungan >= 0 ? 'fa-trending-up' : 'fa-trending-down' }}"></i>
+    <div class="kpi-card kpi-aktif">
+        <div class="kpi-icon"><i class="fa-solid fa-fish"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ number_format($records->sum('volume_panen_kg'),0,',','.') }}</div>
+            <div class="kpi-label">Total Panen</div>
+            <div class="kpi-sub">kilogram</div>
         </div>
-        <div class="kpi-metric-label">Keuntungan</div>
-        <div class="kpi-metric-value" style="font-size:1.1rem; color: {{ $keuntungan >= 0 ? '#059669' : '#DC2626' }};">
-            Rp {{ number_format($keuntungan,0,',','.') }}
+    </div>
+    <div class="kpi-card kpi-perkolam">
+        <div class="kpi-icon"><i class="fa-solid fa-coins"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value" style="font-size:1.1rem;">Rp {{ number_format($totalNilai,0,',','.') }}</div>
+            <div class="kpi-label">Total Nilai</div>
+            <div class="kpi-sub">nilai produksi</div>
         </div>
-        <div class="kpi-metric-sub">nilai - biaya operasional</div>
+    </div>
+
+    <div class="kpi-card {{ $keuntungan >= 0 ? 'kpi-sr success' : 'kpi-sr danger' }}">
+        <div class="kpi-icon"><i class="fa-solid {{ $keuntungan >= 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down' }}"></i></div>
+        <div class="kpi-body">
+            <div class="kpi-value" style="font-size:1.1rem; color: {{ $keuntungan >= 0 ? '#059669' : '#DC2626' }};">
+                Rp {{ number_format($keuntungan,0,',','.') }}
+            </div>
+            <div class="kpi-label">Keuntungan</div>
+            <div class="kpi-sub">nilai - biaya operasional</div>
+        </div>
     </div>
 </div>
 
@@ -978,6 +961,20 @@
                 <span>{{ $record->catatan }}</span>
             </div>
             @endif
+        </div>
+        @endif
+        @if($record->foto && count($record->foto) > 0)
+        <div class="record-photos" style="margin-top:0.75rem;">
+            <div style="font-size:0.72rem; font-weight:600; color:var(--gray-500); margin-bottom:0.4rem; display:flex; align-items:center; gap:0.35rem;">
+                <i class="fa-solid fa-images"></i> Foto Dokumentasi ({{ count($record->foto) }})
+            </div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                @foreach($record->foto as $foto)
+                <a href="{{ asset('storage/' . $foto) }}" target="_blank" style="display:block; width:80px; height:80px; border-radius:8px; overflow:hidden; border:1px solid var(--gray-200); flex-shrink:0;">
+                    <img src="{{ asset('storage/' . $foto) }}" alt="Foto dokumentasi" style="width:100%; height:100%; object-fit:cover; display:block; transition: transform 200ms;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                </a>
+                @endforeach
+            </div>
         </div>
         @endif
     </div>

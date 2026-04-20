@@ -158,6 +158,57 @@
         .pagenum:before {
             content: counter(page);
         }
+
+        /* Foto Dokumentasi */
+        .foto-section {
+            margin-top: 20px;
+            page-break-before: always;
+        }
+
+        .foto-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 12px;
+        }
+
+        .foto-periode {
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: #fafafa;
+        }
+
+        .foto-periode-title {
+            font-weight: bold;
+            font-size: 11px;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .foto-grid {
+            border: none;
+            width: auto;
+        }
+
+        .foto-grid td {
+            border: none;
+            padding: 4px;
+            text-align: left;
+            vertical-align: top;
+            background: transparent;
+        }
+
+        .foto-grid img {
+            width: 230px;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+
+        .foto-caption {
+            font-size: 9px;
+            color: #666;
+            margin-top: 3px;
+        }
     </style>
 </head>
 
@@ -220,14 +271,14 @@
             <td>{{ $kdmp->komoditas ?? '-' }}</td>
         </tr>
         <tr>
-            <td class="label">Ketua / Anggota</td>
+            <td class="label">Ketua / Anggota (Telp)</td>
             <td class="separator">:</td>
-            <td>{{ $kdmp->ketua_anggota ?? '-' }}</td>
+            <td>{{ $kdmp->ketua_anggota ?? '-' }}{{ $kdmp->no_hp ? ' ('.$kdmp->no_hp.')' : '' }}</td>
         </tr>
         <tr>
-            <td class="label">Penyuluh</td>
+            <td class="label">Penyuluh (Telp)</td>
             <td class="separator">:</td>
-            <td>{{ $kdmp->nama_penyuluh ?? '-' }}</td>
+            <td>{{ $kdmp->nama_penyuluh ?? '-' }}{{ $kdmp->no_hp_penyuluh ? ' ('.$kdmp->no_hp_penyuluh.')' : '' }}</td>
         </tr>
     </table>
 
@@ -322,6 +373,47 @@
             @endforelse
         </tbody>
     </table>
+
+    {{-- Foto Dokumentasi --}}
+    @php
+        $recordsWithFoto = $records->filter(fn($r) => $r->foto && count($r->foto) > 0);
+    @endphp
+    @if($recordsWithFoto->count() > 0)
+    <div class="foto-section">
+        <h4>Foto Dokumentasi</h4>
+        @foreach($recordsWithFoto as $record)
+        <div class="foto-periode">
+            <div class="foto-periode-title">
+                {{ $record->bulan_label }} {{ $record->tahun }} — {{ count($record->foto) }} foto
+            </div>
+            <table class="foto-grid">
+                <tr>
+                @foreach($record->foto as $idx => $foto)
+                    @php
+                        $fotoPath = storage_path('app/public/' . $foto);
+                        $fotoBase64 = '';
+                        if (file_exists($fotoPath)) {
+                            $fotoType = pathinfo($fotoPath, PATHINFO_EXTENSION);
+                            $fotoData = file_get_contents($fotoPath);
+                            $fotoBase64 = 'data:image/' . $fotoType . ';base64,' . base64_encode($fotoData);
+                        }
+                    @endphp
+                    @if($fotoBase64)
+                    <td>
+                        <img src="{{ $fotoBase64 }}" alt="Foto {{ $idx + 1 }}">
+                        <div class="foto-caption">Foto {{ $idx + 1 }}</div>
+                    </td>
+                    @endif
+                    @if(($idx + 1) % 3 == 0 && !$loop->last)
+                </tr><tr>
+                    @endif
+                @endforeach
+                </tr>
+            </table>
+        </div>
+        @endforeach
+    </div>
+    @endif
 
     <div style="margin-top: 20px; font-size: 10px; color: #777;">
         <p>Dicetak pada: {{ now()->timezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }} WIB</p>
