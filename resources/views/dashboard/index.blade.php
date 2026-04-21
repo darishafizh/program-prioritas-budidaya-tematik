@@ -560,7 +560,7 @@
                     <tr>
                         <td colspan="9" class="text-center" style="padding:2rem; color:var(--gray-400);">
                             <i class="fa-solid fa-inbox" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
-                            Belum ada data monitoring. <a href="{{ route('monitoring.create') }}">Mulai Input</a>
+                            Belum ada data monitoring. <a href="{{ route('produksi.create') }}">Mulai Input</a>
                         </td>
                     </tr>
                     @endforelse

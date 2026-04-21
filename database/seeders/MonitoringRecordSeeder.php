@@ -49,8 +49,10 @@ class MonitoringRecordSeeder extends Seeder
 
             foreach ($periodeList as $pIdx => $periode) {
                 // Beberapa KDMP tidak melapor setiap bulan
-                if ($profileGroup === 4 && $pIdx === 2) continue; // skip 1 bulan
-                if ($profileGroup === 3 && $pIdx === 3) continue; // skip bulan terakhir
+                if ($profileGroup === 4 && $pIdx === 2)
+                    continue; // skip 1 bulan
+                if ($profileGroup === 3 && $pIdx === 3)
+                    continue; // skip bulan terakhir
 
                 [$biayaBibit, $biayaPakan, $biayaLainnya, $volume, $nilaiProduksi, $sr, $kolamAktif, $kolamTotal, $pembudidaya, $status, $kendala, $tindakLanjut, $catatan]
                     = $this->generateRecord($profileGroup, $periode['bulan']);
@@ -58,28 +60,28 @@ class MonitoringRecordSeeder extends Seeder
                 $biayaOperasional = $biayaBibit + $biayaPakan + $biayaLainnya;
 
                 $records[] = [
-                    'kdmp_id'                  => $kdmp->id,
-                    'user_id'                  => $userId,
-                    'bulan'                    => $periode['bulan'],
-                    'tahun'                    => $periode['tahun'],
-                    'status_lokasi'            => $status,
-                    'progres_fisik'            => $this->generateProgresFisik($profileGroup, $pIdx),
-                    'volume_panen_kg'          => $volume,
-                    'nilai_produksi'           => $nilaiProduksi,
-                    'biaya_pakan'              => $biayaPakan,
-                    'biaya_bibit'              => $biayaBibit,
-                    'biaya_lainnya'            => $biayaLainnya,
-                    'biaya_operasional'        => $biayaOperasional,
+                    'kdmp_id' => $kdmp->id,
+                    'user_id' => $userId,
+                    'bulan' => $periode['bulan'],
+                    'tahun' => $periode['tahun'],
+                    'status_lokasi' => $status,
+                    'progres_fisik' => $this->generateProgresFisik($profileGroup, $pIdx),
+                    'volume_panen_kg' => $volume,
+                    'nilai_produksi' => $nilaiProduksi,
+                    'biaya_pakan' => $biayaPakan,
+                    'biaya_bibit' => $biayaBibit,
+                    'biaya_lainnya' => $biayaLainnya,
+                    'biaya_operasional' => $biayaOperasional,
                     'jumlah_pembudidaya_aktif' => $pembudidaya,
-                    'survival_rate'            => $sr,
-                    'jumlah_kolam_aktif'       => $kolamAktif,
-                    'jumlah_kolam_total'       => $kolamTotal,
-                    'kendala'                  => $kendala,
-                    'tindak_lanjut'            => $tindakLanjut,
-                    'catatan'                  => $catatan,
-                    'foto'                     => null,
-                    'created_at'               => now(),
-                    'updated_at'               => now(),
+                    'survival_rate' => $sr,
+                    'jumlah_kolam_aktif' => $kolamAktif,
+                    'jumlah_kolam_total' => $kolamTotal,
+                    'kendala' => $kendala,
+                    'tindak_lanjut' => $tindakLanjut,
+                    'catatan' => $catatan,
+                    'foto' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ];
             }
         }
@@ -134,107 +136,116 @@ class MonitoringRecordSeeder extends Seeder
 
         switch ($profile) {
             case 0: // High performer — profit selalu >= 18 juta (On Track pasti)
-                $biayaBibit   = mt_rand(2000000, 4000000);
-                $biayaPakan   = mt_rand(5000000, 8000000);
+                $biayaBibit = mt_rand(2000000, 4000000);
+                $biayaPakan = mt_rand(5000000, 8000000);
                 $biayaLainnya = mt_rand(1000000, 2000000);
-                $biayaTotal   = $biayaBibit + $biayaPakan + $biayaLainnya;
+                $biayaTotal = $biayaBibit + $biayaPakan + $biayaLainnya;
                 $targetProfit = mt_rand(18000000, 30000000);
                 $nilaiProduksi = round(($biayaTotal + $targetProfit) * $musimFaktor);
-                $hargaJual    = mt_rand(30000, 40000);
-                $volume       = round($nilaiProduksi / $hargaJual);
-                $sr           = round(mt_rand(85, 96) + (mt_rand(0, 99) / 100), 1);
-                $kolamTotal   = mt_rand(6, 10);
-                $kolamAktif   = $kolamTotal;
-                $pembudidaya  = mt_rand(8, 15);
-                $status       = 'on_track';
-                $kendala      = null;
+                $hargaJual = mt_rand(30000, 40000);
+                $volume = round($nilaiProduksi / $hargaJual);
+                $sr = round(mt_rand(85, 96) + (mt_rand(0, 99) / 100), 1);
+                $kolamTotal = mt_rand(6, 10);
+                $kolamAktif = $kolamTotal;
+                $pembudidaya = mt_rand(8, 15);
+                $status = 'on_track';
+                $kendala = null;
                 $tindakLanjut = null;
-                $catatan      = $catatanOptions[array_rand(array_slice($catatanOptions, 0, 5))];
+                $catatan = $catatanOptions[array_rand(array_slice($catatanOptions, 0, 5))];
                 break;
 
             case 1: // Good performer — profit 15-22 juta (On Track)
-                $biayaBibit   = mt_rand(2000000, 3500000);
-                $biayaPakan   = mt_rand(4000000, 7000000);
+                $biayaBibit = mt_rand(2000000, 3500000);
+                $biayaPakan = mt_rand(4000000, 7000000);
                 $biayaLainnya = mt_rand(800000, 1500000);
-                $biayaTotal   = $biayaBibit + $biayaPakan + $biayaLainnya;
+                $biayaTotal = $biayaBibit + $biayaPakan + $biayaLainnya;
                 $targetProfit = mt_rand(15000000, 22000000);
                 $nilaiProduksi = round(($biayaTotal + $targetProfit) * $musimFaktor);
-                $hargaJual    = mt_rand(27000, 36000);
-                $volume       = round($nilaiProduksi / $hargaJual);
-                $sr           = round(mt_rand(76, 88) + (mt_rand(0, 99) / 100), 1);
-                $kolamTotal   = mt_rand(5, 8);
-                $kolamAktif   = $kolamTotal - mt_rand(0, 1);
-                $pembudidaya  = mt_rand(6, 12);
-                $status       = 'on_track';
-                $kendala      = mt_rand(0, 3) === 0 ? $kendalaOptions[array_rand($kendalaOptions)] : null;
+                $hargaJual = mt_rand(27000, 36000);
+                $volume = round($nilaiProduksi / $hargaJual);
+                $sr = round(mt_rand(76, 88) + (mt_rand(0, 99) / 100), 1);
+                $kolamTotal = mt_rand(5, 8);
+                $kolamAktif = $kolamTotal - mt_rand(0, 1);
+                $pembudidaya = mt_rand(6, 12);
+                $status = 'on_track';
+                $kendala = mt_rand(0, 3) === 0 ? $kendalaOptions[array_rand($kendalaOptions)] : null;
                 $tindakLanjut = $kendala ? $tindakLanjutOptions[array_rand($tindakLanjutOptions)] : null;
-                $catatan      = $catatanOptions[array_rand($catatanOptions)];
+                $catatan = $catatanOptions[array_rand($catatanOptions)];
                 break;
 
             case 2: // Medium — profit acak 5-18 juta (borderline, campuran)
-                $biayaBibit   = mt_rand(3000000, 6000000);
-                $biayaPakan   = mt_rand(5000000, 9000000);
+                $biayaBibit = mt_rand(3000000, 6000000);
+                $biayaPakan = mt_rand(5000000, 9000000);
                 $biayaLainnya = mt_rand(1000000, 2500000);
-                $biayaTotal   = $biayaBibit + $biayaPakan + $biayaLainnya;
+                $biayaTotal = $biayaBibit + $biayaPakan + $biayaLainnya;
                 $targetProfit = mt_rand(5000000, 18000000);
                 $nilaiProduksi = round(($biayaTotal + $targetProfit) * $musimFaktor);
-                $hargaJual    = mt_rand(25000, 32000);
-                $volume       = round($nilaiProduksi / $hargaJual);
-                $sr           = round(mt_rand(62, 78) + (mt_rand(0, 99) / 100), 1);
-                $kolamTotal   = mt_rand(4, 7);
-                $kolamAktif   = $kolamTotal - mt_rand(0, 2);
-                $pembudidaya  = mt_rand(4, 9);
+                $hargaJual = mt_rand(25000, 32000);
+                $volume = round($nilaiProduksi / $hargaJual);
+                $sr = round(mt_rand(62, 78) + (mt_rand(0, 99) / 100), 1);
+                $kolamTotal = mt_rand(4, 7);
+                $kolamAktif = $kolamTotal - mt_rand(0, 2);
+                $pembudidaya = mt_rand(4, 9);
                 // Status ditentukan otomatis dari profit nyata
-                $status       = ($nilaiProduksi - $biayaTotal) >= 15000000 ? 'on_track' : 'bermasalah';
-                $kendala      = $kendalaOptions[array_rand($kendalaOptions)];
+                $status = ($nilaiProduksi - $biayaTotal) >= 15000000 ? 'on_track' : 'bermasalah';
+                $kendala = $kendalaOptions[array_rand($kendalaOptions)];
                 $tindakLanjut = $tindakLanjutOptions[array_rand($tindakLanjutOptions)];
-                $catatan      = $catatanOptions[array_rand($catatanOptions)];
+                $catatan = $catatanOptions[array_rand($catatanOptions)];
                 break;
 
             case 3: // Underperformer — profit -5 juta s/d 8 juta (selalu Underperform)
-                $biayaBibit   = mt_rand(4000000, 7000000);
-                $biayaPakan   = mt_rand(6000000, 10000000);
+                $biayaBibit = mt_rand(4000000, 7000000);
+                $biayaPakan = mt_rand(6000000, 10000000);
                 $biayaLainnya = mt_rand(1500000, 3000000);
-                $biayaTotal   = $biayaBibit + $biayaPakan + $biayaLainnya;
+                $biayaTotal = $biayaBibit + $biayaPakan + $biayaLainnya;
                 $targetProfit = mt_rand(-5000000, 8000000);
                 $nilaiProduksi = max(0, round(($biayaTotal + $targetProfit) * $musimFaktor));
-                $hargaJual    = mt_rand(22000, 28000);
-                $volume       = $nilaiProduksi > 0 ? round($nilaiProduksi / $hargaJual) : 0;
-                $sr           = round(mt_rand(42, 65) + (mt_rand(0, 99) / 100), 1);
-                $kolamTotal   = mt_rand(4, 6);
-                $kolamAktif   = mt_rand(1, max(1, $kolamTotal - 1));
-                $pembudidaya  = mt_rand(2, 6);
-                $status       = 'bermasalah';
-                $kendala      = $kendalaOptions[array_rand($kendalaOptions)];
+                $hargaJual = mt_rand(22000, 28000);
+                $volume = $nilaiProduksi > 0 ? round($nilaiProduksi / $hargaJual) : 0;
+                $sr = round(mt_rand(42, 65) + (mt_rand(0, 99) / 100), 1);
+                $kolamTotal = mt_rand(4, 6);
+                $kolamAktif = mt_rand(1, max(1, $kolamTotal - 1));
+                $pembudidaya = mt_rand(2, 6);
+                $status = 'bermasalah';
+                $kendala = $kendalaOptions[array_rand($kendalaOptions)];
                 $tindakLanjut = $tindakLanjutOptions[array_rand($tindakLanjutOptions)];
-                $catatan      = $catatanOptions[array_rand($catatanOptions)];
+                $catatan = $catatanOptions[array_rand($catatanOptions)];
                 break;
 
             case 4: // Vakum — produksi sangat rendah / nihil
             default:
-                $biayaBibit   = mt_rand(1000000, 3000000);
-                $biayaPakan   = mt_rand(2000000, 5000000);
+                $biayaBibit = mt_rand(1000000, 3000000);
+                $biayaPakan = mt_rand(2000000, 5000000);
                 $biayaLainnya = mt_rand(500000, 1500000);
-                $biayaTotal   = $biayaBibit + $biayaPakan + $biayaLainnya;
+                $biayaTotal = $biayaBibit + $biayaPakan + $biayaLainnya;
                 $nilaiProduksi = max(0, round(mt_rand(0, 4000000) * $musimFaktor));
-                $hargaJual    = mt_rand(20000, 25000);
-                $volume       = $nilaiProduksi > 0 ? round($nilaiProduksi / $hargaJual) : 0;
-                $sr           = round(mt_rand(18, 45) + (mt_rand(0, 99) / 100), 1);
-                $kolamTotal   = mt_rand(3, 5);
-                $kolamAktif   = mt_rand(0, 2);
-                $pembudidaya  = mt_rand(1, 4);
-                $status       = 'vakum';
-                $kendala      = $kendalaOptions[array_rand($kendalaOptions)];
+                $hargaJual = mt_rand(20000, 25000);
+                $volume = $nilaiProduksi > 0 ? round($nilaiProduksi / $hargaJual) : 0;
+                $sr = round(mt_rand(18, 45) + (mt_rand(0, 99) / 100), 1);
+                $kolamTotal = mt_rand(3, 5);
+                $kolamAktif = mt_rand(0, 2);
+                $pembudidaya = mt_rand(1, 4);
+                $status = 'vakum';
+                $kendala = $kendalaOptions[array_rand($kendalaOptions)];
                 $tindakLanjut = $tindakLanjutOptions[array_rand($tindakLanjutOptions)];
-                $catatan      = 'Lokasi perlu evaluasi dan pendampingan intensif.';
+                $catatan = 'Lokasi perlu evaluasi dan pendampingan intensif.';
                 break;
         }
 
         return [
-            $biayaBibit, $biayaPakan, $biayaLainnya,
-            $volume, $nilaiProduksi,
-            $sr, $kolamAktif, $kolamTotal, $pembudidaya,
-            $status, $kendala, $tindakLanjut, $catatan,
+            $biayaBibit,
+            $biayaPakan,
+            $biayaLainnya,
+            $volume,
+            $nilaiProduksi,
+            $sr,
+            $kolamAktif,
+            $kolamTotal,
+            $pembudidaya,
+            $status,
+            $kendala,
+            $tindakLanjut,
+            $catatan,
         ];
     }
 
