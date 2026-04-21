@@ -244,13 +244,26 @@
                                 <td>
                                     <div class="grid grid-cols-2 gap-2">
                                         <div>
-                                            <input type="text" name="lat" class="form-control" placeholder="Lat (-6.123)">
+                                            <input type="text" name="lat" id="input-lat" class="form-control" placeholder="Lat (-6.123)">
                                         </div>
                                         <div>
-                                            <input type="text" name="long" class="form-control"
+                                            <input type="text" name="long" id="input-long" class="form-control"
                                                 placeholder="Long (106.456)">
                                         </div>
                                     </div>
+                                    <button type="button" id="btn-get-location" onclick="getCurrentLocation()" class="btn-get-location mt-2">
+                                        <svg id="loc-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        <svg id="loc-spinner" style="display:none;" class="animate-spin" fill="none" viewBox="0 0 24 24" style="width:16px;height:16px;">
+                                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" style="opacity:0.25;"></circle>
+                                            <path fill="currentColor" style="opacity:0.75;" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                        </svg>
+                                        <span id="loc-text">Ambil Lokasi Saat Ini</span>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -432,6 +445,53 @@
 @push('styles')
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
+        /* Geolocation button */
+        .btn-get-location {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #0891B2;
+            background: rgba(8, 145, 178, 0.08);
+            border: 1.5px dashed #0891B2;
+            border-radius: var(--radius-md, 8px);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-get-location:hover {
+            background: rgba(8, 145, 178, 0.15);
+            border-style: solid;
+            transform: translateY(-1px);
+        }
+        .btn-get-location:active {
+            transform: translateY(0);
+        }
+        .btn-get-location.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .btn-get-location svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        [data-theme="dark"] .btn-get-location {
+            color: #22D3EE;
+            background: rgba(34, 211, 238, 0.08);
+            border-color: #22D3EE;
+        }
+        [data-theme="dark"] .btn-get-location:hover {
+            background: rgba(34, 211, 238, 0.15);
+        }
+
         /* Select2 theme override to match app design */
         .select2-container--default .select2-selection--single {
             height: 44px;
@@ -704,5 +764,88 @@
                 }
             }));
         });
+
+        // ──── Geolocation: Ambil Lokasi Saat Ini ────
+        function getCurrentLocation() {
+            const btn = document.getElementById('btn-get-location');
+            const icon = document.getElementById('loc-icon');
+            const spinner = document.getElementById('loc-spinner');
+            const text = document.getElementById('loc-text');
+            const latInput = document.getElementById('input-lat') || document.querySelector('[name="lat"]');
+            const longInput = document.getElementById('input-long') || document.querySelector('[name="long"]');
+
+            if (!navigator.geolocation) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Tidak Didukung',
+                    text: 'Browser Anda tidak mendukung fitur Geolocation.',
+                    confirmButtonColor: '#0891B2'
+                });
+                return;
+            }
+
+            // Set loading state
+            btn.classList.add('loading');
+            icon.style.display = 'none';
+            spinner.style.display = 'inline';
+            text.textContent = 'Mengambil lokasi...';
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+
+                    latInput.value = lat;
+                    longInput.value = lng;
+
+                    // Reset button
+                    btn.classList.remove('loading');
+                    icon.style.display = 'inline';
+                    spinner.style.display = 'none';
+                    text.textContent = 'Ambil Lokasi Saat Ini';
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Lokasi Ditemukan',
+                        html: `<b>Latitude:</b> ${lat}<br><b>Longitude:</b> ${lng}`,
+                        confirmButtonColor: '#0891B2',
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
+                },
+                function(error) {
+                    // Reset button
+                    btn.classList.remove('loading');
+                    icon.style.display = 'inline';
+                    spinner.style.display = 'none';
+                    text.textContent = 'Ambil Lokasi Saat Ini';
+
+                    let msg = 'Gagal mengambil lokasi.';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            msg = 'Izin lokasi ditolak. Silakan aktifkan izin lokasi di pengaturan browser Anda.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            msg = 'Informasi lokasi tidak tersedia. Pastikan GPS aktif.';
+                            break;
+                        case error.TIMEOUT:
+                            msg = 'Waktu permintaan lokasi habis. Silakan coba lagi.';
+                            break;
+                    }
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Gagal Mengambil Lokasi',
+                        text: msg,
+                        confirmButtonColor: '#0891B2'
+                    });
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                }
+            );
+        }
     </script>
 @endpush
