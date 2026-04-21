@@ -166,7 +166,7 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        margin-top: 1.25rem;
+        margin-top: 0.4rem;
         position: relative;
         z-index: 1;
     }
@@ -275,7 +275,7 @@
 
     .charts-dual-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 1.5rem;
     }
 
@@ -729,6 +729,21 @@
                 <span class="divider"></span>
                 <span><i class="fa-solid fa-fish" style="margin-right:2px;"></i> {{ $kdmp->komoditas }}</span>
             </div>
+            {{-- Status Terakhir Badge --}}
+            <div class="hero-status-row">
+                <span class="hero-status-label"><i class="fa-solid fa-signal" style="margin-right:3px;"></i> Status Terakhir:</span>
+                @if($lastRecord)
+                <div class="hero-status-badge">
+                    <span class="status-dot-hero {{ $lastRecord->status_color }}"></span>
+                    {!! $lastRecord->status_icon !!} {{ $lastRecord->status_label }}
+                </div>
+                @else
+                <div class="hero-status-badge">
+                    <span class="status-dot-hero secondary"></span>
+                    Belum Ada Data
+                </div>
+                @endif
+            </div>
         </div>
         <div class="detail-hero-actions">
             <a href="{{ route('produksi.pdf-detail', $kdmp->id) }}" class="hero-btn hero-btn-danger" target="_blank" title="Export PDF">
@@ -744,21 +759,6 @@
                 <span>Kembali</span>
             </a>
         </div>
-    </div>
-    {{-- Status Terakhir Badge --}}
-    <div class="hero-status-row">
-        <span class="hero-status-label"><i class="fa-solid fa-signal" style="margin-right:3px;"></i> Status Terakhir:</span>
-        @if($lastRecord)
-        <div class="hero-status-badge">
-            <span class="status-dot-hero {{ $lastRecord->status_color }}"></span>
-            {!! $lastRecord->status_icon !!} {{ $lastRecord->status_label }}
-        </div>
-        @else
-        <div class="hero-status-badge">
-            <span class="status-dot-hero secondary"></span>
-            Belum Ada Data
-        </div>
-        @endif
     </div>
 </div>
 
@@ -811,22 +811,13 @@
             </div>
             <div>
                 <h3>Grafik Perkembangan</h3>
-                <p>Tren progres fisik, volume panen, dan keuangan per periode</p>
+                <p>Tren volume panen dan keuangan per periode</p>
             </div>
         </div>
     </div>
     <div class="chart-section-body">
-        {{-- Dual charts: Progres Fisik & Volume Panen --}}
+        {{-- Charts: Volume Panen --}}
         <div class="charts-dual-grid">
-            <div class="chart-panel">
-                <div class="chart-panel-title">
-                    <span class="dot teal"></span>
-                    Progres Fisik (%)
-                </div>
-                <div class="chart-canvas-wrapper">
-                    <canvas id="chartProgres"></canvas>
-                </div>
-            </div>
             <div class="chart-panel">
                 <div class="chart-panel-title">
                     <span class="dot green"></span>
@@ -875,7 +866,7 @@
             <div class="records-header-icon">
                 <i class="fa-solid fa-clock-rotate-left"></i>
             </div>
-            <h3>Riwayat Laporan Monitoring</h3>
+            <h3>Riwayat Laporan Produksi</h3>
         </div>
         <span class="records-count">{{ $records->count() }} laporan</span>
     </div>
@@ -916,7 +907,7 @@
                             Rincian Panen:
                             <span class="ms-1 px-2 py-1 rounded bg-light" style="font-size:0.7rem">Volume: <strong>{{ number_format($record->volume_panen_kg,0,',','.') }} kg</strong></span>
                             <span class="ms-1 px-2 py-1 rounded bg-light" style="font-size:0.7rem">Nilai: <strong>Rp {{ number_format($record->nilai_produksi,0,',','.') }}</strong></span>
-                            <span class="ms-1 px-2 py-1 rounded" style="font-size:0.7rem; background:rgba(16,185,129,0.1); color:#059669;">Target Jual: <strong>Rp {{ number_format($hargaJual,0,',','.') }} / kg</strong></span>
+                            <span class="ms-1 px-2 py-1 rounded" style="font-size:0.7rem; background:rgba(16,185,129,0.1); color:#059669;">Harga Jual: <strong>Rp {{ number_format($hargaJual,0,',','.') }} / kg</strong></span>
                         </div>
                         <div class="record-stat" style="width: 100%; border-top: 1px dashed var(--gray-200); ">
                             <i class="fa-solid fa-wallet"></i>
@@ -1040,29 +1031,6 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         interaction: { intersect: false, mode: 'index' },
     };
-
-    // === Progres Fisik Chart ===
-    new Chart(document.getElementById('chartProgres'), {
-        type: 'line',
-        data: {
-            labels,
-            datasets: [{
-                label: 'Progres Fisik (%)',
-                data: chartData.map(d => d.progres_fisik),
-                borderColor: '#0891B2',
-                backgroundColor: 'rgba(8,145,178,0.08)',
-                fill: true,
-                tension: 0.4,
-                pointRadius: 5,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#0891B2',
-                pointBorderWidth: 2,
-                pointHoverRadius: 7,
-                borderWidth: 2.5,
-            }]
-        },
-        options: { ...baseOptions, scales: { ...baseOptions.scales, y: { ...baseOptions.scales.y, max: 100 } } }
-    });
 
     // === Volume Panen Chart ===
     new Chart(document.getElementById('chartPanen'), {

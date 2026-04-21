@@ -129,7 +129,7 @@
     </div>
 
     <div class="page-title">
-        <h3 style="margin-bottom: 5px;">DATA LOKASI BUDIDAYA TEMATIK</h3>
+        <h3 style="margin-bottom: 5px;">DATA OPERASIONAL BUDI DAYA TEMATIK BIOFLOK TAHUN 2025</h3>
         <p style="margin: 0; font-size: 11px;">Periode: {{ $bulanList[$bulan] ?? $bulan }} {{ $tahun }}</p>
         @if($search)
             <p style="margin: 2px 0 0; font-size: 11px;">Pencarian: "{{ $search }}"</p>
@@ -139,15 +139,19 @@
     <table>
         <thead>
             <tr>
-                <th rowspan="2" style="width: 30px;">No</th>
-                <th rowspan="2">KDKMP</th>
+                <th rowspan="2">Unit Usaha (KDKMP)</th>
+                <th colspan="3">Biaya Operasional</th>
                 <th colspan="2">Hasil Panen</th>
-                <th rowspan="2">Biaya Opr</th>
-                <th rowspan="2">Harga Jual</th>
+                <th rowspan="2">Harga Jual / Kg</th>
+                <th rowspan="2">Pendapatan</th>
+                <th rowspan="2">Status Kinerja</th>
             </tr>
             <tr>
-                <th>Volume (kg)</th>
-                <th>Nilai (Rp)</th>
+                <th>Bibit (Rp)</th>
+                <th>Pakan (Rp)</th>
+                <th>Lainnya (Rp)</th>
+                <th>Volume (Kg)</th>
+                <th>Nilai Penjualan (Rp)</th>
             </tr>
         </thead>
         <tbody>
@@ -156,7 +160,6 @@
                     $lastRecord = $kdmp->monitoringRecords->first();
                 @endphp
                 <tr>
-                    <td class="text-center">{{ $loop->iteration }}</td>
                     <td>
                         <strong>{{ $kdmp->nama_kdkmp }}</strong><br>
                         <span style="font-size: 10px; color: #555;">{{ $kdmp->kabupaten }}, {{ $kdmp->provinsi }}</span>
@@ -164,12 +167,21 @@
                     @if($lastRecord)
                         @php
                             $hargaJual = $lastRecord->volume_panen_kg > 0 ? ($lastRecord->nilai_produksi / $lastRecord->volume_panen_kg) : 0;
+                            $untungRugi = $lastRecord->nilai_produksi - $lastRecord->biaya_operasional;
                         @endphp
+                        <td class="text-right">{{ number_format($lastRecord->biaya_bibit, 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($lastRecord->biaya_pakan, 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($lastRecord->biaya_lainnya, 0, ',', '.') }}</td>
                         <td class="text-right">{{ number_format($lastRecord->volume_panen_kg, 2, ',', '.') }}</td>
                         <td class="text-right">{{ number_format($lastRecord->nilai_produksi, 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($lastRecord->biaya_operasional, 0, ',', '.') }}</td>
                         <td class="text-right">{{ number_format($hargaJual, 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($untungRugi, 0, ',', '.') }}</td>
+                        <td class="text-center">{{ $lastRecord->status_label }}</td>
                     @else
+                        <td class="text-center">-</td>
+                        <td class="text-center">-</td>
+                        <td class="text-center">-</td>
+                        <td class="text-center">-</td>
                         <td class="text-center">-</td>
                         <td class="text-center">-</td>
                         <td class="text-center">-</td>

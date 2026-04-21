@@ -251,19 +251,9 @@
             <td>{{ $kdmp->nama_kdkmp }}</td>
         </tr>
         <tr>
-            <td class="label">Desa/Kelurahan</td>
+            <td class="label">Alamat</td>
             <td class="separator">:</td>
-            <td>{{ $kdmp->desa ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Kabupaten</td>
-            <td class="separator">:</td>
-            <td>{{ $kdmp->kabupaten ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td class="label">Provinsi</td>
-            <td class="separator">:</td>
-            <td>{{ $kdmp->provinsi ?? '-' }}</td>
+            <td>{{ implode(', ', array_filter([$kdmp->desa ?? null, $kdmp->kabupaten ?? null, $kdmp->provinsi ?? null])) ?: '-' }}</td>
         </tr>
         <tr>
             <td class="label">Komoditas</td>
@@ -306,7 +296,7 @@
                 <td class="val">Rp {{ number_format($totalBiaya, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td>Keuntungan</td>
+                <td>Total Keuntungan</td>
                 <td class="val" style="color: {{ $keuntungan >= 0 ? '#16A34A' : '#DC2626' }}">Rp {{ number_format($keuntungan, 0, ',', '.') }}</td>
                 <td></td>
                 <td></td>
@@ -323,7 +313,6 @@
                 <th style="width: 30px;">No</th>
                 <th>Periode</th>
                 <th>Status</th>
-                <th>Progres<br>Fisik</th>
                 <th>Volume<br>Panen (kg)</th>
                 <th>Nilai<br>Produksi (Rp)</th>
                 <th>Biaya<br>Opr (Rp)</th>
@@ -341,10 +330,7 @@
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td class="text-center">{{ $record->bulan_label }} {{ $record->tahun }}</td>
-                    <td class="text-center">
-                        <span class="status-{{ $record->status_lokasi }}">{{ $record->status_label }}</span>
-                    </td>
-                    <td class="text-center">{{ $record->progres_fisik }}%</td>
+                    <td class="text-center" style="color: {{ $record->status_label === 'On Track' ? '#16A34A' : '#DC2626' }}; font-weight: bold;">{{ $record->status_label }}</td>
                     <td class="text-right">{{ number_format($record->volume_panen_kg, 2, ',', '.') }}</td>
                     <td class="text-right">{{ number_format($record->nilai_produksi, 0, ',', '.') }}</td>
                     <td class="text-right">{{ number_format($record->biaya_operasional, 0, ',', '.') }}</td>
@@ -353,22 +339,25 @@
                     <td class="text-center">{{ $record->jumlah_kolam_aktif ?? '-' }} / {{ $record->jumlah_kolam_total ?? '-' }}</td>
                     <td class="text-center">{{ $record->jumlah_pembudidaya_aktif ?? '-' }}</td>
                 </tr>
-                @if($record->kendala || $record->tindak_lanjut)
+                @if($record->kendala || $record->tindak_lanjut || $record->catatan)
                 <tr>
                     <td></td>
-                    <td colspan="10" style="text-align:left; font-size:10px; background:#fff8f8;">
+                    <td colspan="9" style="text-align:left; font-size:10px; background:#fff8f8;">
                         @if($record->kendala)
                             <strong>Kendala:</strong> {{ $record->kendala }}
                         @endif
                         @if($record->tindak_lanjut)
                             <br><strong>Tindak Lanjut:</strong> {{ $record->tindak_lanjut }}
                         @endif
+                        @if($record->catatan)
+                            <br><strong>Catatan:</strong> {{ $record->catatan }}
+                        @endif
                     </td>
                 </tr>
                 @endif
             @empty
                 <tr>
-                    <td colspan="11" class="text-center">Belum ada data laporan monitoring.</td>
+                    <td colspan="10" class="text-center">Belum ada data laporan monitoring.</td>
                 </tr>
             @endforelse
         </tbody>
