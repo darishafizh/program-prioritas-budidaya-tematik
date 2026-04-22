@@ -46,17 +46,14 @@ class DashboardController extends Controller
         if ($filterKomoditas) $kdmpQuery->where('komoditas', $filterKomoditas);
         $filteredKdmpIds = $kdmpQuery->pluck('id');
 
-        // Monitoring records query (latest per KDMP)
-        $monitoringQuery = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds);
-        if ($filterTahun) $monitoringQuery->where('tahun', $filterTahun);
-        if ($filterBulan) $monitoringQuery->where('bulan', $filterBulan);
+        // Semua KDMP (terfilter) — dipakai untuk tab Teknis (termasuk yang belum ada data)
+        $allKdmp = Kdmp::whereIn('id', $filteredKdmpIds)->orderBy('no')->get();
+        $totalLokasi = $allKdmp->count();
 
         // ============================================================
-        // LAYER 1: EXECUTIVE — KPI Cards
+        // LATEST MONITORING RECORDS — per KDMP sesuai filter periode
         // ============================================================
-        $totalLokasi = $filteredKdmpIds->count();
-
-        // Get latest monitoring record per KDMP (for latest status)
+        // Ambil ID record terbaru per KDMP (sesuai filter tahun/bulan)
         $latestRecordIds = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds)
             ->when($filterTahun, fn($q) => $q->where('tahun', $filterTahun))
             ->when($filterBulan, fn($q) => $q->where('bulan', $filterBulan))
@@ -66,9 +63,14 @@ class DashboardController extends Controller
 
         $latestRecords = MonitoringRecord::with('kdmp')
             ->whereIn('id', $latestRecordIds)
-            ->get();
+            ->get()
+            ->keyBy('kdmp_id'); // indexed by kdmp_id for fast lookup
 
-        // KPI Calculations
+        // ============================================================
+        // LAYER 1: EXECUTIVE — KPI Cards
+        // ============================================================
+
+        // KPI Calculations (dari record yang ada)
         $totalProduksi    = $latestRecords->sum('volume_panen_kg');
         $avgSR            = $latestRecords->whereNotNull('survival_rate')->avg('survival_rate');
         $avgBiayaPerKg    = $latestRecords->filter(fn($r) => $r->biaya_per_kg !== null)->avg('biaya_per_kg');
@@ -76,25 +78,26 @@ class DashboardController extends Controller
         $totalKolamAktif  = $latestRecords->sum('jumlah_kolam_aktif');
         $totalKolamAll    = $latestRecords->sum('jumlah_kolam_total');
         $utilisasiKolam   = $totalKolamAll > 0 ? round(($totalKolamAktif / $totalKolamAll) * 100, 1) : null;
+        $produksiPerKolam = $totalKolamAktif > 0 ? round((float)$totalProduksi / $totalKolamAktif, 1) : null;
 
-        $produksiPerKolam = $totalKolamAktif > 0 ? round($totalProduksi / $totalKolamAktif, 1) : null;
-
-        $unitAktif = $latestRecords->whereIn('status_lokasi', ['on_track', 'selesai'])->count();
+        // Unit aktif = KDMP yang sudah lapor (ada record monitoring)
+        $unitAktif    = $latestRecords->count();
         $pctUnitAktif = $totalLokasi > 0 ? round(($unitAktif / $totalLokasi) * 100, 1) : 0;
 
-        // Program Health Status
+        // Program Health Status berdasarkan rata-rata SR
         $programHealth = 'success';
         if ($avgSR !== null) {
             if ($avgSR < 70) $programHealth = 'danger';
             elseif ($avgSR <= 80) $programHealth = 'warning';
         }
 
-        // Status breakdown
+        // Status breakdown berdasarkan status_lokasi field
         $statusBreakdown = [
             'on_track'   => $latestRecords->where('status_lokasi', 'on_track')->count(),
             'bermasalah' => $latestRecords->where('status_lokasi', 'bermasalah')->count(),
             'vakum'      => $latestRecords->where('status_lokasi', 'vakum')->count(),
             'selesai'    => $latestRecords->where('status_lokasi', 'selesai')->count(),
+            'belum_lapor' => $totalLokasi - $unitAktif,
         ];
         $totalMonitored = $latestRecords->count();
 
@@ -103,7 +106,7 @@ class DashboardController extends Controller
             'danger'  => $latestRecords->where('survival_rate', '<', 70)->whereNotNull('survival_rate')->count(),
             'warning' => $latestRecords->whereBetween('survival_rate', [70, 80])->count(),
             'success' => $latestRecords->where('survival_rate', '>', 80)->count(),
-            'unknown' => $latestRecords->whereNull('survival_rate')->count(),
+            'unknown' => $latestRecords->whereNull('survival_rate')->count() + ($totalLokasi - $unitAktif),
         ];
 
         // ============================================================
@@ -113,26 +116,26 @@ class DashboardController extends Controller
             ->whereIn('id', $filteredKdmpIds)
             ->get()
             ->map(function ($item) use ($latestRecords) {
-                $record = $latestRecords->firstWhere('kdmp_id', $item->id);
+                $record = $latestRecords->get($item->id);
                 $sr = $record?->survival_rate;
-                $srColor = '#9CA3AF'; // gray default
+                $srColor = '#9CA3AF'; // gray default (belum ada data)
                 if ($sr !== null) {
                     if ($sr < 70) $srColor = '#DC2626';
                     elseif ($sr <= 80) $srColor = '#D97706';
                     else $srColor = '#16A34A';
                 }
                 return [
-                    'id'         => $item->id,
-                    'name'       => $item->nama_kdkmp ?? 'KDMP',
-                    'kabupaten'  => $item->kabupaten,
-                    'provinsi'   => $item->provinsi,
-                    'komoditas'  => $item->komoditas,
-                    'lat'        => $item->lat,
-                    'lng'        => $item->long,
-                    'sr'         => $sr,
-                    'srColor'    => $srColor,
-                    'status'     => $record?->status_lokasi ?? 'belum_lapor',
-                    'produksi'   => $record ? (float) $record->volume_panen_kg : 0,
+                    'id'        => $item->id,
+                    'name'      => $item->nama_kdkmp ?? 'KDMP',
+                    'kabupaten' => $item->kabupaten,
+                    'provinsi'  => $item->provinsi,
+                    'komoditas' => $item->komoditas,
+                    'lat'       => $item->lat,
+                    'lng'       => $item->long,
+                    'sr'        => $sr,
+                    'srColor'   => $srColor,
+                    'status'    => $record?->status_lokasi ?? 'belum_lapor',
+                    'produksi'  => $record ? (float) $record->volume_panen_kg : 0,
                 ];
             })
             ->values();
@@ -174,7 +177,6 @@ class DashboardController extends Controller
             ->where('kendala', '!=', '')
             ->pluck('kendala')
             ->flatMap(function ($kendala) {
-                // Try to categorize by keywords
                 $categories = [];
                 $lower = strtolower($kendala);
                 if (str_contains($lower, 'pakan'))       $categories[] = 'Pakan';
@@ -205,30 +207,63 @@ class DashboardController extends Controller
 
         // ============================================================
         // LAYER 3: TEKNIS — Detail Table
+        // Tampilkan SEMUA KDMP (termasuk yang belum ada data monitoring)
         // ============================================================
-        $detailLokasi = $latestRecords->map(function ($record) {
-            return [
-                'id'               => $record->kdmp_id,
-                'nama'             => $record->kdmp->nama_kdkmp ?? '-',
-                'provinsi'         => $record->kdmp->provinsi ?? '-',
-                'kabupaten'        => $record->kdmp->kabupaten ?? '-',
-                'komoditas'        => $record->kdmp->komoditas ?? '-',
-                'kolam_aktif'      => $record->jumlah_kolam_aktif,
-                'kolam_total'      => $record->jumlah_kolam_total,
-                'utilisasi'        => $record->utilisasi_kolam,
-                'produksi'         => (float) $record->volume_panen_kg,
-                'produksi_per_kolam' => $record->produksi_per_kolam,
-                'sr'               => $record->survival_rate !== null ? (float) $record->survival_rate : null,
-                'sr_status'        => $record->sr_status,
-                'biaya_per_kg'     => $record->biaya_per_kg ? round($record->biaya_per_kg, 0) : null,
-                'status'           => $record->status_label,
-                'status_color'     => $record->status_color,
-                'kendala'          => $record->kendala,
-                'is_prioritas'     => $record->is_prioritas,
-                'periode'          => $record->periode_label,
-                'progres'          => $record->progres_fisik,
-            ];
-        })->sortByDesc('is_prioritas')->values();
+        $detailLokasi = $allKdmp->map(function ($kdmp) use ($latestRecords) {
+            $record = $latestRecords->get($kdmp->id);
+
+            if ($record) {
+                return [
+                    'id'               => $kdmp->id,
+                    'nama'             => $kdmp->nama_kdkmp ?? '-',
+                    'provinsi'         => $kdmp->provinsi ?? '-',
+                    'kabupaten'        => $kdmp->kabupaten ?? '-',
+                    'komoditas'        => $kdmp->komoditas ?? '-',
+                    'kolam_aktif'      => $record->jumlah_kolam_aktif,
+                    'kolam_total'      => $record->jumlah_kolam_total,
+                    'utilisasi'        => $record->utilisasi_kolam,
+                    'produksi'         => (float) $record->volume_panen_kg,
+                    'produksi_per_kolam' => $record->produksi_per_kolam,
+                    'sr'               => $record->survival_rate !== null ? (float) $record->survival_rate : null,
+                    'sr_status'        => $record->sr_status,
+                    'biaya_per_kg'     => $record->biaya_per_kg ? round($record->biaya_per_kg, 0) : null,
+                    'status'           => $record->status_label,
+                    'status_color'     => $record->status_color,
+                    'kendala'          => $record->kendala,
+                    'is_prioritas'     => $record->is_prioritas,
+                    'periode'          => $record->periode_label,
+                    'progres'          => $record->progres_fisik,
+                    'has_data'         => true,
+                ];
+            } else {
+                // KDMP belum ada data monitoring pada periode ini
+                return [
+                    'id'               => $kdmp->id,
+                    'nama'             => $kdmp->nama_kdkmp ?? '-',
+                    'provinsi'         => $kdmp->provinsi ?? '-',
+                    'kabupaten'        => $kdmp->kabupaten ?? '-',
+                    'komoditas'        => $kdmp->komoditas ?? '-',
+                    'kolam_aktif'      => null,
+                    'kolam_total'      => null,
+                    'utilisasi'        => null,
+                    'produksi'         => 0,
+                    'produksi_per_kolam' => null,
+                    'sr'               => null,
+                    'sr_status'        => 'secondary',
+                    'biaya_per_kg'     => null,
+                    'status'           => 'Belum Lapor',
+                    'status_color'     => 'secondary',
+                    'kendala'          => null,
+                    'is_prioritas'     => false,
+                    'periode'          => '-',
+                    'progres'          => null,
+                    'has_data'         => false,
+                ];
+            }
+        })
+        ->sortByDesc('is_prioritas')
+        ->sortByDesc('has_data')
+        ->values();
 
         // Prioritas Intervensi — lokasi yang butuh perhatian segera
         $prioritasIntervensi = $detailLokasi->where('is_prioritas', true)->values();
@@ -236,7 +271,7 @@ class DashboardController extends Controller
         // Total Nilai Produksi
         $totalNilai = $latestRecords->sum('nilai_produksi');
 
-        // Komoditas palette (for map legend)
+        // Komoditas palette
         $sebaranKomoditas = Kdmp::select('komoditas', DB::raw('count(*) as total'))
             ->whereNotNull('komoditas')
             ->where('komoditas', '!=', '')

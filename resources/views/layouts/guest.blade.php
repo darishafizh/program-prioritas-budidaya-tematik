@@ -19,6 +19,9 @@
 </head>
 
 <body>
+    {{-- Global Page Loader --}}
+    <x-page-loader />
+
     <div class="login-wrapper">
         <div class="login-card">
             {{ $slot }}

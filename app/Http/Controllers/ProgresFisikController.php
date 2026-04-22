@@ -6,6 +6,7 @@ use App\Models\Kdmp;
 use App\Models\ProgresFisikRecord;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProgresFisikController extends Controller
 {
@@ -128,6 +129,10 @@ class ProgresFisikController extends Controller
             'kendala' => 'nullable|string',
             'tindak_lanjut' => 'nullable|string',
             'catatan' => 'nullable|string',
+            'foto_sebelum' => 'nullable|array',
+            'foto_sebelum.*' => 'image|mimes:jpg,jpeg,png|max:51200',
+            'foto_sesudah' => 'nullable|array',
+            'foto_sesudah.*' => 'image|mimes:jpg,jpeg,png|max:51200',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -143,6 +148,10 @@ class ProgresFisikController extends Controller
                 ->withInput()
                 ->withErrors(['periode' => 'Data progres fisik untuk KDMP ini pada periode tersebut sudah ada. Gunakan edit untuk memperbarui.']);
         }
+
+        // Handle foto upload
+        $validated['foto_sebelum'] = $this->uploadFotos($request, 'foto_sebelum');
+        $validated['foto_sesudah'] = $this->uploadFotos($request, 'foto_sesudah');
 
         ProgresFisikRecord::create($validated);
 
@@ -181,12 +190,75 @@ class ProgresFisikController extends Controller
             'kendala' => 'nullable|string',
             'tindak_lanjut' => 'nullable|string',
             'catatan' => 'nullable|string',
+            'foto_sebelum' => 'nullable|array',
+            'foto_sebelum.*' => 'image|mimes:jpg,jpeg,png|max:51200',
+            'foto_sesudah' => 'nullable|array',
+            'foto_sesudah.*' => 'image|mimes:jpg,jpeg,png|max:51200',
+            'hapus_foto_sebelum' => 'nullable|array',
+            'hapus_foto_sebelum.*' => 'integer',
+            'hapus_foto_sesudah' => 'nullable|array',
+            'hapus_foto_sesudah.*' => 'integer',
         ]);
+
+        // Handle foto sebelum
+        $validated['foto_sebelum'] = $this->handleFotoUpdate(
+            $record->foto_sebelum ?? [],
+            $request, 'foto_sebelum', 'hapus_foto_sebelum'
+        );
+
+        // Handle foto sesudah
+        $validated['foto_sesudah'] = $this->handleFotoUpdate(
+            $record->foto_sesudah ?? [],
+            $request, 'foto_sesudah', 'hapus_foto_sesudah'
+        );
+
+        // Remove hapus_foto keys from validated
+        unset($validated['hapus_foto_sebelum'], $validated['hapus_foto_sesudah']);
 
         $record->update($validated);
 
         return redirect()->route('progres-fisik.show', $record->kdmp_id)
             ->with('success', 'Data progres fisik berhasil diperbarui!');
+    }
+
+    /**
+     * Upload array of foto files and return paths
+     */
+    private function uploadFotos(Request $request, string $fieldName): ?array
+    {
+        $paths = [];
+        if ($request->hasFile($fieldName)) {
+            foreach ($request->file($fieldName) as $file) {
+                $paths[] = $file->store('progres-fisik-foto', 'public');
+            }
+        }
+        return !empty($paths) ? $paths : null;
+    }
+
+    /**
+     * Handle foto update: delete checked, add new uploads
+     */
+    private function handleFotoUpdate(array $existing, Request $request, string $uploadField, string $deleteField): ?array
+    {
+        // Delete checked photos
+        if ($request->has($deleteField)) {
+            foreach ($request->input($deleteField) as $idx) {
+                if (isset($existing[$idx])) {
+                    Storage::disk('public')->delete($existing[$idx]);
+                    unset($existing[$idx]);
+                }
+            }
+            $existing = array_values($existing);
+        }
+
+        // Add new uploads
+        if ($request->hasFile($uploadField)) {
+            foreach ($request->file($uploadField) as $file) {
+                $existing[] = $file->store('progres-fisik-foto', 'public');
+            }
+        }
+
+        return !empty($existing) ? $existing : null;
     }
 
     /**

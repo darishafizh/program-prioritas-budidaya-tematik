@@ -456,7 +456,10 @@
             <input type="text" id="tableSearch" placeholder="Cari lokasi, provinsi, komoditas..." class="table-search-input">
         </div>
         <div class="table-info">
-            <span>Menampilkan <strong>{{ $detailLokasi->count() }}</strong> lokasi</span>
+            <span>Menampilkan <strong>{{ $detailLokasi->count() }}</strong> lokasi &nbsp;·&nbsp;
+            <span class="text-success fw-bold">{{ $detailLokasi->where('has_data', true)->count() }} sudah lapor</span>
+            &nbsp;·&nbsp;
+            <span style="color:var(--gray-500);">{{ $detailLokasi->where('has_data', false)->count() }} belum lapor</span></span>
         </div>
     </div>
 
@@ -479,11 +482,14 @@
                 </thead>
                 <tbody>
                     @forelse($detailLokasi as $loc)
-                    <tr class="{{ $loc['is_prioritas'] ? 'row-prioritas' : '' }}" data-search="{{ strtolower($loc['nama'] . ' ' . $loc['provinsi'] . ' ' . $loc['kabupaten'] . ' ' . $loc['komoditas']) }}">
+                    <tr class="{{ $loc['is_prioritas'] ? 'row-prioritas' : '' }} {{ !$loc['has_data'] ? 'row-belum-lapor' : '' }}"
+                        data-search="{{ strtolower($loc['nama'] . ' ' . $loc['provinsi'] . ' ' . $loc['kabupaten'] . ' ' . $loc['komoditas'] . ' ' . ($loc['has_data'] ? 'sudah lapor' : 'belum lapor')) }}">
                         <td>
                             <div class="cell-lokasi">
                                 @if($loc['is_prioritas'])
                                 <span class="prioritas-badge" title="Prioritas Intervensi"><i class="fa-solid fa-exclamation"></i></span>
+                                @elseif(!$loc['has_data'])
+                                <span class="prioritas-badge" title="Belum Lapor" style="background:#E5E7EB; color:#9CA3AF;"><i class="fa-regular fa-clock"></i></span>
                                 @endif
                                 <div>
                                     <div class="cell-nama">{{ $loc['nama'] }}</div>
@@ -500,7 +506,7 @@
                                 <div class="cell-sub">{{ $loc['utilisasi'] }}%</div>
                                 @endif
                             @else
-                                <span style="color:var(--gray-400);">-</span>
+                                <span style="color:var(--gray-300);">-</span>
                             @endif
                         </td>
                         <td class="text-center font-semibold">
@@ -522,7 +528,7 @@
                             @if($loc['biaya_per_kg'] !== null)
                                 Rp {{ number_format($loc['biaya_per_kg'], 0, ',', '.') }}
                             @else
-                                <span style="color:var(--gray-400);">-</span>
+                                <span style="color:var(--gray-300);">-</span>
                             @endif
                         </td>
                         <td class="text-center">
@@ -543,11 +549,13 @@
                             @if($loc['kendala'])
                                 <div class="cell-kendala" title="{{ $loc['kendala'] }}">{{ Str::limit($loc['kendala'], 50) }}</div>
                             @else
-                                <span style="color:var(--gray-400); font-size:0.78rem;">Tidak ada</span>
+                                <span style="color:var(--gray-300); font-size:0.78rem;">{{ $loc['has_data'] ? 'Tidak ada' : '-' }}</span>
                             @endif
                         </td>
                         <td class="text-center">
-                            @if($loc['is_prioritas'])
+                            @if(!$loc['has_data'])
+                                <span class="badge py-1 px-2 text-muted" style="background:#F3F4F6; font-size:0.65rem; letter-spacing:1px;">-</span>
+                            @elseif($loc['is_prioritas'])
                                 <span class="badge py-1 px-2" style="background:#DC2626; font-size:0.65rem; font-weight:700; letter-spacing:1px;">TINGGI</span>
                             @elseif($loc['sr'] !== null && $loc['sr'] < 75)
                                 <span class="badge py-1 px-2 text-dark" style="background:#FBBF24; font-size:0.65rem; font-weight:700; letter-spacing:1px;">SEDANG</span>
@@ -560,7 +568,7 @@
                     <tr>
                         <td colspan="9" class="text-center" style="padding:2rem; color:var(--gray-400);">
                             <i class="fa-solid fa-inbox" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
-                            Belum ada data monitoring. <a href="{{ route('monitoring.create') }}">Mulai Input</a>
+                            Belum ada data monitoring. <a href="{{ route('produksi.create') }}">Mulai Input</a>
                         </td>
                     </tr>
                     @endforelse
@@ -1189,6 +1197,17 @@
 }
 .monev-table tbody tr.row-prioritas:hover {
     background: rgba(220,38,38,0.06);
+}
+.monev-table tbody tr.row-belum-lapor {
+    opacity: 0.55;
+}
+.monev-table tbody tr.row-belum-lapor:hover {
+    opacity: 0.75;
+    background: rgba(156,163,175,0.05);
+}
+.monev-table tbody tr.row-belum-lapor .cell-nama {
+    color: var(--gray-500);
+    font-weight: 500;
 }
 
 /* Cell styles */

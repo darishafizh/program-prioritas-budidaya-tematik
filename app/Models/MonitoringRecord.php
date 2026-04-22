@@ -29,11 +29,9 @@ class MonitoringRecord extends Model
         'kendala',
         'tindak_lanjut',
         'catatan',
-        'foto',
     ];
 
     protected $casts = [
-        'foto' => 'array',
         'volume_panen_kg' => 'decimal:2',
         'nilai_produksi' => 'decimal:2',
         'biaya_pakan' => 'decimal:2',

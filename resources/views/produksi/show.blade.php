@@ -954,20 +954,6 @@
             @endif
         </div>
         @endif
-        @if($record->foto && count($record->foto) > 0)
-        <div class="record-photos" style="margin-top:0.75rem;">
-            <div style="font-size:0.72rem; font-weight:600; color:var(--gray-500); margin-bottom:0.4rem; display:flex; align-items:center; gap:0.35rem;">
-                <i class="fa-solid fa-images"></i> Foto Dokumentasi ({{ count($record->foto) }})
-            </div>
-            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-                @foreach($record->foto as $foto)
-                <a href="{{ asset('storage/' . $foto) }}" target="_blank" style="display:block; width:80px; height:80px; border-radius:8px; overflow:hidden; border:1px solid var(--gray-200); flex-shrink:0;">
-                    <img src="{{ asset('storage/' . $foto) }}" alt="Foto dokumentasi" style="width:100%; height:100%; object-fit:cover; display:block; transition: transform 200ms;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                </a>
-                @endforeach
-            </div>
-        </div>
-        @endif
     </div>
     @empty
     <div class="empty-state">

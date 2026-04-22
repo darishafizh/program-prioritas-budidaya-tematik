@@ -249,8 +249,6 @@ class ProduksiController extends Controller
             'kendala' => 'nullable|string',
             'tindak_lanjut' => 'nullable|string',
             'catatan' => 'nullable|string',
-            'foto' => 'nullable|array',
-            'foto.*' => 'image|mimes:jpg,jpeg,png|max:51200',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -270,16 +268,6 @@ class ProduksiController extends Controller
         $validated['biaya_operasional'] = (float)($validated['biaya_pakan'] ?? 0) 
                                         + (float)($validated['biaya_bibit'] ?? 0) 
                                         + (float)($validated['biaya_lainnya'] ?? 0);
-
-        // Handle foto upload
-        $fotoPaths = [];
-        if ($request->hasFile('foto')) {
-            foreach ($request->file('foto') as $file) {
-                $path = $file->store('monitoring-foto', 'public');
-                $fotoPaths[] = $path;
-            }
-        }
-        $validated['foto'] = !empty($fotoPaths) ? $fotoPaths : null;
 
         MonitoringRecord::create($validated);
 
@@ -334,40 +322,11 @@ class ProduksiController extends Controller
             'kendala' => 'nullable|string',
             'tindak_lanjut' => 'nullable|string',
             'catatan' => 'nullable|string',
-            'foto' => 'nullable|array',
-            'foto.*' => 'image|mimes:jpg,jpeg,png|max:51200',
-            'hapus_foto' => 'nullable|array',
-            'hapus_foto.*' => 'integer',
         ]);
 
         $validated['biaya_operasional'] = (float)($validated['biaya_pakan'] ?? 0) 
                                         + (float)($validated['biaya_bibit'] ?? 0) 
                                         + (float)($validated['biaya_lainnya'] ?? 0);
-
-        // Handle foto: start with existing photos
-        $existingFotos = $monitoring->foto ?? [];
-
-        // Remove checked photos
-        if ($request->has('hapus_foto')) {
-            $toDelete = $request->input('hapus_foto');
-            foreach ($toDelete as $idx) {
-                if (isset($existingFotos[$idx])) {
-                    Storage::disk('public')->delete($existingFotos[$idx]);
-                    unset($existingFotos[$idx]);
-                }
-            }
-            $existingFotos = array_values($existingFotos); // re-index
-        }
-
-        // Add new uploaded photos
-        if ($request->hasFile('foto')) {
-            foreach ($request->file('foto') as $file) {
-                $path = $file->store('monitoring-foto', 'public');
-                $existingFotos[] = $path;
-            }
-        }
-
-        $validated['foto'] = !empty($existingFotos) ? $existingFotos : null;
 
         $monitoring->update($validated);
 

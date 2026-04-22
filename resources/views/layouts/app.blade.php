@@ -37,6 +37,9 @@
     </script>
 </head>
 <body>
+    {{-- Global Page Loader --}}
+    <x-page-loader />
+    
     <script>
         // Restore sidebar state BEFORE render to prevent flash
         if (window.innerWidth > 768 && localStorage.getItem('sidebar-collapsed') === 'true') {

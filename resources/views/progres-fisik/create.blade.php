@@ -28,7 +28,7 @@
         </div>
         @endif
 
-        <form method="POST" action="{{ route('progres-fisik.store') }}">
+        <form method="POST" action="{{ route('progres-fisik.store') }}" enctype="multipart/form-data">
             @csrf
 
             {{-- Lokasi & Periode --}}
@@ -107,6 +107,40 @@
                 <textarea name="catatan" class="form-control" rows="2" placeholder="Catatan lainnya...">{{ old('catatan') }}</textarea>
             </div>
 
+            {{-- Dokumentasi Foto --}}
+            <h4 style="font-size:0.9rem;font-weight:600;color:var(--gray-700);margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color);">
+                <i class="fa-solid fa-camera" style="color:var(--kkp-teal);margin-right:0.3rem;"></i> Dokumentasi Foto
+            </h4>
+
+            <div class="detail-grid" style="margin-bottom:1.5rem;">
+                {{-- Foto Sebelum --}}
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-image" style="color:#F59E0B;margin-right:0.3rem;"></i> Foto Sebelum Pembangunan</label>
+                    <div class="foto-upload-area" id="dropSebelum">
+                        <input type="file" name="foto_sebelum[]" id="inputFotoSebelum" multiple accept="image/jpeg,image/png" class="foto-upload-input">
+                        <div class="foto-upload-placeholder">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.5rem;color:var(--kkp-teal);margin-bottom:0.3rem;"></i>
+                            <p style="margin:0;font-size:0.8rem;color:var(--gray-500);">Klik atau seret foto di sini</p>
+                            <span style="font-size:0.7rem;color:var(--gray-400);">JPG, PNG — Maks 50MB per file</span>
+                        </div>
+                    </div>
+                    <div class="foto-preview-grid" id="previewSebelum"></div>
+                </div>
+                {{-- Foto Sesudah --}}
+                <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-image" style="color:#10B981;margin-right:0.3rem;"></i> Foto Sesudah Pembangunan</label>
+                    <div class="foto-upload-area" id="dropSesudah">
+                        <input type="file" name="foto_sesudah[]" id="inputFotoSesudah" multiple accept="image/jpeg,image/png" class="foto-upload-input">
+                        <div class="foto-upload-placeholder">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.5rem;color:var(--kkp-teal);margin-bottom:0.3rem;"></i>
+                            <p style="margin:0;font-size:0.8rem;color:var(--gray-500);">Klik atau seret foto di sini</p>
+                            <span style="font-size:0.7rem;color:var(--gray-400);">JPG, PNG — Maks 50MB per file</span>
+                        </div>
+                    </div>
+                    <div class="foto-preview-grid" id="previewSesudah"></div>
+                </div>
+            </div>
+
             {{-- Actions --}}
             <div class="form-actions" style="display:flex;gap:0.75rem;padding-top:1rem;border-top:1px solid var(--border-color);margin-top:1.5rem;">
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check" style="font-size:0.75rem;"></i> Simpan Data</button>
@@ -117,14 +151,108 @@
 </div>
 @endsection
 
+@push('styles')
+<style>
+.foto-upload-area {
+    position: relative;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.25s;
+}
+.foto-upload-area:hover,
+.foto-upload-area.drag-over {
+    border-color: var(--kkp-teal);
+    background: rgba(8, 145, 178, 0.04);
+}
+.foto-upload-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+.foto-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+.foto-preview-item {
+    position: relative;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    aspect-ratio: 1;
+    border: 1px solid var(--border-color);
+}
+.foto-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.foto-preview-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(220,38,38,0.85);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+</style>
+@endpush
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Slider display
     document.querySelectorAll('.progres-slider').forEach(slider => {
         const name = slider.dataset.name;
         const display = document.querySelector(`.progres-display[data-target="${name}"]`);
         slider.addEventListener('input', () => { display.textContent = slider.value + '%'; });
     });
+
+    // Foto preview
+    function setupFotoPreview(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        if (!input || !preview) return;
+
+        input.addEventListener('change', function() {
+            preview.innerHTML = '';
+            Array.from(this.files).forEach((file, i) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'foto-preview-item';
+                    div.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Drag & drop
+        const area = input.closest('.foto-upload-area');
+        ['dragenter','dragover'].forEach(e => area.addEventListener(e, ev => { ev.preventDefault(); area.classList.add('drag-over'); }));
+        ['dragleave','drop'].forEach(e => area.addEventListener(e, ev => { ev.preventDefault(); area.classList.remove('drag-over'); }));
+        area.addEventListener('drop', ev => {
+            input.files = ev.dataTransfer.files;
+            input.dispatchEvent(new Event('change'));
+        });
+    }
+
+    setupFotoPreview('inputFotoSebelum', 'previewSebelum');
+    setupFotoPreview('inputFotoSesudah', 'previewSesudah');
 });
 </script>
 @endpush

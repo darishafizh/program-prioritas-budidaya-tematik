@@ -146,7 +146,7 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <a href="{{ route('logout') }}" class="sidebar-user-menu-item sidebar-user-menu-item--danger"
-                        onclick="event.preventDefault(); let form = this.closest('form'); Swal.fire({ title: 'Konfirmasi Logout', text: 'Apakah Anda yakin ingin keluar dari sistem?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#005b9f', cancelButtonColor: '#dc3545', confirmButtonText: 'Ya, Keluar', cancelButtonText: 'Batal', reverseButtons: true }).then((result) => { if (result.isConfirmed) { form.submit(); } })">
+                        onclick="event.preventDefault(); let form = this.closest('form'); Swal.fire({ title: 'Konfirmasi Logout', text: 'Apakah Anda yakin ingin keluar dari sistem?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#005b9f', cancelButtonColor: '#dc3545', confirmButtonText: 'Ya, Keluar', cancelButtonText: 'Batal', reverseButtons: true }).then((result) => { if (result.isConfirmed) { var loader = document.getElementById('pageLoader'); if (loader) { loader.classList.remove('fade-out'); loader.classList.add('active'); } form.submit(); } })">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">

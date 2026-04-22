@@ -33,6 +33,28 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Pesan validasi dalam Bahasa Indonesia.
+     */
+    public function messages(): array
+    {
+        return [
+            'username.required' => 'Username tidak boleh kosong.',
+            'password.required' => 'Password tidak boleh kosong.',
+        ];
+    }
+
+    /**
+     * Nama atribut yang ditampilkan di pesan error.
+     */
+    public function attributes(): array
+    {
+        return [
+            'username' => 'username',
+            'password' => 'password',
+        ];
+    }
+
+    /**
      * Attempt to authenticate the request's credentials.
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -41,12 +63,23 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        // Use 'name' column as username for authentication
+        // Cek apakah username terdaftar
+        $user = \App\Models\User::where('name', $this->input('username'))->first();
+
+        if (! $user) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'username' => 'Username tidak ditemukan. Pastikan username yang Anda masukkan benar.',
+            ]);
+        }
+
+        // Username ada, cek apakah password cocok
         if (! Auth::attempt(['name' => $this->input('username'), 'password' => $this->input('password')], $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'username' => trans('auth.failed'),
+                'password' => 'Password yang Anda masukkan salah. Silakan coba lagi.',
             ]);
         }
 
@@ -68,11 +101,13 @@ class LoginRequest extends FormRequest
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
+        $menit = ceil($seconds / 60);
+        $pesanWaktu = $seconds < 60
+            ? "Mohon tunggu {$seconds} detik sebelum mencoba kembali."
+            : "Terlalu banyak percobaan login. Silakan coba lagi dalam {$menit} menit.";
+
         throw ValidationException::withMessages([
-            'username' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
+            'username' => $pesanWaktu,
         ]);
     }
 

@@ -22,11 +22,13 @@ class ProgresFisikRecord extends Model
         'kendala',
         'tindak_lanjut',
         'catatan',
-        'foto',
+        'foto_sebelum',
+        'foto_sesudah',
     ];
 
     protected $casts = [
-        'foto' => 'array',
+        'foto_sebelum' => 'array',
+        'foto_sesudah' => 'array',
     ];
 
     // ==========================================

@@ -198,6 +198,47 @@
         @if($record->tindak_lanjut)
         <div class="record-note tindak-lanjut"><strong>Tindak Lanjut:</strong> <span>{{ $record->tindak_lanjut }}</span></div>
         @endif
+
+        {{-- Foto Dokumentasi --}}
+        @if(!empty($record->foto_sebelum) || !empty($record->foto_sesudah))
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                
+                {{-- Foto Sebelum --}}
+                @if(!empty($record->foto_sebelum) && is_array($record->foto_sebelum))
+                <div>
+                    <h5 style="font-size:0.75rem; font-weight:600; color:var(--gray-600); margin-bottom:0.5rem;">
+                        <i class="fa-solid fa-image" style="color:#F59E0B; margin-right:0.3rem;"></i> Foto Sebelum
+                    </h5>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.5rem;">
+                        @foreach($record->foto_sebelum as $path)
+                            <a href="{{ asset('storage/'.$path) }}" target="_blank" style="display:block; aspect-ratio:1; border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color);">
+                                <img src="{{ asset('storage/'.$path) }}" alt="Foto Sebelum" style="width:100%; height:100%; object-fit:cover; transition: transform 0.25s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+                
+                {{-- Foto Sesudah --}}
+                @if(!empty($record->foto_sesudah) && is_array($record->foto_sesudah))
+                <div>
+                    <h5 style="font-size:0.75rem; font-weight:600; color:var(--gray-600); margin-bottom:0.5rem;">
+                        <i class="fa-solid fa-image" style="color:#10B981; margin-right:0.3rem;"></i> Foto Sesudah
+                    </h5>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.5rem;">
+                        @foreach($record->foto_sesudah as $path)
+                            <a href="{{ asset('storage/'.$path) }}" target="_blank" style="display:block; aspect-ratio:1; border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border-color);">
+                                <img src="{{ asset('storage/'.$path) }}" alt="Foto Sesudah" style="width:100%; height:100%; object-fit:cover; transition: transform 0.25s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+                
+            </div>
+        </div>
+        @endif
     </div>
     @empty
     <div style="text-align:center;padding:3.5rem 2rem;">

@@ -21,10 +21,9 @@
                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                 </span>
-                <input id="username" name="username" type="text" value="{{ old('username') }}" class="form-control"
+                <input id="username" name="username" type="text" value="{{ old('username') }}" class="form-control {{ $errors->has('username') ? 'is-invalid' : '' }}"
                     placeholder="Masukkan username anda" required autofocus autocomplete="username" style="color: white !important;">
             </div>
-            <x-input-error :messages="$errors->get('username')" class="text-danger text-sm mt-1" />
         </div>
 
         <!-- Password -->
@@ -38,7 +37,7 @@
                         </path>
                     </svg>
                 </span>
-                <input id="password" name="password" type="password" class="form-control"
+                <input id="password" name="password" type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
                     placeholder="Masukkan password" required autocomplete="current-password" style="padding-right: 40px; color: white !important;">
                 
                 <span onclick="var p = document.getElementById('password'); var isP = p.type === 'password'; p.type = isP ? 'text' : 'password'; document.getElementById('eye-show').style.display = isP ? 'none' : 'block'; document.getElementById('eye-hide').style.display = isP ? 'block' : 'none';" style="cursor: pointer; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7); z-index: 5;">
@@ -53,25 +52,31 @@
                     </svg>
                 </span>
             </div>
-            <x-input-error :messages="$errors->get('password')" class="text-danger text-sm mt-1" />
         </div>
 
-        <!-- Remember Me -->
-        <div class="flex items-center justify-between mb-4">
-            <label class="form-check" style="background:none; padding:0;">
-                <input id="remember_me" type="checkbox" name="remember" class="form-check-input">
-                <span class="form-check-label">Ingat saya</span>
-            </label>
-
-            @if (Route::has('password.request'))
-                <a class="text-sm text-primary font-medium" href="{{ route('password.request') }}">
-                    Lupa password?
-                </a>
-            @endif
+        <!-- Validation Alert — Posisi di antara password & tombol masuk -->
+        @if($errors->any())
+        <div class="login-alert" id="loginAlert">
+            <div class="login-alert-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+            </div>
+            <div class="login-alert-content">
+                @foreach($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+            <button type="button" class="login-alert-close" onclick="document.getElementById('loginAlert').style.display='none'">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
+        @endif
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary" style="width:100%;">
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top: 0.5rem;">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
@@ -81,5 +86,75 @@
         </button>
     </form>
 
+    <style>
+        /* Jarak antar field password dan submit lebih besar dari antar username-password */
+        .login-form .form-group {
+            margin-bottom: 1rem;
+        }
+
+        /* Alert Container */
+        .login-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding: 0.75rem 1rem;
+            margin-top: 0.75rem;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            backdrop-filter: blur(8px);
+            animation: alertSlideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes alertSlideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-alert-icon {
+            flex-shrink: 0;
+            color: #FCA5A5;
+            margin-top: 1px;
+        }
+
+        .login-alert-content {
+            flex: 1;
+        }
+
+        .login-alert-content p {
+            margin: 0;
+            padding: 0;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            color: #FCA5A5;
+            font-weight: 500;
+        }
+
+        .login-alert-content p + p {
+            margin-top: 0.25rem;
+        }
+
+        .login-alert-close {
+            flex-shrink: 0;
+            background: none;
+            border: none;
+            color: rgba(252, 165, 165, 0.6);
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 4px;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .login-alert-close:hover {
+            color: #FCA5A5;
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* Input invalid state — glassmorphic red border */
+        .form-control.is-invalid {
+            border-color: rgba(239, 68, 68, 0.5) !important;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15) !important;
+        }
+    </style>
 
 </x-guest-layout>
