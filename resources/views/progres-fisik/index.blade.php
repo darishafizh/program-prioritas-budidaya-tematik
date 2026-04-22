@@ -103,7 +103,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($kdmpList as $kdmp)
+                    @foreach($kdmpList as $kdmp)
                         @php
                             $lastRecord = $kdmp->progresFisikRecords->first();
                             $avg = $lastRecord ? $lastRecord->average_progress : 0;
@@ -190,11 +190,7 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="9" style="text-align:center;padding:2rem;color:var(--gray-400);">Tidak ada KDMP ditemukan</td>
-                        </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>

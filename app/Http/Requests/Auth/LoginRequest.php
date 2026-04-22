@@ -65,10 +65,10 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         // Cek apakah username terdaftar
-        $user = \App\Models\User::where('name', $this->input('username'))->first();
+        $user = \App\Models\User::where('username', $this->input('username'))->first();
 
         // Ensure strict exact match for case-sensitivity
-        if (! $user || $user->name !== $this->input('username')) {
+        if (! $user || $user->username !== $this->input('username')) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -77,7 +77,7 @@ class LoginRequest extends FormRequest
         }
 
         // Username ada, cek apakah password cocok
-        if (! Auth::attempt(['name' => $this->input('username'), 'password' => $this->input('password')], $this->boolean('remember'))) {
+        if (! Auth::attempt(['username' => $this->input('username'), 'password' => $this->input('password')], $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
