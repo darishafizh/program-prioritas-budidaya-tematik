@@ -199,7 +199,7 @@
             </div>
             <div>
                 <h3 class="monitoring-form-title">Foto Dokumentasi</h3>
-                <p class="monitoring-form-desc">Upload foto kegiatan budidaya (JPG/PNG, maks. total 50 MB)</p>
+                <p class="monitoring-form-desc">Upload foto kegiatan budidaya (JPG/PNG, maks. total 5 MB)</p>
             </div>
         </div>
         <div class="monitoring-form-body">
@@ -210,7 +210,7 @@
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                     </div>
                     <p class="upload-zone-text">Seret & lepas foto di sini, atau <span class="upload-zone-link">pilih file</span></p>
-                    <p class="upload-zone-hint">Format: JPG, PNG · Bisa pilih lebih dari 1 file · Maks. total 50 MB</p>
+                    <p class="upload-zone-hint">Format: JPG, PNG · Bisa pilih lebih dari 1 file · Maks. total 5 MB</p>
                 </div>
             </div>
             <div class="upload-preview-grid" id="previewGrid"></div>
@@ -219,7 +219,7 @@
                 <span class="upload-info-dot">·</span>
                 <span id="uploadSize">0 MB</span>
                 <span class="upload-info-dot">·</span>
-                <span id="uploadLimit">Sisa: 50 MB</span>
+                <span id="uploadLimit">Sisa: 5 MB</span>
                 <button type="button" class="upload-clear-btn" id="clearAllBtn" title="Hapus Semua">
                     <i class="fa-solid fa-trash-can"></i> Hapus Semua
                 </button>
@@ -663,7 +663,7 @@
     }
 
     // ===== FOTO UPLOAD HANDLER =====
-    const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50 MB
+    const MAX_TOTAL_SIZE = 5 * 1024 * 1024; // 5 MB total
     const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
     const uploadZone = document.getElementById('uploadZone');
     const fotoInput = document.getElementById('fotoInput');
@@ -720,7 +720,7 @@
         const totalSize = merged.reduce((sum, f) => sum + f.size, 0);
 
         if (totalSize > MAX_TOTAL_SIZE) {
-            showError('Total ukuran file melebihi batas 50 MB. Silakan kurangi jumlah atau ukuran file.');
+            showError('Total ukuran semua file melebihi batas 5 MB. Silakan kurangi jumlah atau ukuran file.');
             return;
         }
 

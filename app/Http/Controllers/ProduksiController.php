@@ -249,8 +249,18 @@ class ProduksiController extends Controller
             'kendala' => 'nullable|string',
             'tindak_lanjut' => 'nullable|string',
             'catatan' => 'nullable|string',
-            'foto' => 'nullable|array',
-            'foto.*' => 'image|mimes:jpg,jpeg,png|max:51200',
+            'foto' => ['nullable', 'array', function ($attribute, $value, $fail) use ($request) {
+                $totalSize = 0;
+                if ($request->hasFile('foto')) {
+                    foreach ($request->file('foto') as $file) {
+                        $totalSize += $file->getSize();
+                    }
+                }
+                if ($totalSize > 5 * 1024 * 1024) {
+                    $fail('Total ukuran semua foto tidak boleh melebihi 5 MB.');
+                }
+            }],
+            'foto.*' => 'image|mimes:jpg,jpeg,png',
         ]);
 
         $validated['user_id'] = Auth::id();
@@ -334,8 +344,18 @@ class ProduksiController extends Controller
             'kendala' => 'nullable|string',
             'tindak_lanjut' => 'nullable|string',
             'catatan' => 'nullable|string',
-            'foto' => 'nullable|array',
-            'foto.*' => 'image|mimes:jpg,jpeg,png|max:51200',
+            'foto' => ['nullable', 'array', function ($attribute, $value, $fail) use ($request) {
+                $totalSize = 0;
+                if ($request->hasFile('foto')) {
+                    foreach ($request->file('foto') as $file) {
+                        $totalSize += $file->getSize();
+                    }
+                }
+                if ($totalSize > 5 * 1024 * 1024) {
+                    $fail('Total ukuran semua foto tidak boleh melebihi 5 MB.');
+                }
+            }],
+            'foto.*' => 'image|mimes:jpg,jpeg,png',
             'hapus_foto' => 'nullable|array',
             'hapus_foto.*' => 'integer',
         ]);
