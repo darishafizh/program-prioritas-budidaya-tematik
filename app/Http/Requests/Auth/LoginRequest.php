@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'string'],
+            'username' => ['required', 'string', 'regex:/^[a-zA-Z0-9]+$/'],
             'password' => ['required', 'string'],
         ];
     }
@@ -39,6 +39,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'username.required' => 'Username tidak boleh kosong.',
+            'username.regex' => 'Username hanya boleh mengandung huruf dan angka (tanpa spasi atau karakter spesial).',
             'password.required' => 'Password tidak boleh kosong.',
         ];
     }
@@ -66,11 +67,12 @@ class LoginRequest extends FormRequest
         // Cek apakah username terdaftar
         $user = \App\Models\User::where('name', $this->input('username'))->first();
 
-        if (! $user) {
+        // Ensure strict exact match for case-sensitivity
+        if (! $user || $user->name !== $this->input('username')) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'username' => 'Username tidak ditemukan. Pastikan username yang Anda masukkan benar.',
+                'username' => 'Username tidak ditemukan. Pastikan username yang Anda masukkan benar (huruf besar/kecil berpengaruh).',
             ]);
         }
 

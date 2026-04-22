@@ -35,17 +35,33 @@
                         <small class="text-muted">Username akan digunakan untuk login</small>
                         @error('name')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Password Baru <span class="text-muted">(kosongkan jika tidak
-                                diubah)</span></label>
-                        <input type="password" name="password" class="form-control" placeholder="Masukkan password baru">
-                        @error('password')<span class="text-danger text-sm">{{ $message }}</span>@enderror
+                <div class="form-group" style="grid-column: span 2;">
+                    <div class="password-info-box">
+                        <i class="fa-solid fa-circle-info" style="color: var(--kkp-teal); margin-right: 0.25rem;"></i>
+                        <strong>Kriteria Keamanan Password:</strong> Jika ingin mengubah password, password baru wajib memiliki minimal 8 karakter, mengandung kombinasi huruf besar (A-Z), huruf kecil (a-z), angka (0-9), dan karakter spesial (seperti @, #, !). Karakter bersifat *case-sensitive* (huruf kapital berpengaruh).
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Konfirmasi Password Baru</label>
-                        <input type="password" name="password_confirmation" class="form-control"
-                            placeholder="Ulangi password baru">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password Baru <span class="text-muted">(kosongkan jika tidak diubah)</span></label>
+                    <div style="position: relative;">
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Masukkan password baru" style="padding-right: 40px;">
+                        <span onclick="var p = document.getElementById('password'); var isP = p.type === 'password'; p.type = isP ? 'text' : 'password'; document.getElementById('pw-eye-show').style.display = isP ? 'none' : 'block'; document.getElementById('pw-eye-hide').style.display = isP ? 'block' : 'none';" style="cursor: pointer; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400);">
+                            <i id="pw-eye-show" class="fa-solid fa-eye" style="display: block;"></i>
+                            <i id="pw-eye-hide" class="fa-solid fa-eye-slash" style="display: none;"></i>
+                        </span>
                     </div>
+                    @error('password')<span class="text-danger text-sm">{{ $message }}</span>@enderror
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Konfirmasi Password Baru</label>
+                    <div style="position: relative;">
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Ulangi password baru" style="padding-right: 40px;">
+                        <span onclick="var p = document.getElementById('password_confirmation'); var isP = p.type === 'password'; p.type = isP ? 'text' : 'password'; document.getElementById('pwc-eye-show').style.display = isP ? 'none' : 'block'; document.getElementById('pwc-eye-hide').style.display = isP ? 'block' : 'none';" style="cursor: pointer; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400);">
+                            <i id="pwc-eye-show" class="fa-solid fa-eye" style="display: block;"></i>
+                            <i id="pwc-eye-hide" class="fa-solid fa-eye-slash" style="display: none;"></i>
+                        </span>
+                    </div>
+                </div>
                     <div class="form-group" style="grid-column: span 2;">
                         <label class="form-label">Role <span class="required">*</span></label>
                         <div class="flex flex-wrap gap-4 mt-2">
@@ -86,4 +102,23 @@
 
 @push('scripts')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@endpush
+
+@push('styles')
+<style>
+    .password-info-box {
+        font-size: 0.8rem;
+        background: rgba(8,145,178,0.05);
+        color: var(--kkp-navy);
+        border: 1px solid rgba(8,145,178,0.2);
+        padding: 0.75rem;
+        border-radius: 8px;
+    }
+    
+    [data-theme="dark"] .password-info-box {
+        background: rgba(8,145,178,0.15);
+        color: #E5E7EB;
+        border-color: rgba(8,145,178,0.3);
+    }
+</style>
 @endpush

@@ -133,6 +133,12 @@
     font-family: 'Poppins', sans-serif;
 }
 
+.loader-dots {
+    display: inline-block;
+    width: 16px;
+    text-align: left;
+}
+
 .loader-dots::after {
     content: '';
     animation: loadingDots 1.4s steps(4, end) infinite;

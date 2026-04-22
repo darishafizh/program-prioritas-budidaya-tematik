@@ -23,9 +23,11 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'name' => ['required', 'string', 'max:255', 'unique:users', 'regex:/^[a-zA-Z0-9]+$/'],
+            'password' => ['required', 'confirmed', Rules\Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
             'role' => ['required', 'in:admin,verifikator'],
+        ], [
+            'name.regex' => 'Username hanya boleh mengandung huruf abjad dan angka independensi kapital (tanpa spasi/karakter spesial).'
         ]);
 
         User::create([
@@ -45,8 +47,10 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:users,name,' . $user->id],
+            'name' => ['required', 'string', 'max:255', 'unique:users,name,' . $user->id, 'regex:/^[a-zA-Z0-9]+$/'],
             'role' => ['required', 'in:admin,verifikator'],
+        ], [
+            'name.regex' => 'Username hanya boleh mengandung huruf abjad dan angka (tanpa spasi/karakter spesial).'
         ]);
 
         $user->update([
@@ -56,7 +60,7 @@ class UserController extends Controller
 
         if ($request->filled('password')) {
             $request->validate([
-                'password' => ['confirmed', Rules\Password::defaults()],
+                'password' => ['confirmed', Rules\Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
             ]);
             $user->update(['password' => Hash::make($request->password)]);
         }
