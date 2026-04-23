@@ -31,12 +31,12 @@ class MonitoringRecordSeeder extends Seeder
 
         $this->command->info("Menyiapkan data monitoring untuk {$kdmpList->count()} KDMP...");
 
-        // Periode yang akan di-seed: Jan - Apr 2025
+        // Periode yang akan di-seed: Jan - Apr 2026
         $periodeList = [
-            ['bulan' => 1, 'tahun' => 2025],
-            ['bulan' => 2, 'tahun' => 2025],
-            ['bulan' => 3, 'tahun' => 2025],
-            ['bulan' => 4, 'tahun' => 2025],
+            ['bulan' => 1, 'tahun' => 2026],
+            ['bulan' => 2, 'tahun' => 2026],
+            ['bulan' => 3, 'tahun' => 2026],
+            ['bulan' => 4, 'tahun' => 2026],
         ];
 
         // Profil performa tiap KDMP: variasi realistis
