@@ -79,7 +79,6 @@ class MonitoringRecordSeeder extends Seeder
                     'kendala' => $kendala,
                     'tindak_lanjut' => $tindakLanjut,
                     'catatan' => $catatan,
-                    'foto' => null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
