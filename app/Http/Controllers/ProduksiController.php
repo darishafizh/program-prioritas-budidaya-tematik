@@ -20,9 +20,13 @@ class ProduksiController extends Controller
         $status = $request->get('status');
         $search = $request->get('search');
 
-        // Ambil semua KDMP beserta record monitoring terakhir
+        // Ambil semua KDMP beserta record sesuai periode yang dipilih
         $query = Kdmp::with([
-            'monitoringRecords' => fn($q) => $q->orderBy('tahun', 'desc')->orderBy('bulan', 'desc'),
+            'monitoringRecords' => fn($q) => $q
+                ->where('tahun', $tahun)
+                ->where('bulan', $bulan)
+                ->orderBy('tahun', 'desc')
+                ->orderBy('bulan', 'desc'),
         ]);
 
         if ($search) {
@@ -98,43 +102,49 @@ class ProduksiController extends Controller
             ->get();
             
         $chartTrend = [
-            'labels' => [],
-            'avg_volume' => [],
-            'avg_nilai' => [],
-            'avg_harga' => []
+            'labels' => array_values($bulanList),
+            'avg_volume' => array_fill(0, 12, 0),
+            'avg_nilai' => array_fill(0, 12, 0),
+            'avg_harga' => array_fill(0, 12, 0)
         ];
         
         foreach($trendBulanan as $t) {
+            $idx = $t->bulan - 1; // 0-11
             $jml = $t->jumlah_lapor > 0 ? $t->jumlah_lapor : 1;
             $avgVol = round($t->total_volume / $jml, 0);
             $avgNilai = round($t->total_nilai / $jml, 0);
             $avgHarga = $t->total_volume > 0 ? round($t->total_nilai / $t->total_volume, 0) : 0;
 
-            $chartTrend['labels'][] = $bulanList[$t->bulan] ?? $t->bulan;
-            $chartTrend['avg_volume'][] = $avgVol;
-            $chartTrend['avg_nilai'][] = $avgNilai;
-            $chartTrend['avg_harga'][] = $avgHarga;
+            $chartTrend['avg_volume'][$idx] = (float) $avgVol;
+            $chartTrend['avg_nilai'][$idx] = (float) $avgNilai;
+            $chartTrend['avg_harga'][$idx] = (float) $avgHarga;
         }
 
         // 2. Sebaran Performa Seluruh Titik Lokasi (Scatter Plot)
-        // Menampilkan titik seluruh KDMP berdasarkan Volume, Nilai Produksi, dan Harga Jual pada bulan terpilih
-        $scatterSeries = [];
+        // Grouped into "On Track" and "Underperform"
+        $scatterSeries = [
+            ['name' => 'On Track', 'data' => []],
+            ['name' => 'Underperform', 'data' => []]
+        ];
+
         foreach($allRecords as $rec) {
             $kdmp = $kdmpList->firstWhere('id', $rec->kdmp_id);
             if ($kdmp && $rec->volume_panen_kg > 0) {
-                $hargaJual = $rec->volume_panen_kg > 0 ? round($rec->nilai_produksi / $rec->volume_panen_kg, 0) : 0;
-                $keuntungan = $rec->nilai_produksi - $rec->biaya_operasional;
+                $hargaJual = $rec->volume_panen_kg > 0 ? round((float)$rec->nilai_produksi / (float)$rec->volume_panen_kg, 0) : 0;
+                $keuntungan = (float)$rec->nilai_produksi - (float)$rec->biaya_operasional;
                 
-                $scatterSeries[] = [
-                    'name' => $kdmp->nama_kdkmp,
-                    'data' => [
-                        [
-                            (float) $rec->volume_panen_kg, // X axis: Volume
-                            (float) $rec->nilai_produksi,   // Y axis: Nilai Produksi
-                            $hargaJual                     // Extra data
-                        ]
-                    ]
+                $dataPoint = [
+                    'x' => (float) $rec->volume_panen_kg,
+                    'y' => (float) $rec->nilai_produksi,
+                    'kdmpName' => $kdmp->nama_kdkmp,
+                    'hargaJual' => $hargaJual
                 ];
+
+                if ($keuntungan >= 15000000) {
+                    $scatterSeries[0]['data'][] = $dataPoint; // On Track
+                } else {
+                    $scatterSeries[1]['data'][] = $dataPoint; // Underperform
+                }
             }
         }
         

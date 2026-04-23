@@ -299,14 +299,15 @@ $(document).ready(function() {
     $('#scoringTable').DataTable({
         language: {
             search: "Cari:",
-            lengthMenu: "Tampilkan _MENU_ Data",
+            lengthMenu: "Tampilkan _MENU_ data",
             info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-            infoEmpty: "Menampilkan 0 data",
+            infoEmpty: "Tidak ada data",
             infoFiltered: "(difilter dari _MAX_ total data)",
             zeroRecords: "Tidak ada data yang cocok",
             paginate: { first: "<<", last: ">>", next: ">", previous: "<" }
         },
-        pageLength: 25,
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"]],
+        pageLength: 10,
         dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
         order: [[0, 'asc']],
         columnDefs: [

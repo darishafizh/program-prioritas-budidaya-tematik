@@ -80,10 +80,12 @@
 {{-- Tabel KDMP --}}
 <div class="card shadow-sm border-0" style="border-radius: 12px;">
     <div class="card-body">
-        <div class="d-flex justify-content-end mb-3">
-            <a href="{{ route('progres-fisik.create') }}" class="btn btn-sm btn-success d-flex align-items-center gap-2 rounded-pill px-4 shadow-sm">
+        {{-- Card Header: Title + Add Button --}}
+        <div class="dt-card-header">
+            <h4 class="dt-card-title">Data Progres Fisik KDMP</h4>
+            <a href="{{ route('progres-fisik.create') }}" class="btn-tambah-data">
                 <i class="fa-solid fa-plus"></i>
-                <span class="fw-bold">Tambah Data Progres</span>
+                Tambah Data Progres
             </a>
         </div>
 
@@ -231,13 +233,16 @@
     $(document).ready(function () {
         $('#progresFisikTable').DataTable({
             language: {
-                search: "Cari:", lengthMenu: "Tampilkan _MENU_ Data",
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data",
                 info: "Menampilkan _START_ - _END_ dari _TOTAL_ data",
-                infoEmpty: "Menampilkan 0 data", infoFiltered: "(difilter dari _MAX_ total data)",
+                infoEmpty: "Tidak ada data",
+                infoFiltered: "(difilter dari _MAX_ total data)",
                 zeroRecords: "Tidak ada data yang cocok",
                 paginate: { first: "<<", last: ">>", next: ">", previous: "<" }
             },
-            pageLength: 25,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"]],
+            pageLength: 10,
             dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
             order: [[0, 'asc']],
             columnDefs: [{ orderable: false, targets: [8] }]
