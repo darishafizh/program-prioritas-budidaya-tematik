@@ -34,6 +34,10 @@
                class="filter-icon-btn filter-pdf-btn" target="_blank" title="Export PDF">
                 <i class="fa-solid fa-file-pdf"></i> <span class="ms-1 d-none d-sm-inline" style="font-size:0.8rem;font-weight:600;">PDF</span>
             </a>
+            <a href="{{ route('produksi.excel', request()->query()) }}"
+               class="filter-icon-btn filter-excel-btn" target="_blank" title="Export Excel">
+                <i class="fa-solid fa-file-excel"></i> <span class="ms-1 d-none d-sm-inline" style="font-size:0.8rem;font-weight:600;">Excel</span>
+            </a>
         </form>
     </div>
 
@@ -222,6 +226,8 @@
         .filter-reset-btn:hover { background:var(--gray-200,#E5E7EB); color:var(--gray-800); }
         .filter-pdf-btn { background:#EF4444; color:#fff; border:1px solid #EF4444; }
         .filter-pdf-btn:hover { background:#DC2626; color:#fff; }
+        .filter-excel-btn { background:#10B981; color:#fff; border:1px solid #10B981; }
+        .filter-excel-btn:hover { background:#059669; color:#fff; }
         [data-theme="dark"] .filter-reset-btn { background:#1F2937; border-color:#374151; color:#9CA3AF; }
 
         /* ── Scatter Card ───────────────────────────────────────────────────── */
