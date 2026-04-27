@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ 0<!DOCTYPE html>
 <html>
 
 <head>
@@ -299,73 +299,41 @@
 
     {{-- Dokumentasi Foto --}}
     @php
-        $hasFoto = $records->filter(function($r) { return !empty($r->foto_sebelum) || !empty($r->foto_sesudah); })->isNotEmpty();
+        $allFotoSesudah = [];
+        foreach($records as $record) {
+            if(!empty($record->foto_sesudah) && is_array($record->foto_sesudah)) {
+                $allFotoSesudah = array_merge($allFotoSesudah, $record->foto_sesudah);
+            }
+        }
+        $hasFoto = count($allFotoSesudah) > 0;
     @endphp
+
     @if($hasFoto)
-    <div style="page-break-before: always;"></div>
-    <h4 style="margin-bottom: 10px;">Dokumentasi Foto Pembangunan</h4>
-    
-    @foreach($records as $record)
-        @if(!empty($record->foto_sebelum) || !empty($record->foto_sesudah))
-        <div style="margin-bottom: 20px; border-bottom: 1px dashed #ccc; padding-bottom: 15px;">
-            <p style="font-weight: bold; margin-bottom: 8px; font-size: 12px; background: #f0f0f0; padding: 4px 8px; display: inline-block;">Periode: {{ $record->periode_label }}</p>
-            
-            <table style="width: 100%; border: none; margin-top: 0;">
-                <tr>
-                    {{-- Foto Sebelum --}}
-                    <td style="width: 50%; vertical-align: top; border: none; padding: 0 10px 0 0; text-align: left;">
-                        <p style="margin: 0 0 5px 0; font-weight: bold; color: #d97706;">Foto Sebelum Pembangunan</p>
-                        @if(!empty($record->foto_sebelum) && is_array($record->foto_sebelum))
-                            <div>
-                                @foreach($record->foto_sebelum as $path)
-                                    @php
-                                        $fullPath = storage_path('app/public/' . $path);
-                                        $base64Image = '';
-                                        if (file_exists($fullPath)) {
-                                            $type = pathinfo($fullPath, PATHINFO_EXTENSION);
-                                            $data = file_get_contents($fullPath);
-                                            $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);
-                                        }
-                                    @endphp
-                                    @if($base64Image)
-                                    <img src="{{ $base64Image }}" style="width: 180px; height: 180px; object-fit: cover; margin-right: 5px; margin-bottom: 5px; border: 1px solid #ccc;">
-                                    @endif
-                                @endforeach
-                            </div>
-                        @else
-                            <p style="margin: 0; color: #777; font-style: italic;">Tidak ada foto</p>
-                        @endif
-                    </td>
-                    
-                    {{-- Foto Sesudah --}}
-                    <td style="width: 50%; vertical-align: top; border: none; padding: 0 0 0 10px; text-align: left;">
-                        <p style="margin: 0 0 5px 0; font-weight: bold; color: #16a34a;">Foto Sesudah Pembangunan</p>
-                        @if(!empty($record->foto_sesudah) && is_array($record->foto_sesudah))
-                            <div>
-                                @foreach($record->foto_sesudah as $path)
-                                    @php
-                                        $fullPath = storage_path('app/public/' . $path);
-                                        $base64Image = '';
-                                        if (file_exists($fullPath)) {
-                                            $type = pathinfo($fullPath, PATHINFO_EXTENSION);
-                                            $data = file_get_contents($fullPath);
-                                            $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);
-                                        }
-                                    @endphp
-                                    @if($base64Image)
-                                    <img src="{{ $base64Image }}" style="width: 180px; height: 180px; object-fit: cover; margin-right: 5px; margin-bottom: 5px; border: 1px solid #ccc;">
-                                    @endif
-                                @endforeach
-                            </div>
-                        @else
-                            <p style="margin: 0; color: #777; font-style: italic;">Tidak ada foto</p>
-                        @endif
-                    </td>
-                </tr>
-            </table>
+    <div style="margin-top: 30px;">
+        <div style="margin-bottom: 15px;">
+            <h4 style="margin: 0; font-size: 16px; font-weight: bold;">Dokumentasi Foto Lokasi</h4>
         </div>
-        @endif
-    @endforeach
+        
+        <div style="width: 100%;">
+            @foreach($allFotoSesudah as $path)
+                @php
+                    $fullPath = storage_path('app/public/' . $path);
+                    $base64Image = '';
+                    if (file_exists($fullPath)) {
+                        $type = pathinfo($fullPath, PATHINFO_EXTENSION);
+                        $data = file_get_contents($fullPath);
+                        $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                    }
+                @endphp
+                @if($base64Image)
+                <div style="float: left; margin-right: 20px; margin-bottom: 20px;">
+                    <img src="{{ $base64Image }}" style="width: 260px; height: 260px; object-fit: cover; border: 2px solid #ddd; border-radius: 4px;">
+                </div>
+                @endif
+            @endforeach
+            <div style="clear: both;"></div>
+        </div>
+    </div>
     @endif
 
     <div style="margin-top: 20px; font-size: 10px; color: #777;">

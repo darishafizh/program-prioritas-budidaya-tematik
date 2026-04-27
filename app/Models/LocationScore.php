@@ -67,10 +67,8 @@ class LocationScore extends Model
     public function getStatusColorAttribute()
     {
         return match ($this->status) {
-            'SANGAT LAYAK' => 'success',
-            'LAYAK' => 'primary',
-            'CUKUP LAYAK' => 'warning',
-            'TIDAK LAYAK' => 'danger',
+            'POTENSIAL' => 'success',
+            'TIDAK POTENSIAL' => 'danger',
             default => 'secondary',
         };
     }
@@ -78,10 +76,8 @@ class LocationScore extends Model
     public function getStatusIconAttribute()
     {
         return match ($this->status) {
-            'SANGAT LAYAK' => '<i class="fa-solid fa-circle-check"></i>',
-            'LAYAK' => '<i class="fa-solid fa-circle-check"></i>',
-            'CUKUP LAYAK' => '<i class="fa-solid fa-circle-exclamation"></i>',
-            'TIDAK LAYAK' => '<i class="fa-solid fa-circle-xmark"></i>',
+            'POTENSIAL' => '<i class="fa-solid fa-circle-check"></i>',
+            'TIDAK POTENSIAL' => '<i class="fa-solid fa-circle-xmark"></i>',
             default => '<i class="fa-solid fa-circle"></i>',
         };
     }

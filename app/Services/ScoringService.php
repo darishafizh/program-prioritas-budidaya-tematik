@@ -33,13 +33,8 @@ class ScoringService
                 ->first();
         }
 
-        // Survey Masyarakat — cari via relasi kdmp_survey atau kabupaten
+        // Survey Masyarakat — cari via kabupaten
         $masyarakatSurvey = null;
-        if ($kdmpSurvey) {
-            $masyarakatSurvey = MasyarakatSurvey::whereHas('kdmpSurvey', function ($q) use ($kdmpSurvey) {
-                $q->where('id', $kdmpSurvey->id);
-            })->latest()->first();
-        }
         if (!$masyarakatSurvey) {
             $masyarakatSurvey = MasyarakatSurvey::where('tempat', 'like', "%{$kdmp->kabupaten}%")
                 ->latest()->first();
@@ -313,12 +308,7 @@ class ScoringService
 
     public function determineStatus(float $totalScore): string
     {
-        return match (true) {
-            $totalScore >= 85 => 'SANGAT LAYAK',
-            $totalScore >= 70 => 'LAYAK',
-            $totalScore >= 55 => 'CUKUP LAYAK',
-            default => 'TIDAK LAYAK',
-        };
+        return $totalScore >= 60 ? 'POTENSIAL' : 'TIDAK POTENSIAL';
     }
 
     // =====================================================

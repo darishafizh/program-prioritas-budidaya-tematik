@@ -382,7 +382,9 @@ class ProduksiController extends Controller
             ->orderByDesc('bulan')
             ->get();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('produksi.pdf-detail', compact('kdmp', 'records'))
+        $progresFisikRecords = \App\Models\ProgresFisikRecord::where('kdmp_id', $kdmp->id)->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('produksi.pdf-detail', compact('kdmp', 'records', 'progresFisikRecords'))
             ->setPaper('a4', 'landscape');
 
         $filename = 'Detail_Monitoring_' . str_replace(' ', '_', $kdmp->nama_kdkmp) . '.pdf';
