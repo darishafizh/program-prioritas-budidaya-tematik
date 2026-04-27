@@ -422,4 +422,25 @@ class ProduksiController extends Controller
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('produksi.pdf', compact('kdmpList', 'tahun', 'bulan', 'bulanList', 'search'))->setPaper('a4', 'landscape');
         return $pdf->stream('Data_Lokasi_Budidaya_' . ($bulanList[$bulan] ?? $bulan) . '_' . $tahun . '.pdf');
     }
+
+    /**
+     * Export data monitoring ke Excel
+     */
+    public function exportExcel(Request $request)
+    {
+        $tahun = $request->get('tahun', date('Y'));
+        $bulan = $request->get('bulan', date('n'));
+        $search = $request->get('search');
+
+        $bulanList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+        ];
+
+        $namaBulan = $bulanList[$bulan] ?? $bulan;
+        $filename = "Data_Monitoring_Produksi_{$namaBulan}_{$tahun}.xlsx";
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\ProduksiExport($tahun, $bulan, $search), $filename);
+    }
 }

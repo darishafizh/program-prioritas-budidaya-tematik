@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('produksi')->name('produksi.')->group(function () {
         Route::get('/', [ProduksiController::class, 'index'])->name('index');
         Route::get('/pdf', [ProduksiController::class, 'exportPdf'])->name('pdf');
+        Route::get('/excel', [ProduksiController::class, 'exportExcel'])->name('excel');
         Route::get('/create', [ProduksiController::class, 'create'])->name('create');
         Route::post('/', [ProduksiController::class, 'store'])->name('store');
         Route::get('/kdmp/{kdmp}/pdf', [ProduksiController::class, 'exportPdfDetail'])->name('pdf-detail');
