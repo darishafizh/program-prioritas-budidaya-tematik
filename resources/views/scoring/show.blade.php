@@ -23,18 +23,13 @@
                     </div>
                     <div class="status-info">
                         <span class="status-badge-large {{ $locationScore->status_color }}">
-                            {{ $locationScore->status_icon }} {{ $locationScore->status }}
+                            {!! $locationScore->status_icon !!} {{ $locationScore->status }}
                         </span>
                         <p class="status-desc">
-                            @if($locationScore->status == 'SANGAT LAYAK')
-                                Lokasi ini sangat berpotensi untuk pengembangan budidaya tematik bioflok dan dapat
-                                diprioritaskan.
-                            @elseif($locationScore->status == 'LAYAK')
-                                Lokasi ini layak untuk pengembangan budidaya tematik bioflok dengan beberapa perbaikan minor.
-                            @elseif($locationScore->status == 'CUKUP LAYAK')
-                                Lokasi ini cukup layak namun perlu perhatian pada beberapa aspek sebelum pengembangan.
+                            @if($locationScore->status == 'POTENSIAL')
+                                Lokasi ini berpotensi untuk pengembangan budidaya tematik bioflok dan dapat diprioritaskan.
                             @else
-                                Lokasi ini belum memenuhi kriteria kelayakan. Perlu evaluasi mendalam.
+                                Lokasi ini belum memenuhi kriteria potensi kelayakan. Perlu evaluasi mendalam.
                             @endif
                         </p>
                     </div>
@@ -70,7 +65,7 @@
     </div>
 
     <!-- Detail Scores Grid -->
-    <div class="grid grid-cols-3 gap-4 mb-4">
+    <div class="grid-responsive-3 mb-4">
         <!-- KDMP Detail -->
         <div class="section-card">
             <div class="section-header">

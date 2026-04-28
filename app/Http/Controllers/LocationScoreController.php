@@ -40,17 +40,15 @@ class LocationScoreController extends Controller
         $scores = $query->ranked()->get();
 
         // Get filter options
-        $statusOptions = ['SANGAT LAYAK', 'LAYAK', 'CUKUP LAYAK', 'TIDAK LAYAK'];
+        $statusOptions = ['POTENSIAL', 'TIDAK POTENSIAL'];
         $kabupatenOptions = LocationScore::distinct()->pluck('kabupaten')->filter();
         $provinsiOptions = LocationScore::distinct()->pluck('provinsi')->filter();
 
         // Get statistics
         $stats = [
             'total' => LocationScore::count(),
-            'sangat_layak' => LocationScore::byStatus('SANGAT LAYAK')->count(),
-            'layak' => LocationScore::byStatus('LAYAK')->count(),
-            'cukup_layak' => LocationScore::byStatus('CUKUP LAYAK')->count(),
-            'tidak_layak' => LocationScore::byStatus('TIDAK LAYAK')->count(),
+            'potensial' => LocationScore::byStatus('POTENSIAL')->count(),
+            'tidak_potensial' => LocationScore::byStatus('TIDAK POTENSIAL')->count(),
             'avg_score' => LocationScore::avg('total_score') ?? 0,
         ];
 

@@ -313,8 +313,46 @@
         </tbody>
     </table>
 
+    {{-- Dokumentasi Foto dari Progres Fisik --}}
+    @if(isset($progresFisikRecords) && $progresFisikRecords->isNotEmpty())
+        @php
+            $allFotoSesudah = [];
+            foreach($progresFisikRecords as $record) {
+                if(!empty($record->foto_sesudah) && is_array($record->foto_sesudah)) {
+                    $allFotoSesudah = array_merge($allFotoSesudah, $record->foto_sesudah);
+                }
+            }
+            $hasFoto = count($allFotoSesudah) > 0;
+        @endphp
 
-
+        @if($hasFoto)
+        <div style="margin-top: 30px;">
+            <div style="margin-bottom: 15px;">
+                <h4 style="margin: 0; font-size: 16px; font-weight: bold;">Dokumentasi Foto Lokasi</h4>
+            </div>
+            
+            <div style="width: 100%;">
+                @foreach($allFotoSesudah as $path)
+                    @php
+                        $fullPath = storage_path('app/public/' . $path);
+                        $base64Image = '';
+                        if (file_exists($fullPath)) {
+                            $type = pathinfo($fullPath, PATHINFO_EXTENSION);
+                            $data = file_get_contents($fullPath);
+                            $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                        }
+                    @endphp
+                    @if($base64Image)
+                    <div style="float: left; margin-right: 20px; margin-bottom: 20px;">
+                        <img src="{{ $base64Image }}" style="width: 260px; height: 260px; object-fit: cover; border: 2px solid #ddd; border-radius: 4px;">
+                    </div>
+                    @endif
+                @endforeach
+                <div style="clear: both;"></div>
+            </div>
+        </div>
+        @endif
+    @endif
     <div style="margin-top: 20px; font-size: 10px; color: #777;">
         <p>Dicetak pada: {{ now()->timezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY, HH:mm') }} WIB</p>
     </div>

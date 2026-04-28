@@ -62,7 +62,6 @@ class ProduksiExport implements FromCollection, WithHeadings, WithMapping, Shoul
 
         $periode = '-';
         $status = '-';
-        $progresFisik = '-';
         $volumePanen = '-';
         $nilaiProduksi = '-';
         $biayaOperasional = '-';
@@ -78,7 +77,6 @@ class ProduksiExport implements FromCollection, WithHeadings, WithMapping, Shoul
         if ($lastRecord) {
             $periode = $lastRecord->periode_label ?? ($lastRecord->bulan . ' ' . $lastRecord->tahun);
             $status = $lastRecord->status_label ?? $lastRecord->status_lokasi;
-            $progresFisik = $lastRecord->progres_fisik . '%';
             $volumePanen = $lastRecord->volume_panen_kg;
             $nilaiProduksi = $lastRecord->nilai_produksi;
             $biayaOperasional = $lastRecord->biaya_operasional;
@@ -101,7 +99,6 @@ class ProduksiExport implements FromCollection, WithHeadings, WithMapping, Shoul
             $penyuluh,
             $periode,
             $status,
-            $progresFisik,
             $volumePanen,
             $nilaiProduksi,
             $biayaOperasional,
@@ -127,7 +124,6 @@ class ProduksiExport implements FromCollection, WithHeadings, WithMapping, Shoul
             'Penyuluh (Telp)',
             'Periode Laporan Terakhir',
             'Status Lokasi',
-            'Progres Fisik (%)',
             'Volume Panen (kg)',
             'Nilai Produksi (Rp)',
             'Biaya Operasional (Rp)',

@@ -13,7 +13,7 @@
 </div>
 
 <!-- Statistics Cards -->
-<div class="grid grid-cols-4 mb-5">
+<div class="grid-responsive-4 mb-5" style="grid-template-columns: repeat(2, 1fr);">
     <div class="kpi-card kpi-aktif">
         <div class="kpi-icon">
             <svg fill="none" class="w-6 h-6" stroke="currentColor" viewBox="0 0 24 24" style="width:24px;height:24px;">
@@ -21,30 +21,8 @@
             </svg>
         </div>
         <div>
-            <div class="kpi-value">{{ $stats['sangat_layak'] }}</div>
-            <div class="kpi-label">SANGAT LAYAK</div>
-        </div>
-    </div>
-    <div class="kpi-card kpi-perkolam">
-        <div class="kpi-icon">
-            <svg fill="none" class="w-6 h-6" stroke="currentColor" viewBox="0 0 24 24" style="width:24px;height:24px;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-        </div>
-        <div>
-            <div class="kpi-value">{{ $stats['layak'] }}</div>
-            <div class="kpi-label">LAYAK</div>
-        </div>
-    </div>
-    <div class="kpi-card kpi-sr warning">
-        <div class="kpi-icon">
-            <svg fill="none" class="w-6 h-6" stroke="currentColor" viewBox="0 0 24 24" style="width:24px;height:24px;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-        </div>
-        <div>
-            <div class="kpi-value">{{ $stats['cukup_layak'] }}</div>
-            <div class="kpi-label">CUKUP LAYAK</div>
+            <div class="kpi-value">{{ $stats['potensial'] }}</div>
+            <div class="kpi-label">POTENSIAL</div>
         </div>
     </div>
     <div class="kpi-card kpi-sr danger">
@@ -54,8 +32,8 @@
             </svg>
         </div>
         <div>
-            <div class="kpi-value">{{ $stats['tidak_layak'] }}</div>
-            <div class="kpi-label">TIDAK LAYAK</div>
+            <div class="kpi-value">{{ $stats['tidak_potensial'] }}</div>
+            <div class="kpi-label">TIDAK POTENSIAL</div>
         </div>
     </div>
 </div>
@@ -188,7 +166,7 @@
                         </td>
                         <td class="text-center">
                             <span class="status-badge {{ $score->status_color }}">
-                                {{ $score->status_icon }} {{ $score->status }}
+                                {!! $score->status_icon !!} {{ $score->status }}
                             </span>
                         </td>
                         <td class="text-center">
