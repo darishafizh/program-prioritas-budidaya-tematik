@@ -110,7 +110,7 @@
                             $lastRecord = $kdmp->progresFisikRecords->first();
                             $avg = $lastRecord ? $lastRecord->average_progress : 0;
                         @endphp
-                        <tr>
+                        <tr data-kdmp-id="{{ $kdmp->id }}">
                             <td class="text-center fw-bold text-muted">{{ $kdmp->no }}</td>
                             <td>
                                 <div class="fw-bold">{{ $kdmp->nama_kdkmp }}</div>
@@ -218,6 +218,13 @@
     .table th, .table td { border: 1px solid #ccc !important; }
     [data-theme="dark"] .table { border-color: #374151 !important; }
     [data-theme="dark"] .table th, [data-theme="dark"] .table td { border-color: #374151 !important; }
+    .highlight-row td {
+        background: rgba(8, 145, 178, 0.12) !important;
+        transition: background 2s ease;
+    }
+    [data-theme="dark"] .highlight-row td {
+        background: rgba(8, 145, 178, 0.2) !important;
+    }
 </style>
 @endpush
 
@@ -227,7 +234,8 @@
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#progresFisikTable').DataTable({
+        var table = $('#progresFisikTable').DataTable({
+            stateSave: true,
             language: {
                 search: "Cari:",
                 lengthMenu: "Tampilkan _MENU_ data",
@@ -243,6 +251,48 @@
             order: [[0, 'asc']],
             columnDefs: [{ orderable: false, targets: [8] }]
         });
+
+        // Highlight and scroll to specific KDMP row
+        var urlParams = new URLSearchParams(window.location.search);
+        var highlightId = urlParams.get('highlight');
+        if (highlightId) {
+            // Find the row with the matching kdmp id
+            var targetRow = null;
+            var targetIndex = -1;
+            table.rows().every(function(rowIdx) {
+                var node = this.node();
+                if ($(node).data('kdmp-id') == highlightId) {
+                    targetRow = node;
+                    targetIndex = rowIdx;
+                    return false;
+                }
+            });
+
+            if (targetRow && targetIndex >= 0) {
+                // Calculate which page this row is on and navigate to it
+                var pageInfo = table.page.info();
+                var pageLength = pageInfo.length;
+                if (pageLength > 0) {
+                    var targetPage = Math.floor(targetIndex / pageLength);
+                    table.page(targetPage).draw(false);
+                }
+
+                // Highlight and scroll
+                setTimeout(function() {
+                    $(targetRow).addClass('highlight-row');
+                    targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Remove highlight after 3 seconds
+                    setTimeout(function() {
+                        $(targetRow).removeClass('highlight-row');
+                    }, 3000);
+                }, 300);
+            }
+
+            // Clean URL
+            var cleanUrl = window.location.pathname + window.location.search.replace(/[?&]highlight=[^&]+/, '').replace(/^&/, '?');
+            if (cleanUrl.endsWith('?')) cleanUrl = cleanUrl.slice(0, -1);
+            window.history.replaceState({}, '', cleanUrl);
+        }
     });
 </script>
 @endpush

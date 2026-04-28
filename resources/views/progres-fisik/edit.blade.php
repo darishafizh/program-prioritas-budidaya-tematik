@@ -259,24 +259,67 @@ document.addEventListener('DOMContentLoaded', function() {
         slider.addEventListener('input', () => { display.textContent = slider.value + '%'; });
     });
 
-    // Foto preview
+    // Foto preview with file accumulation
     function setupFotoPreview(inputId, previewId) {
         const input = document.getElementById(inputId);
         const preview = document.getElementById(previewId);
         if (!input || !preview) return;
 
-        input.addEventListener('change', function() {
+        // Store accumulated files
+        let accumulatedFiles = new DataTransfer();
+
+        function renderPreviews() {
             preview.innerHTML = '';
-            Array.from(this.files).forEach((file, i) => {
+            Array.from(accumulatedFiles.files).forEach((file, i) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const div = document.createElement('div');
                     div.className = 'foto-preview-item';
-                    div.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button type="button" class="foto-preview-remove" data-index="${i}" title="Hapus foto">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    `;
+                    // Handle remove
+                    div.querySelector('.foto-preview-remove').addEventListener('click', function() {
+                        const idx = parseInt(this.dataset.index);
+                        const newDt = new DataTransfer();
+                        Array.from(accumulatedFiles.files).forEach((f, j) => {
+                            if (j !== idx) newDt.items.add(f);
+                        });
+                        accumulatedFiles = newDt;
+                        input.files = accumulatedFiles.files;
+                        renderPreviews();
+                    });
                     preview.appendChild(div);
                 };
                 reader.readAsDataURL(file);
             });
+        }
+
+        function getTotalSize() {
+            let total = 0;
+            Array.from(accumulatedFiles.files).forEach(f => total += f.size);
+            return total;
+        }
+
+        input.addEventListener('change', function() {
+            // Calculate size of new files
+            const maxTotal = 2 * 1024 * 1024; // 2MB total
+            let newSize = 0;
+            Array.from(this.files).forEach(f => newSize += f.size);
+            if (getTotalSize() + newSize > maxTotal) {
+                const currentMB = ((getTotalSize() + newSize) / 1024 / 1024).toFixed(2);
+                alert('Total ukuran semua file tidak boleh melebihi 2MB.\nTotal saat ini: ' + currentMB + 'MB. File tidak ditambahkan.');
+            } else {
+                Array.from(this.files).forEach(file => {
+                    accumulatedFiles.items.add(file);
+                });
+            }
+            // Update input with all accumulated files
+            input.files = accumulatedFiles.files;
+            renderPreviews();
         });
 
         // Drag & drop
@@ -284,8 +327,19 @@ document.addEventListener('DOMContentLoaded', function() {
         ['dragenter','dragover'].forEach(e => area.addEventListener(e, ev => { ev.preventDefault(); area.classList.add('drag-over'); }));
         ['dragleave','drop'].forEach(e => area.addEventListener(e, ev => { ev.preventDefault(); area.classList.remove('drag-over'); }));
         area.addEventListener('drop', ev => {
-            input.files = ev.dataTransfer.files;
-            input.dispatchEvent(new Event('change'));
+            const maxTotal = 2 * 1024 * 1024;
+            let newSize = 0;
+            Array.from(ev.dataTransfer.files).forEach(f => newSize += f.size);
+            if (getTotalSize() + newSize > maxTotal) {
+                const currentMB = ((getTotalSize() + newSize) / 1024 / 1024).toFixed(2);
+                alert('Total ukuran semua file tidak boleh melebihi 2MB.\nTotal saat ini: ' + currentMB + 'MB. File tidak ditambahkan.');
+            } else {
+                Array.from(ev.dataTransfer.files).forEach(file => {
+                    accumulatedFiles.items.add(file);
+                });
+            }
+            input.files = accumulatedFiles.files;
+            renderPreviews();
         });
     }
 
