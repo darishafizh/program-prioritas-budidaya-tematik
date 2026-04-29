@@ -9,6 +9,8 @@ class ProgresFisikRecord extends Model
 {
     use HasFactory;
 
+    protected $table = 'monitoring_progres_fisik';
+
     protected $fillable = [
         'kdmp_id',
         'user_id',
