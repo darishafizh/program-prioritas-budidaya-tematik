@@ -31,21 +31,6 @@
     .hero-btn-danger { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #FCA5A5; }
     .hero-btn-danger:hover { background: rgba(239,68,68,0.25); color: #fff; }
 
-    .progres-summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.875rem; margin-bottom: 1.75rem; }
-    .progres-summary-card {
-        background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
-        padding: 1rem 1.125rem; text-align: center; position: relative; overflow: hidden; transition: all 250ms ease;
-    }
-    .progres-summary-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-    .progres-summary-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-    .progres-summary-card.c-bangunan::before { background: #0891B2; }
-    .progres-summary-card.c-kolam::before { background: #10B981; }
-    .progres-summary-card.c-listrik::before { background: #F59E0B; }
-    .progres-summary-card.c-air::before { background: #3B82F6; }
-    .progres-summary-card.c-aerasi::before { background: #8B5CF6; }
-    .progres-summary-label { font-size: 0.68rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.35rem; }
-    .progres-summary-value { font-size: 1.5rem; font-weight: 700; color: var(--gray-900); }
-    .progres-summary-bar { height: 6px; background: var(--gray-200); border-radius: 3px; margin-top: 0.5rem; overflow: hidden; }
     .progres-summary-bar-fill { height: 100%; border-radius: 3px; transition: width 600ms ease; }
 
     .chart-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-xl); margin-bottom: 1.75rem; overflow: hidden; }
@@ -75,15 +60,13 @@
     .record-note.tindak-lanjut { background: rgba(16,185,129,0.04); border-left: 3px solid #10B981; }
     .record-note strong { font-weight: 600; white-space: nowrap; }
 
-    [data-theme="dark"] .progres-summary-card { background: #111827; border-color: #1F2937; }
-    [data-theme="dark"] .progres-summary-value { color: #E5E7EB; }
     [data-theme="dark"] .chart-card, [data-theme="dark"] .records-card { background: #111827; border-color: #1F2937; }
     [data-theme="dark"] .chart-card-header, [data-theme="dark"] .records-card-header, [data-theme="dark"] .pf-record { border-color: #1F2937; }
     [data-theme="dark"] .pf-record:hover { background: rgba(255,255,255,0.02); }
 
-    @media (max-width: 1024px) { .progres-summary-grid { grid-template-columns: repeat(3, 1fr); } .pf-bars { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 768px) { .progres-summary-grid { grid-template-columns: repeat(2, 1fr); } .pf-bars { grid-template-columns: repeat(2, 1fr); } .progres-hero-top { flex-direction: column; } .pf-record-top { flex-direction: column; } }
-    @media (max-width: 480px) { .progres-summary-grid { grid-template-columns: 1fr; } .pf-bars { grid-template-columns: 1fr; } }
+    @media (max-width: 1024px) { .pf-bars { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px) { .pf-bars { grid-template-columns: repeat(2, 1fr); } .progres-hero-top { flex-direction: column; } .pf-record-top { flex-direction: column; } }
+    @media (max-width: 480px) { .pf-bars { grid-template-columns: 1fr; } }
 </style>
 @endpush
 
@@ -114,25 +97,26 @@
         <div class="progres-hero-actions">
             <a href="{{ route('progres-fisik.pdf-detail', $kdmp->id) }}" class="hero-btn hero-btn-danger" target="_blank"><i class="fa-solid fa-file-pdf"></i> PDF</a>
             <a href="{{ route('progres-fisik.create', ['kdmp_id' => $kdmp->id]) }}" class="hero-btn hero-btn-primary"><i class="fa-solid fa-plus"></i> Tambah Data</a>
-            <a href="{{ route('progres-fisik.index') }}" class="hero-btn hero-btn-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+            <a href="{{ route('progres-fisik.index', ['highlight' => $kdmp->id]) }}" class="hero-btn hero-btn-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
         </div>
     </div>
 </div>
 
 {{-- Latest Progress Summary Cards --}}
-<div class="progres-summary-grid">
+<div class="grid grid-cols-5 mb-5">
     @foreach([
-        ['label' => 'Bangunan', 'value' => $latestBangunan, 'color' => '#0891B2', 'class' => 'c-bangunan'],
-        ['label' => 'Kolam', 'value' => $latestKolam, 'color' => '#10B981', 'class' => 'c-kolam'],
-        ['label' => 'Listrik', 'value' => $latestListrik, 'color' => '#F59E0B', 'class' => 'c-listrik'],
-        ['label' => 'Air', 'value' => $latestAir, 'color' => '#3B82F6', 'class' => 'c-air'],
-        ['label' => 'Aerasi', 'value' => $latestAerasi, 'color' => '#8B5CF6', 'class' => 'c-aerasi'],
+        ['label' => 'BANGUNAN', 'value' => $latestBangunan, 'color' => '#0891B2', 'icon' => 'fa-building', 'class' => 'kpi-produksi'],
+        ['label' => 'KOLAM', 'value' => $latestKolam, 'color' => '#10B981', 'icon' => 'fa-water', 'class' => 'kpi-aktif'],
+        ['label' => 'LISTRIK', 'value' => $latestListrik, 'color' => '#F59E0B', 'icon' => 'fa-bolt', 'class' => 'kpi-sr warning'],
+        ['label' => 'AIR', 'value' => $latestAir, 'color' => '#3B82F6', 'icon' => 'fa-droplet', 'class' => 'kpi-perkolam'],
+        ['label' => 'AERASI', 'value' => $latestAerasi, 'color' => '#8B5CF6', 'icon' => 'fa-wind', 'class' => 'kpi-utilisasi'],
     ] as $comp)
-    <div class="progres-summary-card {{ $comp['class'] }}">
-        <div class="progres-summary-label">{{ $comp['label'] }}</div>
-        <div class="progres-summary-value">{{ $comp['value'] }}%</div>
-        <div class="progres-summary-bar">
-            <div class="progres-summary-bar-fill" style="width:{{ $comp['value'] }}%; background:{{ $comp['color'] }};"></div>
+    <div class="kpi-card {{ $comp['class'] }}">
+        <div class="kpi-icon"><i class="fa-solid {{ $comp['icon'] }}" style="font-size:1rem;"></i></div>
+        <div>
+            <div class="kpi-value">{{ $comp['value'] }}%</div>
+            <div class="kpi-label">{{ $comp['label'] }}</div>
+            <div class="kpi-sub">Progres terakhir</div>
         </div>
     </div>
     @endforeach

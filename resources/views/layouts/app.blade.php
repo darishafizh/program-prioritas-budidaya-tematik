@@ -124,6 +124,14 @@
                 // Mobile: slide in/out
                 sidebar.classList.toggle('sidebar-open');
             }
+
+            // Recalculate DataTables columns & trigger resize after sidebar transition ends
+            setTimeout(function() {
+                if (typeof $.fn.dataTable !== 'undefined') {
+                    $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+                }
+                window.dispatchEvent(new Event('resize'));
+            }, 300);
         }
 
         // Close sidebar on mobile when clicking a link

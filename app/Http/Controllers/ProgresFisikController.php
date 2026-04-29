@@ -130,10 +130,25 @@ class ProgresFisikController extends Controller
             'tindak_lanjut' => 'nullable|string',
             'catatan' => 'nullable|string',
             'foto_sebelum' => 'nullable|array',
-            'foto_sebelum.*' => 'image|mimes:jpg,jpeg,png|max:51200',
+            'foto_sebelum.*' => 'image|mimes:jpg,jpeg,png',
             'foto_sesudah' => 'nullable|array',
-            'foto_sesudah.*' => 'image|mimes:jpg,jpeg,png|max:51200',
+            'foto_sesudah.*' => 'image|mimes:jpg,jpeg,png',
         ]);
+
+        // Validasi total ukuran semua file upload maks 2MB
+        $totalSize = 0;
+        foreach (['foto_sebelum', 'foto_sesudah'] as $field) {
+            if ($request->hasFile($field)) {
+                foreach ($request->file($field) as $file) {
+                    $totalSize += $file->getSize();
+                }
+            }
+        }
+        if ($totalSize > 2 * 1024 * 1024) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['foto' => 'Total ukuran semua file foto tidak boleh melebihi 2MB. Ukuran saat ini: ' . round($totalSize / 1024 / 1024, 2) . 'MB.']);
+        }
 
         $validated['user_id'] = Auth::id();
 
@@ -155,7 +170,7 @@ class ProgresFisikController extends Controller
 
         ProgresFisikRecord::create($validated);
 
-        return redirect()->route('progres-fisik.index')
+        return redirect()->route('progres-fisik.index', ['highlight' => $validated['kdmp_id']])
             ->with('success', 'Data progres fisik berhasil disimpan!');
     }
 
@@ -191,14 +206,29 @@ class ProgresFisikController extends Controller
             'tindak_lanjut' => 'nullable|string',
             'catatan' => 'nullable|string',
             'foto_sebelum' => 'nullable|array',
-            'foto_sebelum.*' => 'image|mimes:jpg,jpeg,png|max:51200',
+            'foto_sebelum.*' => 'image|mimes:jpg,jpeg,png',
             'foto_sesudah' => 'nullable|array',
-            'foto_sesudah.*' => 'image|mimes:jpg,jpeg,png|max:51200',
+            'foto_sesudah.*' => 'image|mimes:jpg,jpeg,png',
             'hapus_foto_sebelum' => 'nullable|array',
             'hapus_foto_sebelum.*' => 'integer',
             'hapus_foto_sesudah' => 'nullable|array',
             'hapus_foto_sesudah.*' => 'integer',
         ]);
+
+        // Validasi total ukuran semua file upload maks 2MB
+        $totalSize = 0;
+        foreach (['foto_sebelum', 'foto_sesudah'] as $field) {
+            if ($request->hasFile($field)) {
+                foreach ($request->file($field) as $file) {
+                    $totalSize += $file->getSize();
+                }
+            }
+        }
+        if ($totalSize > 2 * 1024 * 1024) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['foto' => 'Total ukuran semua file foto tidak boleh melebihi 2MB. Ukuran saat ini: ' . round($totalSize / 1024 / 1024, 2) . 'MB.']);
+        }
 
         // Handle foto sebelum
         $validated['foto_sebelum'] = $this->handleFotoUpdate(

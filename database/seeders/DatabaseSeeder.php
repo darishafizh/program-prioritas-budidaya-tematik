@@ -22,9 +22,13 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        $this->call([
-            MonitoringRecordSeeder::class,
-            ProgresFisikRecordSeeder::class,
+        // Create Admin user
+        User::factory()->create([
+            'name' => 'Administrator',
+            'username' => 'admin',
+            'email' => 'admin@admin.com',
+            'password' => bcrypt('admin123'),
+            'role' => 'admin',
         ]);
     }
 }
