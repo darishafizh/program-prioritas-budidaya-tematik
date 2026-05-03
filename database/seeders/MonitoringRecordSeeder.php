@@ -65,7 +65,6 @@ class MonitoringRecordSeeder extends Seeder
                     'bulan' => $periode['bulan'],
                     'tahun' => $periode['tahun'],
                     'status_lokasi' => $status,
-                    'progres_fisik' => $this->generateProgresFisik($profileGroup, $pIdx),
                     'volume_panen_kg' => $volume,
                     'nilai_produksi' => $nilaiProduksi,
                     'biaya_pakan' => $biayaPakan,

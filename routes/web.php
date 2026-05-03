@@ -20,13 +20,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])
-    ->middleware(['auth'])
-    ->name('dashboard.chart-data');
-
-Route::get('/dashboard/filter-data', [DashboardController::class, 'filterData'])
-    ->middleware(['auth'])
-    ->name('dashboard.filter-data');
 
 Route::middleware('auth')->group(function () {
     // Profile routes

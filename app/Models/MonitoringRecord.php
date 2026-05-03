@@ -9,6 +9,8 @@ class MonitoringRecord extends Model
 {
     use HasFactory;
 
+    protected $table = 'monitoring_produksi';
+
     protected $fillable = [
         'kdmp_id',
         'user_id',
