@@ -15,8 +15,13 @@ class ProduksiController extends Controller
      */
     public function index(Request $request)
     {
-        $tahun = $request->get('tahun', date('Y'));
-        $bulan = $request->get('bulan', date('n'));
+        // Default ke periode terakhir yang ada datanya, bukan bulan saat ini
+        $latestRecord = MonitoringRecord::orderByDesc('tahun')->orderByDesc('bulan')->first();
+        $defaultTahun = $latestRecord ? $latestRecord->tahun : date('Y');
+        $defaultBulan = $latestRecord ? $latestRecord->bulan : date('n');
+
+        $tahun = $request->get('tahun', $defaultTahun);
+        $bulan = $request->get('bulan', $defaultBulan);
         $status = $request->get('status');
         $search = $request->get('search');
 
