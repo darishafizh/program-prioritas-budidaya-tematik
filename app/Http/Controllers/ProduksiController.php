@@ -248,8 +248,7 @@ class ProduksiController extends Controller
     {
         $validated = $request->validate([
             'kdmp_id' => 'required|exists:kdmp,id',
-            'bulan' => 'required|integer|between:1,12',
-            'tahun' => 'required|integer|min:2024',
+            'tanggal' => 'required|date',
             'status_lokasi' => 'required|in:on_track,bermasalah,selesai,vakum',
             'progres_fisik' => 'required|integer|between:0,100',
             'volume_panen_kg' => 'nullable|numeric|min:0',
@@ -264,32 +263,24 @@ class ProduksiController extends Controller
             'kendala' => 'nullable|string',
             'tindak_lanjut' => 'nullable|string',
             'catatan' => 'nullable|string',
-            'foto' => ['nullable', 'array', function ($attribute, $value, $fail) use ($request) {
-                $totalSize = 0;
-                if ($request->hasFile('foto')) {
-                    foreach ($request->file('foto') as $file) {
-                        $totalSize += $file->getSize();
-                    }
-                }
-                if ($totalSize > 5 * 1024 * 1024) {
-                    $fail('Total ukuran semua foto tidak boleh melebihi 5 MB.');
-                }
-            }],
-            'foto.*' => 'image|mimes:jpg,jpeg,png',
         ]);
+
+        // Parse tanggal ke bulan dan tahun
+        $date = \Carbon\Carbon::parse($validated['tanggal']);
+        $validated['bulan'] = $date->month;
+        $validated['tahun'] = $date->year;
 
         $validated['user_id'] = Auth::id();
 
-        // Cek duplikasi
+        // Cek duplikasi berdasarkan tanggal yang sama
         $existing = MonitoringRecord::where('kdmp_id', $validated['kdmp_id'])
-            ->where('bulan', $validated['bulan'])
-            ->where('tahun', $validated['tahun'])
+            ->where('tanggal', $validated['tanggal'])
             ->first();
 
         if ($existing) {
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['periode' => 'Laporan untuk KDMP ini pada periode ' . $validated['bulan'] . '/' . $validated['tahun'] . ' sudah ada. Gunakan edit untuk memperbarui.']);
+                ->withErrors(['tanggal' => 'Laporan untuk KDMP ini pada tanggal tersebut sudah ada. Gunakan edit untuk memperbarui.']);
         }
 
         $validated['biaya_operasional'] = (float)($validated['biaya_pakan'] ?? 0) 

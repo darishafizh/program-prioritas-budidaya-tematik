@@ -876,7 +876,7 @@
         <div class="record-top">
             <div class="record-main">
                 <div class="record-period">
-                    <div class="record-period-month">{{ $bulanList[$record->bulan] ?? '-' }}</div>
+                    <div class="record-period-month">{{ $record->tanggal ? \Carbon\Carbon::parse($record->tanggal)->format('d') : '' }} {{ $bulanList[$record->bulan] ?? '-' }}</div>
                     <div class="record-period-year">{{ $record->tahun }}</div>
                 </div>
                 <div class="record-divider"></div>

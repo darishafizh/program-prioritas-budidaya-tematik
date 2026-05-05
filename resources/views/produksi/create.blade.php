@@ -76,30 +76,16 @@
             </div>
             <div>
                 <h3 class="monitoring-form-title">Periode</h3>
-                <p class="monitoring-form-desc">Tentukan periode laporan</p>
+                <p class="monitoring-form-desc">Tentukan tanggal laporan</p>
             </div>
         </div>
         <div class="monitoring-form-body">
-            <div class="grid grid-cols-2">
-                <div class="form-group">
-                    <label class="form-label">Bulan <span class="required">*</span></label>
-                    <select name="bulan" class="form-control form-select" required>
-                        @foreach($bulanList as $num => $nama)
-                        <option value="{{ $num }}" {{ old('bulan', date('n')) == $num ? 'selected' : '' }}>{{ $nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Tahun <span class="required">*</span></label>
-                    <select name="tahun" class="form-control form-select" required>
-                        @foreach($tahunList as $t)
-                        <option value="{{ $t }}" {{ old('tahun', date('Y')) == $t ? 'selected' : '' }}>{{ $t }}</option>
-                        @endforeach
-                    </select>
-                </div>
+            <div class="form-group" style="max-width:300px;margin-bottom:0;">
+                <label class="form-label">Tanggal <span class="required">*</span></label>
+                <input type="date" name="tanggal" class="form-control" value="{{ old('tanggal', date('Y-m-d')) }}" required>
             </div>
-                <input type="hidden" name="status_lokasi" value="on_track">
-                <input type="hidden" name="progres_fisik" value="100">
+            <input type="hidden" name="status_lokasi" value="on_track">
+            <input type="hidden" name="progres_fisik" value="100">
         </div>
     </div>
 
@@ -189,47 +175,7 @@
         </div>
     </div>
 
-    {{-- Section 3c: Upload Foto Dokumentasi --}}
-    <div class="monitoring-form-card">
-        <div class="monitoring-form-header">
-            <div class="monitoring-form-header-icon" style="background: rgba(236, 72, 153, 0.1); color: #EC4899;">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-            </div>
-            <div>
-                <h3 class="monitoring-form-title">Foto Dokumentasi</h3>
-                <p class="monitoring-form-desc">Upload foto kegiatan budidaya (JPG/PNG, maks. total 50 MB)</p>
-            </div>
-        </div>
-        <div class="monitoring-form-body">
-            <div class="upload-zone" id="uploadZone">
-                <input type="file" name="foto[]" id="fotoInput" multiple accept="image/jpeg,image/png" style="display:none;">
-                <div class="upload-zone-content" id="uploadPlaceholder">
-                    <div class="upload-zone-icon">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                    </div>
-                    <p class="upload-zone-text">Seret & lepas foto di sini, atau <span class="upload-zone-link">pilih file</span></p>
-                    <p class="upload-zone-hint">Format: JPG, PNG · Bisa pilih lebih dari 1 file · Maks. total 50 MB</p>
-                </div>
-            </div>
-            <div class="upload-preview-grid" id="previewGrid"></div>
-            <div class="upload-info" id="uploadInfo" style="display:none;">
-                <span id="uploadCount">0 file</span>
-                <span class="upload-info-dot">·</span>
-                <span id="uploadSize">0 MB</span>
-                <span class="upload-info-dot">·</span>
-                <span id="uploadLimit">Sisa: 50 MB</span>
-                <button type="button" class="upload-clear-btn" id="clearAllBtn" title="Hapus Semua">
-                    <i class="fa-solid fa-trash-can"></i> Hapus Semua
-                </button>
-            </div>
-            <div class="upload-error" id="uploadError" style="display:none;">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                <span id="uploadErrorMsg"></span>
-            </div>
-        </div>
-    </div>
+
 
     {{-- Section 4: Catatan & Kendala --}}
     <div class="monitoring-form-card">
@@ -493,141 +439,7 @@
         updateBar();
     }
 
-    // ===== FOTO UPLOAD HANDLER =====
-    const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50 MB
-    const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
-    const uploadZone = document.getElementById('uploadZone');
-    const fotoInput = document.getElementById('fotoInput');
-    const previewGrid = document.getElementById('previewGrid');
-    const uploadInfo = document.getElementById('uploadInfo');
-    const uploadCount = document.getElementById('uploadCount');
-    const uploadSize = document.getElementById('uploadSize');
-    const uploadLimit = document.getElementById('uploadLimit');
-    const uploadError = document.getElementById('uploadError');
-    const uploadErrorMsg = document.getElementById('uploadErrorMsg');
-    const clearAllBtn = document.getElementById('clearAllBtn');
 
-    let selectedFiles = []; // DataTransfer to manage FileList
-
-    // Click to open file picker
-    uploadZone.addEventListener('click', () => fotoInput.click());
-
-    // Drag & drop events
-    ['dragenter', 'dragover'].forEach(evt => {
-        uploadZone.addEventListener(evt, e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
-    });
-    ['dragleave', 'drop'].forEach(evt => {
-        uploadZone.addEventListener(evt, e => { e.preventDefault(); uploadZone.classList.remove('dragover'); });
-    });
-    uploadZone.addEventListener('drop', e => {
-        const files = Array.from(e.dataTransfer.files).filter(f => ALLOWED_TYPES.includes(f.type));
-        addFiles(files);
-    });
-
-    // File input change
-    fotoInput.addEventListener('change', () => {
-        const files = Array.from(fotoInput.value ? fotoInput.files : []);
-        addFiles(files);
-    });
-
-    // Clear all
-    clearAllBtn.addEventListener('click', () => {
-        selectedFiles = [];
-        syncInputFiles();
-        renderPreviews();
-    });
-
-    function addFiles(newFiles) {
-        hideError();
-        const validFiles = newFiles.filter(f => {
-            if (!ALLOWED_TYPES.includes(f.type)) {
-                showError('Format file "' + f.name + '" tidak didukung. Hanya JPG dan PNG.');
-                return false;
-            }
-            return true;
-        });
-
-        const merged = [...selectedFiles, ...validFiles];
-        const totalSize = merged.reduce((sum, f) => sum + f.size, 0);
-
-        if (totalSize > MAX_TOTAL_SIZE) {
-            showError('Total ukuran file melebihi batas 50 MB. Silakan kurangi jumlah atau ukuran file.');
-            return;
-        }
-
-        selectedFiles = merged;
-        syncInputFiles();
-        renderPreviews();
-    }
-
-    function removeFile(index) {
-        selectedFiles.splice(index, 1);
-        syncInputFiles();
-        renderPreviews();
-        hideError();
-    }
-
-    function syncInputFiles() {
-        const dt = new DataTransfer();
-        selectedFiles.forEach(f => dt.items.add(f));
-        fotoInput.files = dt.files;
-    }
-
-    function renderPreviews() {
-        previewGrid.innerHTML = '';
-        const totalSize = selectedFiles.reduce((sum, f) => sum + f.size, 0);
-
-        if (selectedFiles.length === 0) {
-            uploadInfo.style.display = 'none';
-            return;
-        }
-
-        uploadInfo.style.display = 'flex';
-        uploadCount.textContent = selectedFiles.length + ' file';
-        uploadSize.textContent = formatSize(totalSize);
-        uploadLimit.textContent = 'Sisa: ' + formatSize(MAX_TOTAL_SIZE - totalSize);
-
-        selectedFiles.forEach((file, idx) => {
-            const item = document.createElement('div');
-            item.className = 'upload-preview-item';
-
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(file);
-            img.onload = () => URL.revokeObjectURL(img.src);
-
-            const removeBtn = document.createElement('button');
-            removeBtn.type = 'button';
-            removeBtn.className = 'upload-preview-remove';
-            removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-            removeBtn.addEventListener('click', (e) => { e.stopPropagation(); removeFile(idx); });
-
-            const nameLabel = document.createElement('div');
-            nameLabel.className = 'upload-preview-name';
-            nameLabel.textContent = file.name;
-
-            item.appendChild(img);
-            item.appendChild(removeBtn);
-            item.appendChild(nameLabel);
-            previewGrid.appendChild(item);
-        });
-    }
-
-    function formatSize(bytes) {
-        if (bytes === 0) return '0 B';
-        const k = 1024;
-        const sizes = ['B', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-    }
-
-    function showError(msg) {
-        uploadError.style.display = 'flex';
-        uploadErrorMsg.textContent = msg;
-    }
-
-    function hideError() {
-        uploadError.style.display = 'none';
-    }
 
     // ===== RUPIAH AUTO-FORMAT =====
     function formatRupiah(angka) {

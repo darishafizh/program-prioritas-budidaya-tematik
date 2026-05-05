@@ -15,6 +15,7 @@ class MonitoringRecord extends Model
         'kdmp_id',
         'user_id',
         'bulan',
+        'tanggal',
         'tahun',
         'status_lokasi',
         'progres_fisik',

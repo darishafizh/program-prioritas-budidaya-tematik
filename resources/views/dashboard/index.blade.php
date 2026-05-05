@@ -33,6 +33,51 @@
     </form>
 </div>
 
+{{-- ═══════════ DASBOR EKSEKUTIF ═══════════ --}}
+<div class="exec-dashboard">
+    <h3 class="exec-title"><i class="fa-solid fa-chart-pie"></i> Capaian Kumulatif Program {{ $filterTahun }}</h3>
+    <div class="exec-grid">
+        <div class="exec-panel exec-chart-panel">
+            <div class="exec-chart-wrapper">
+                <div class="legend-item orange">
+                    <strong>{{ $eksekutif['pctBelumPanen'] }}%</strong>
+                    <span>{{ $eksekutif['countBelumPanen'] }} Lokasi<br>Belum Panen</span>
+                </div>
+                <div class="exec-chart-container">
+                    <canvas id="cExecStatus"></canvas>
+                    <div class="exec-chart-center">Status<br>Penyelesaian</div>
+                </div>
+                <div class="legend-item cyan">
+                    <strong>{{ $eksekutif['pctPanen'] }}%</strong>
+                    <span>{{ $eksekutif['countPanen'] }} Lokasi<br>Panen</span>
+                </div>
+            </div>
+        </div>
+        <div class="exec-panel-group">
+            <div class="exec-panel exec-stat-panel">
+                <div class="exec-stat-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                <div class="exec-stat-content">
+                    <div class="exec-stat-val">{{ number_format($eksekutif['totalProduksi'], 0, ',', '.') }} <small>Kg</small></div>
+                    <div class="exec-stat-row">
+                        <div class="exec-stat-desc">Total Produksi dari {{ $eksekutif['countPanen'] }} lokasi</div>
+                        <div class="exec-stat-avg">Avg: {{ number_format($eksekutif['avgProduksi'], 1, ',', '.') }} Kg/lokasi</div>
+                    </div>
+                </div>
+            </div>
+            <div class="exec-panel exec-stat-panel">
+                <div class="exec-stat-icon revenue"><i class="fa-solid fa-money-bill-trend-up"></i></div>
+                <div class="exec-stat-content">
+                    <div class="exec-stat-val">Rp {{ number_format($eksekutif['totalNilai'], 0, ',', '.') }}</div>
+                    <div class="exec-stat-row">
+                        <div class="exec-stat-desc">Total Realisasi Pendapatan</div>
+                        <div class="exec-stat-avg">Avg: Rp {{ number_format($eksekutif['avgNilai'] / 1000000, 1, ',', '.') }} Jt/lokasi</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- ═══════════ KPI CARDS 2×3 ═══════════ --}}
 <div class="kpi-grid">
     <div class="kc kc-blue">
@@ -51,13 +96,49 @@
         <div class="kc-ico"><i class="fa-solid fa-heart-pulse"></i></div>
         <div class="kc-body"><span class="kc-val">{{ number_format($avgSR, 1) }}%</span><span class="kc-lbl">Rata-rata Survival Rate</span></div>
     </div>
-    <div class="kc kc-violet">
-        <div class="kc-ico"><i class="fa-solid fa-helmet-safety"></i></div>
-        <div class="kc-body"><span class="kc-val">{{ $avgProgresFisik }}%</span><span class="kc-lbl">Rata-rata Progres Fisik</span></div>
-    </div>
     <div class="kc kc-teal">
         <div class="kc-ico"><i class="fa-solid fa-water"></i></div>
         <div class="kc-body"><span class="kc-val">{{ $utilisasi }}%</span><span class="kc-lbl">Utilisasi Kolam Aktif</span></div>
+    </div>
+</div>
+
+{{-- ═══════════ PUNCAK KINERJA ═══════════ --}}
+<div class="perf-dashboard">
+    <h3 class="perf-title">Puncak Kinerja: Dominasi {{ $performanceSummary['regionName'] }}</h3>
+    
+    <div class="perf-grid">
+        <!-- TOP 5 -->
+        <div class="perf-col">
+            <h4 class="perf-col-title" style="color: #22d3ee;"><i class="fa-solid fa-arrow-trend-up"></i> Top 5 Kinerja Tertinggi</h4>
+            <div class="perf-list-container">
+                @foreach($performanceSummary['top5'] as $index => $item)
+                <div class="perf-item">
+                    <div class="perf-number {{ $index < 3 ? 'top-3' : '' }}">{{ $index + 1 }}</div>
+                    <div class="perf-details">
+                        <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
+                        <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+        </div>
+        
+        <!-- BOTTOM 5 -->
+        <div class="perf-col">
+            <h4 class="perf-col-title" style="color: #f87171;"><i class="fa-solid fa-arrow-trend-down"></i> Bottom 5 Kinerja Terendah</h4>
+            <div class="perf-list-container">
+                @foreach($performanceSummary['bottom5'] as $index => $item)
+                <div class="perf-item bottom">
+                    <div class="perf-number bottom">{{ $index + 1 }}</div>
+                    <div class="perf-details">
+                        <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
+                        <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 </div>
 
@@ -66,9 +147,9 @@
     <div class="map-head">
         <h6><i class="fa-solid fa-map-location-dot"></i> Peta Infografis Lokasi KDMP</h6>
         <div class="map-leg">
-            <span><i class="fa-solid fa-circle" style="color:#10B981"></i> On Track</span>
+            <span><i class="fa-solid fa-circle" style="color:#10B981"></i> Sudah Panen</span>
             <span><i class="fa-solid fa-circle" style="color:#EF4444"></i> Underperformed</span>
-            <span><i class="fa-solid fa-circle" style="color:#94A3B8"></i> Belum Lapor</span>
+            <span><i class="fa-solid fa-circle" style="color:#94A3B8"></i> Belum Panen</span>
         </div>
     </div>
     <div class="map-body" style="position: relative;">
@@ -107,12 +188,8 @@
 </div>
 
 {{-- ═══════════ ROW: RADAR + BAR ═══════════ --}}
-{{-- ═══════════ ROW: CHARTS (RADAR, KOMODITAS, BAR PROVINSI) ═══════════ --}}
-<div class="grid-3-3-6">
-    <div class="panel">
-        <div class="ph"><h6><i class="fa-solid fa-trowel-bricks"></i> Progres Fisik</h6></div>
-        <div class="pb chart-c" style="padding-top:8px"><canvas id="cRadar" height="260"></canvas></div>
-    </div>
+{{-- ═══════════ ROW: CHARTS (KOMODITAS, BAR PROVINSI) ═══════════ --}}
+<div class="grid-4-8">
     <div class="panel">
         <div class="ph"><h6><i class="fa-solid fa-fish-fins"></i> Komoditas</h6></div>
         <div class="pb chart-c" style="padding-top:8px"><canvas id="cKom" height="260"></canvas></div>
@@ -157,6 +234,308 @@
 .dash-fdiv{width:1px;height:18px;background:var(--border-color)}
 .dash-freset{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#FEE2E2;color:#DC2626;font-size:.75rem;text-decoration:none;transition:all .2s}
 .dash-freset:hover{background:#FECACA;transform:scale(1.1)}
+
+/* ═══ Exec Dashboard ═══ */
+.exec-dashboard {
+    background: var(--bg-surface);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    color: #0f172a;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+.exec-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 22px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+}
+.exec-title i {
+    color: #0891b2;
+    font-size: 1rem;
+}
+.exec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+@media(max-width:992px) { .exec-grid { grid-template-columns: 1fr; } }
+.exec-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 24px;
+}
+.exec-chart-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.exec-chart-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    width: 100%;
+}
+.exec-chart-container {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    flex-shrink: 0;
+}
+.exec-chart-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gray-500);
+    line-height: 1.3;
+}
+.exec-panel-group {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.exec-stat-panel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    padding: 20px;
+}
+.exec-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(8, 145, 178, 0.1);
+    color: #0891b2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+.exec-stat-icon.revenue {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+.exec-stat-content {
+    flex: 1;
+    min-width: 0;
+}
+.exec-stat-val {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+}
+.exec-stat-val small {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-500);
+}
+.exec-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+.exec-stat-desc {
+    font-size: 0.78rem;
+    color: var(--gray-500);
+    font-weight: 500;
+}
+.exec-stat-avg {
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--gray-400);
+    font-weight: 500;
+}
+.legend-item {
+    text-align: center;
+    flex-shrink: 0;
+}
+.legend-item.cyan { color: #0891b2; }
+.legend-item.orange { color: #ea580c; }
+.legend-item strong {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    display: block;
+}
+.legend-item span {
+    font-size: 0.72rem;
+    opacity: 0.8;
+    line-height: 1.3;
+    margin-top: 4px;
+    display: block;
+}
+
+/* ═══ Performance Dashboard ═══ */
+.perf-dashboard {
+    background: var(--bg-surface);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    color: #0f172a;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+.perf-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 22px 0;
+    text-align: center;
+    color: var(--text-primary);
+}
+.perf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+@media(max-width: 768px) { .perf-grid { grid-template-columns: 1fr; } }
+.perf-col {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+}
+.perf-col-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin: 0 0 14px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.perf-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.perf-item {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 0;
+    padding: 12px 4px;
+    gap: 12px;
+    transition: background 0.15s;
+}
+.perf-item:last-child {
+    border-bottom: none;
+}
+.perf-item:hover {
+    background: rgba(8,145,178,0.04);
+}
+.perf-item.bottom:hover {
+    background: rgba(244,63,94,0.04);
+}
+.perf-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ecfeff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #0891b2;
+    flex-shrink: 0;
+}
+.perf-number.top-3 {
+    background: #cffafe;
+    color: #0e7490;
+}
+.perf-number.bottom {
+    color: #e11d48;
+    background: #fff1f2;
+}
+.perf-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+.perf-name {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.perf-stats {
+    font-size: 0.75rem;
+    color: #0891b2;
+    font-weight: 500;
+}
+.perf-item.bottom .perf-stats {
+    color: #e11d48;
+}
+
+/* ═══ Dark Mode Overrides for Exec & Perf ═══ */
+[data-theme="dark"] .exec-dashboard,
+[data-theme="dark"] .perf-dashboard {
+    background: var(--bg-surface);
+    color: #fff;
+    border-color: var(--border-color);
+}
+[data-theme="dark"] .exec-panel {
+    background: rgba(255,255,255,0.04);
+    border-color: var(--border-color);
+}
+[data-theme="dark"] .exec-stat-val {
+    color: #22d3ee;
+}
+[data-theme="dark"] .exec-stat-icon {
+    background: rgba(34, 211, 238, 0.1);
+    color: #22d3ee;
+}
+[data-theme="dark"] .exec-stat-icon.revenue {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+}
+[data-theme="dark"] .exec-chart-center { color: var(--gray-400); }
+[data-theme="dark"] .exec-stat-desc { color: rgba(255,255,255,0.7); }
+[data-theme="dark"] .exec-stat-avg { color: rgba(255,255,255,0.45); }
+[data-theme="dark"] .legend-item.cyan { color: #22d3ee; }
+[data-theme="dark"] .legend-item.orange { color: #f59e0b; }
+[data-theme="dark"] .perf-title { color: #f8fafc; }
+[data-theme="dark"] .perf-item {
+    background: transparent;
+    border-color: var(--border-color);
+}
+[data-theme="dark"] .perf-item:hover { background: rgba(34, 211, 238, 0.06); }
+[data-theme="dark"] .perf-item.bottom:hover { background: rgba(244, 63, 94, 0.06); }
+[data-theme="dark"] .perf-number {
+    background: rgba(34, 211, 238, 0.1);
+    color: #22d3ee;
+}
+[data-theme="dark"] .perf-number.top-3 {
+    background: rgba(34, 211, 238, 0.2);
+}
+[data-theme="dark"] .perf-number.bottom {
+    border-color: #fb7185;
+    color: #fb7185;
+    background: rgba(244, 63, 94, 0.1);
+}
+[data-theme="dark"] .perf-name { color: #f8fafc; }
+[data-theme="dark"] .perf-stats { color: #22d3ee; }
+[data-theme="dark"] .perf-item.bottom .perf-stats { color: #fca5a5; }
+
 
 /* ═══ KPI Grid ═══ */
 .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
@@ -317,8 +696,32 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
     if(mkrs.length) map.fitBounds(L.featureGroup(mkrs).getBounds().pad(.1));
 
-    /* ═══ RADAR ═══ */
-    new Chart(document.getElementById('cRadar'),{type:'radar',data:{labels:['Bangunan','Kolam','Listrik','Air','Aerasi'],datasets:[{data:[{{$fisikKomponen['Bangunan']}},{{$fisikKomponen['Kolam']}},{{$fisikKomponen['Listrik']}},{{$fisikKomponen['Air']}},{{$fisikKomponen['Aerasi']}}],backgroundColor:'rgba(8,145,178,.15)',borderColor:'#0891B2',pointBackgroundColor:'#0891B2',pointBorderColor:'#fff',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{angleLines:{color:gridC},grid:{color:gridC},pointLabels:{font:{size:12,weight:'600'},color:txtC},ticks:{display:false},min:0,max:100}}}});
+    /* ═══ DASBOR EKSEKUTIF DOUGHNUT ═══ */
+    new Chart(document.getElementById('cExecStatus'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Panen', 'Belum Panen'],
+            datasets: [{
+                data: [{{ $eksekutif['countPanen'] }}, {{ $eksekutif['countBelumPanen'] }}],
+                backgroundColor: ['#22d3ee', '#f59e0b'],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '80%',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) { return ' ' + ctx.label + ': ' + ctx.parsed + ' Lokasi'; }
+                    }
+                }
+            }
+        }
+    });
 
     /* ═══ BAR PROVINSI ═══ */
     const prov=@json($prodPerProvinsi);

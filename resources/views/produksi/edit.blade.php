@@ -59,15 +59,15 @@
             <div class="grid grid-cols-3">
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">KDKMP</label>
-                    <div class="form-control" style="background:var(--gray-50);cursor:default;">{{ $record->kdmp->nama_kdkmp }}</div>
+                    <div class="form-control readonly-control" style="cursor:default;">{{ $record->kdmp->nama_kdkmp }}</div>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">Periode</label>
-                    <div class="form-control" style="background:var(--gray-50);cursor:default;">{{ $bulanList[$record->bulan] }} {{ $record->tahun }}</div>
+                    <div class="form-control readonly-control" style="cursor:default;">{{ $record->tanggal ? \Carbon\Carbon::parse($record->tanggal)->format('d') : '' }} {{ $bulanList[$record->bulan] }} {{ $record->tahun }}</div>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
                     <label class="form-label">Kabupaten</label>
-                    <div class="form-control" style="background:var(--gray-50);cursor:default;">{{ $record->kdmp->kabupaten }}</div>
+                    <div class="form-control readonly-control" style="cursor:default;">{{ $record->kdmp->kabupaten }}</div>
                 </div>
             </div>
         </div>
@@ -286,8 +286,37 @@
     .monitoring-form-body .grid {
         gap: 1rem;
     }
+    /* ===== Dark Mode Overrides ===== */
+    [data-theme="dark"] .monitoring-form-card {
+        background: var(--bg-surface);
+        border-color: #374151;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    }
+    [data-theme="dark"] .monitoring-form-header {
+        background: #1F2937;
+        border-color: #374151;
+    }
+    [data-theme="dark"] .monitoring-form-title {
+        color: #F9FAFB;
+    }
+    [data-theme="dark"] .monitoring-form-desc {
+        color: #9CA3AF;
+    }
 
+    [data-theme="dark"] .monitoring-alert-error {
+        background: rgba(220, 38, 38, 0.1);
+        border-color: #EF4444;
+        color: #FCA5A5;
+    }
 
+    .readonly-control {
+        background: var(--gray-50);
+    }
+    [data-theme="dark"] .readonly-control {
+        background: #1F2937;
+        color: #D1D5DB;
+        border-color: #374151;
+    }
 </style>
 @endpush
 
