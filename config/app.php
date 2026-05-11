@@ -99,11 +99,22 @@ return [
 
     'key' => env('APP_KEY'),
 
-    'previous_keys' => [
-        ...array_filter(
-            explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
-        ),
-    ],
+    SSL Fix Test
+Test 1: Custom OpenSSL SECLEVEL=0
+❌ SQLSTATE[HY000] [2026] SSL connection error: error:00000001:lib(0)::reason(1)
+
+Test 2: PDO SSL constants (numeric)
+❌ SQLSTATE[HY000] [2026] SSL connection error: Failed to set ciphers to use
+
+Test 3: PDO SSL cipher SECLEVEL=0
+❌ SQLSTATE[HY000] [2026] SSL connection error: Unable to get certificate
+
+Test 4: mysqli SSL dont verify
+❌ Access denied for user 'kkpsamudrahostin_bioflok'@'hosting4.kkp.go.id' (using password: YES)
+
+Test 5: mysqli basic
+❌ Access denied for user 'kkpsamudrahostin_bioflok'@'hosting4.kkp.go.id' (using password: YES)
+
 
     /*
     |--------------------------------------------------------------------------
