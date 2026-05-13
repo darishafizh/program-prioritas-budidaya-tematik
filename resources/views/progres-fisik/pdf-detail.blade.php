@@ -1,4 +1,5 @@
- 0<!DOCTYPE html>
+0
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -162,7 +163,7 @@
 
     <div class="header-kop">
         @php
-            $path = public_path('logo-kkp.png');
+            $path = resource_path('images/logo-kkp.png');
             $type = pathinfo($path, PATHINFO_EXTENSION);
             $data = file_get_contents($path);
             $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
@@ -230,31 +231,33 @@
         $lastRecord = $records->first();
     @endphp
     @if($lastRecord)
-    <div class="summary-box">
-        <h4>Ringkasan Progres Terakhir ({{ $lastRecord->periode_label }})</h4>
-        <table class="summary-grid">
-            <tr>
-                <td>Bangunan</td>
-                <td class="val">{{ $lastRecord->progres_bangunan }}%</td>
-                <td style="width:30px;"></td>
-                <td>Kolam</td>
-                <td class="val">{{ $lastRecord->progres_kolam }}%</td>
-                <td style="width:30px;"></td>
-                <td>Listrik</td>
-                <td class="val">{{ $lastRecord->progres_listrik }}%</td>
-            </tr>
-            <tr>
-                <td>Air</td>
-                <td class="val">{{ $lastRecord->progres_air }}%</td>
-                <td></td>
-                <td>Aerasi</td>
-                <td class="val">{{ $lastRecord->progres_aerasi }}%</td>
-                <td></td>
-                <td>Rata-rata</td>
-                <td class="val" style="color: {{ $lastRecord->average_progress >= 100 ? '#16A34A' : ($lastRecord->average_progress >= 50 ? '#2563EB' : '#D97706') }};">{{ $lastRecord->average_progress }}%</td>
-            </tr>
-        </table>
-    </div>
+        <div class="summary-box">
+            <h4>Ringkasan Progres Terakhir ({{ $lastRecord->periode_label }})</h4>
+            <table class="summary-grid">
+                <tr>
+                    <td>Bangunan</td>
+                    <td class="val">{{ $lastRecord->progres_bangunan }}%</td>
+                    <td style="width:30px;"></td>
+                    <td>Kolam</td>
+                    <td class="val">{{ $lastRecord->progres_kolam }}%</td>
+                    <td style="width:30px;"></td>
+                    <td>Listrik</td>
+                    <td class="val">{{ $lastRecord->progres_listrik }}%</td>
+                </tr>
+                <tr>
+                    <td>Air</td>
+                    <td class="val">{{ $lastRecord->progres_air }}%</td>
+                    <td></td>
+                    <td>Aerasi</td>
+                    <td class="val">{{ $lastRecord->progres_aerasi }}%</td>
+                    <td></td>
+                    <td>Rata-rata</td>
+                    <td class="val"
+                        style="color: {{ $lastRecord->average_progress >= 100 ? '#16A34A' : ($lastRecord->average_progress >= 50 ? '#2563EB' : '#D97706') }};">
+                        {{ $lastRecord->average_progress }}%</td>
+                </tr>
+            </table>
+        </div>
     @endif
 
     {{-- Tabel Riwayat --}}
@@ -285,7 +288,9 @@
                     <td class="text-center">{{ $record->progres_listrik }}%</td>
                     <td class="text-center">{{ $record->progres_air }}%</td>
                     <td class="text-center">{{ $record->progres_aerasi }}%</td>
-                    <td class="text-center" style="font-weight:bold; color:{{ $avg >= 100 ? '#16A34A' : ($avg >= 50 ? '#2563EB' : '#D97706') }};">{{ $avg }}%</td>
+                    <td class="text-center"
+                        style="font-weight:bold; color:{{ $avg >= 100 ? '#16A34A' : ($avg >= 50 ? '#2563EB' : '#D97706') }};">
+                        {{ $avg }}%</td>
                     <td style="font-size:10px;">{{ $record->kendala ?? '-' }}</td>
                     <td style="font-size:10px;">{{ $record->tindak_lanjut ?? '-' }}</td>
                 </tr>
@@ -300,8 +305,8 @@
     {{-- Dokumentasi Foto --}}
     @php
         $allFotoSesudah = [];
-        foreach($records as $record) {
-            if(!empty($record->foto_sesudah) && is_array($record->foto_sesudah)) {
+        foreach ($records as $record) {
+            if (!empty($record->foto_sesudah) && is_array($record->foto_sesudah)) {
                 $allFotoSesudah = array_merge($allFotoSesudah, $record->foto_sesudah);
             }
         }
@@ -309,31 +314,32 @@
     @endphp
 
     @if($hasFoto)
-    <div style="margin-top: 30px;">
-        <div style="margin-bottom: 15px;">
-            <h4 style="margin: 0; font-size: 16px; font-weight: bold;">Dokumentasi Foto Lokasi</h4>
+        <div style="margin-top: 30px;">
+            <div style="margin-bottom: 15px;">
+                <h4 style="margin: 0; font-size: 16px; font-weight: bold;">Dokumentasi Foto Lokasi</h4>
+            </div>
+
+            <div style="width: 100%;">
+                @foreach($allFotoSesudah as $path)
+                    @php
+                        $fullPath = storage_path('app/public/' . $path);
+                        $base64Image = '';
+                        if (file_exists($fullPath)) {
+                            $type = pathinfo($fullPath, PATHINFO_EXTENSION);
+                            $data = file_get_contents($fullPath);
+                            $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                        }
+                    @endphp
+                    @if($base64Image)
+                        <div style="float: left; margin-right: 20px; margin-bottom: 20px;">
+                            <img src="{{ $base64Image }}"
+                                style="width: 260px; height: 260px; object-fit: cover; border: 2px solid #ddd; border-radius: 4px;">
+                        </div>
+                    @endif
+                @endforeach
+                <div style="clear: both;"></div>
+            </div>
         </div>
-        
-        <div style="width: 100%;">
-            @foreach($allFotoSesudah as $path)
-                @php
-                    $fullPath = storage_path('app/public/' . $path);
-                    $base64Image = '';
-                    if (file_exists($fullPath)) {
-                        $type = pathinfo($fullPath, PATHINFO_EXTENSION);
-                        $data = file_get_contents($fullPath);
-                        $base64Image = 'data:image/' . $type . ';base64,' . base64_encode($data);
-                    }
-                @endphp
-                @if($base64Image)
-                <div style="float: left; margin-right: 20px; margin-bottom: 20px;">
-                    <img src="{{ $base64Image }}" style="width: 260px; height: 260px; object-fit: cover; border: 2px solid #ddd; border-radius: 4px;">
-                </div>
-                @endif
-            @endforeach
-            <div style="clear: both;"></div>
-        </div>
-    </div>
     @endif
 
     <div style="margin-top: 20px; font-size: 10px; color: #777;">

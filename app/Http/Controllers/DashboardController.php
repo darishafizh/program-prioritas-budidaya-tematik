@@ -27,7 +27,16 @@ class DashboardController extends Controller
         $filteredKdmpIds = $kdmpQuery->pluck('id');
         $totalLokasi = $filteredKdmpIds->count();
 
-        // ── PRODUKSI ───────────────────────────────────────────────
+        // ── PRODUKSI (semua record dalam tahun = kumulatif) ─────────
+        $allProdRecords = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds)
+            ->when($filterTahun, fn($q) => $q->where('tahun', $filterTahun))
+            ->get();
+
+        // Kumulatif: total dari SEMUA record di tahun ini
+        $totalProduksi      = $allProdRecords->sum('volume_panen_kg');
+        $totalNilaiProduksi = $allProdRecords->sum('nilai_produksi');
+
+        // Record terakhir per KDMP (untuk status, SR, kolam, map, performa)
         $latestProdIds = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds)
             ->when($filterTahun, fn($q) => $q->where('tahun', $filterTahun))
             ->select('kdmp_id', DB::raw('MAX(id) as latest_id'))
@@ -35,46 +44,62 @@ class DashboardController extends Controller
             ->pluck('latest_id');
         $prodRecords = MonitoringRecord::whereIn('id', $latestProdIds)->get();
 
-        $totalProduksi      = $prodRecords->sum('volume_panen_kg');
-        $totalNilaiProduksi = $prodRecords->sum('nilai_produksi');
         $avgSR              = $prodRecords->whereNotNull('survival_rate')->avg('survival_rate') ?? 0;
         $totalKolamAktif    = $prodRecords->sum('jumlah_kolam_aktif');
         $totalKolamAll      = $prodRecords->sum('jumlah_kolam_total');
         $utilisasi          = $totalKolamAll > 0 ? round(($totalKolamAktif / $totalKolamAll) * 100, 1) : 0;
 
-        // ── EKSEKUTIF DASBOR ───────────────────────────────────────
-        $countPanen = $prodRecords->where('volume_panen_kg', '>', 0)->count();
+        // ── EKSEKUTIF DASBOR (kumulatif) ──────────────────────────
+        // Lokasi yang pernah panen = punya minimal 1 record dengan volume > 0
+        $kdmpIdsPanen = $allProdRecords->where('volume_panen_kg', '>', 0)
+            ->pluck('kdmp_id')->unique();
+        $countPanen = $kdmpIdsPanen->count();
         $countBelumPanen = $totalLokasi - $countPanen;
-        $pctPanen = $totalLokasi > 0 ? round(($countPanen / $totalLokasi) * 100) : 0;
-        $pctBelumPanen = $totalLokasi > 0 ? 100 - $pctPanen : 0;
 
-        $avgProduksiPanen = $countPanen > 0 ? $totalProduksi / $countPanen : 0;
-        $avgNilaiPanen = $countPanen > 0 ? $totalNilaiProduksi / $countPanen : 0;
+        // Hitung On Track vs Underperform dari lokasi yang sudah panen
+        $targetKeuntunganExec = 15000000;
+        $kumulatifPanenPerKdmp = $allProdRecords->whereIn('kdmp_id', $kdmpIdsPanen)
+            ->groupBy('kdmp_id')
+            ->map(function ($records) {
+                return [
+                    'nilai' => (float) $records->sum('nilai_produksi'),
+                    'biaya' => (float) $records->sum('biaya_operasional'),
+                ];
+            });
+
+        $countOnTrack = 0;
+        $countUnderperform = 0;
+        foreach ($kumulatifPanenPerKdmp as $kumul) {
+            $keuntungan = $kumul['nilai'] - $kumul['biaya'];
+            if ($keuntungan >= $targetKeuntunganExec) {
+                $countOnTrack++;
+            } else {
+                $countUnderperform++;
+            }
+        }
 
         $eksekutif = [
-            'countPanen' => $countPanen,
             'countBelumPanen' => $countBelumPanen,
-            'pctPanen' => $pctPanen,
-            'pctBelumPanen' => $pctBelumPanen,
+            'countPanen' => $countPanen,
+            'countOnTrack' => $countOnTrack,
+            'countUnderperform' => $countUnderperform,
             'totalProduksi' => $totalProduksi,
-            'avgProduksi' => $avgProduksiPanen,
             'totalNilai' => $totalNilaiProduksi,
-            'avgNilai' => $avgNilaiPanen,
         ];
 
-        // ── TOP & BOTTOM PERFORMANCE ───────────────────────────────
+        // ── TOP & BOTTOM PERFORMANCE (kumulatif per KDMP) ──────────
         $kdmps = Kdmp::whereIn('id', $filteredKdmpIds)->get()->keyBy('id');
-        $performanceData = $prodRecords->map(function ($prod) use ($kdmps) {
-            $kdmp = $kdmps[$prod->kdmp_id] ?? null;
+        $performanceData = $allProdRecords->groupBy('kdmp_id')->map(function ($records, $kdmpId) use ($kdmps) {
+            $kdmp = $kdmps[$kdmpId] ?? null;
             return [
                 'kdmp_name' => $kdmp ? $kdmp->nama_kdkmp : 'Unknown',
                 'kabupaten' => $kdmp ? $kdmp->kabupaten : 'Unknown',
                 'provinsi' => $kdmp ? $kdmp->provinsi : 'Unknown',
                 'komoditas' => $kdmp ? $kdmp->komoditas : 'Unknown',
-                'volume' => (float) $prod->volume_panen_kg,
-                'nilai' => (float) $prod->nilai_produksi,
+                'volume' => (float) $records->sum('volume_panen_kg'),
+                'nilai' => (float) $records->sum('nilai_produksi'),
             ];
-        });
+        })->values();
 
         // Sort by volume descending, then nilai descending
         $top5 = $performanceData->sortByDesc(function ($item) {
@@ -129,29 +154,35 @@ class DashboardController extends Controller
             ->groupBy('komoditas')->orderByDesc('total')->get();
 
         // ── MAP DATA ───────────────────────────────────────────────
+        $targetKeuntungan = 15000000;
+        // Kumulatif per KDMP untuk map
+        $kumulatifPerKdmp = $allProdRecords->groupBy('kdmp_id')->map(function ($records) {
+            return [
+                'volume' => (float) $records->sum('volume_panen_kg'),
+                'nilai'  => (float) $records->sum('nilai_produksi'),
+                'biaya'  => (float) $records->sum('biaya_operasional'),
+            ];
+        });
+
         $mapLocations = Kdmp::whereNotNull('lat')->whereNotNull('long')
             ->whereIn('id', $filteredKdmpIds)
             ->get()
-            ->map(function ($item) use ($prodRecords) {
+            ->map(function ($item) use ($prodRecords, $kumulatifPerKdmp, $targetKeuntungan) {
                 $prod  = $prodRecords->where('kdmp_id', $item->id)->first();
+                $kumul = $kumulatifPerKdmp[$item->id] ?? null;
 
-                // Warna berdasarkan status produksi
+                // Status berdasarkan data kumulatif
                 $color = '#94A3B8'; // belum ada data
-                $statusText = 'Belum Lapor';
+                $statusText = 'Belum Panen';
 
-                if ($prod) {
-                    $hasVolume = (float) $prod->volume_panen_kg > 0;
-                    $isBermasalah = in_array($prod->status_lokasi, ['bermasalah', 'vakum']);
-
-                    if ($isBermasalah) {
-                        $color = '#EF4444'; // Red — problematic
-                        $statusText = 'Underperformed';
-                    } elseif ($hasVolume) {
-                        $color = '#10B981'; // Green — has harvest
-                        $statusText = 'Sudah Panen';
+                if ($kumul && $kumul['volume'] > 0) {
+                    $keuntungan = $kumul['nilai'] - $kumul['biaya'];
+                    if ($keuntungan >= $targetKeuntungan) {
+                        $color = '#10B981'; // Green — On Track
+                        $statusText = 'On Track';
                     } else {
-                        $color = '#94A3B8'; // Gray — monitoring exists but no harvest yet
-                        $statusText = 'Belum Panen';
+                        $color = '#EF4444'; // Red — Underperform
+                        $statusText = 'Underperform';
                     }
                 }
 
@@ -169,9 +200,9 @@ class DashboardController extends Controller
                     'lng'         => $item->long,
                     'color'       => $color,
                     'status'      => $statusText,
-                    'produksi'    => $prod ? (float) $prod->volume_panen_kg : 0,
-                    'nilai'       => $prod ? (float) $prod->nilai_produksi : 0,
-                    'biaya'       => $prod ? (float) $prod->biaya_operasional : 0,
+                    'produksi'    => $kumul ? $kumul['volume'] : 0,
+                    'nilai'       => $kumul ? $kumul['nilai'] : 0,
+                    'biaya'       => $kumul ? $kumul['biaya'] : 0,
                     'sr'          => $prod ? $prod->survival_rate : null,
                     'kolam_aktif' => $prod ? $prod->jumlah_kolam_aktif : null,
                     'kolam_total' => $prod ? $prod->jumlah_kolam_total : null,

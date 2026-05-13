@@ -422,7 +422,7 @@ class ProduksiController extends Controller
     }
 
     /**
-     * Export data monitoring ke Excel
+     * Export data monitoring ke Excel (CSV format, compatible with Excel)
      */
     public function exportExcel(Request $request)
     {
@@ -436,9 +436,123 @@ class ProduksiController extends Controller
             9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
         ];
 
-        $namaBulan = $bulanList[$bulan] ?? $bulan;
-        $filename = "Data_Monitoring_Produksi_{$namaBulan}_{$tahun}.xlsx";
+        // Query data
+        $query = Kdmp::with([
+            'monitoringRecords' => fn($q) => $q->orderBy('tahun', 'desc')->orderBy('bulan', 'desc'),
+        ]);
 
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\ProduksiExport($tahun, $bulan, $search), $filename);
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_kdkmp', 'like', "%$search%")
+                    ->orWhere('kabupaten', 'like', "%$search%")
+                    ->orWhere('provinsi', 'like', "%$search%");
+            });
+        }
+
+        $kdmpList = $query->orderBy('no')->get();
+
+        $namaBulan = $bulanList[$bulan] ?? $bulan;
+        $filename = "Data_Monitoring_Produksi_{$namaBulan}_{$tahun}.csv";
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($kdmpList, $bulanList) {
+            $file = fopen('php://output', 'w');
+            // BOM for UTF-8 so Excel reads it correctly
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Header row
+            fputcsv($file, [
+                'No',
+                'Nama KDKMP',
+                'Alamat',
+                'Komoditas',
+                'Ketua / Anggota (Telp)',
+                'Penyuluh (Telp)',
+                'Periode Laporan Terakhir',
+                'Status Lokasi',
+                'Volume Panen (kg)',
+                'Nilai Produksi (Rp)',
+                'Biaya Operasional (Rp)',
+                'Keuntungan (Rp)',
+                'Survival Rate (%)',
+                'Kolam Aktif',
+                'Kolam Total',
+                'Pembudidaya Aktif',
+                'Kendala',
+                'Tindak Lanjut',
+                'Catatan',
+            ]);
+
+            // Data rows
+            foreach ($kdmpList as $kdmp) {
+                $lastRecord = $kdmp->monitoringRecords->first();
+
+                $alamat = implode(', ', array_filter([$kdmp->desa, $kdmp->kabupaten, $kdmp->provinsi])) ?: '-';
+                $ketua = $kdmp->ketua_anggota ?? '-';
+                if ($kdmp->no_hp) $ketua .= ' (' . $kdmp->no_hp . ')';
+                $penyuluh = $kdmp->nama_penyuluh ?? '-';
+                if ($kdmp->no_hp_penyuluh) $penyuluh .= ' (' . $kdmp->no_hp_penyuluh . ')';
+
+                $periode = '-';
+                $status = '-';
+                $volumePanen = '-';
+                $nilaiProduksi = '-';
+                $biayaOperasional = '-';
+                $keuntungan = '-';
+                $sr = '-';
+                $kolamAktif = '-';
+                $kolamTotal = '-';
+                $pembudidaya = '-';
+                $kendala = '-';
+                $tindakLanjut = '-';
+                $catatan = '-';
+
+                if ($lastRecord) {
+                    $periode = $lastRecord->periode_label ?? ($lastRecord->bulan . ' ' . $lastRecord->tahun);
+                    $status = $lastRecord->status_label ?? $lastRecord->status_lokasi;
+                    $volumePanen = $lastRecord->volume_panen_kg;
+                    $nilaiProduksi = $lastRecord->nilai_produksi;
+                    $biayaOperasional = $lastRecord->biaya_operasional;
+                    $keuntungan = (float)$lastRecord->nilai_produksi - (float)$lastRecord->biaya_operasional;
+                    $sr = $lastRecord->survival_rate !== null ? $lastRecord->survival_rate . '%' : '-';
+                    $kolamAktif = $lastRecord->jumlah_kolam_aktif ?? '-';
+                    $kolamTotal = $lastRecord->jumlah_kolam_total ?? '-';
+                    $pembudidaya = $lastRecord->jumlah_pembudidaya_aktif ?? '-';
+                    $kendala = $lastRecord->kendala ?? '-';
+                    $tindakLanjut = $lastRecord->tindak_lanjut ?? '-';
+                    $catatan = $lastRecord->catatan ?? '-';
+                }
+
+                fputcsv($file, [
+                    $kdmp->no,
+                    $kdmp->nama_kdkmp,
+                    $alamat,
+                    $kdmp->komoditas ?? '-',
+                    $ketua,
+                    $penyuluh,
+                    $periode,
+                    $status,
+                    $volumePanen,
+                    $nilaiProduksi,
+                    $biayaOperasional,
+                    $keuntungan,
+                    $sr,
+                    $kolamAktif,
+                    $kolamTotal,
+                    $pembudidaya,
+                    $kendala,
+                    $tindakLanjut,
+                    $catatan,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

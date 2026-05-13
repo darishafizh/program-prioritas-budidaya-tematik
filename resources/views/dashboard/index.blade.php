@@ -33,110 +33,105 @@
     </form>
 </div>
 
-{{-- ═══════════ DASBOR EKSEKUTIF ═══════════ --}}
-<div class="exec-dashboard">
-    <h3 class="exec-title"><i class="fa-solid fa-chart-pie"></i> Capaian Kumulatif Program {{ $filterTahun }}</h3>
-    <div class="exec-grid">
-        <div class="exec-panel exec-chart-panel">
-            <div class="exec-chart-wrapper">
-                <div class="legend-item orange">
-                    <strong>{{ $eksekutif['pctBelumPanen'] }}%</strong>
-                    <span>{{ $eksekutif['countBelumPanen'] }} Lokasi<br>Belum Panen</span>
-                </div>
-                <div class="exec-chart-container">
-                    <canvas id="cExecStatus"></canvas>
-                    <div class="exec-chart-center">Status<br>Penyelesaian</div>
-                </div>
-                <div class="legend-item cyan">
-                    <strong>{{ $eksekutif['pctPanen'] }}%</strong>
-                    <span>{{ $eksekutif['countPanen'] }} Lokasi<br>Panen</span>
-                </div>
-            </div>
-        </div>
-        <div class="exec-panel-group">
-            <div class="exec-panel exec-stat-panel">
-                <div class="exec-stat-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
-                <div class="exec-stat-content">
-                    <div class="exec-stat-val">{{ number_format($eksekutif['totalProduksi'], 0, ',', '.') }} <small>Kg</small></div>
-                    <div class="exec-stat-row">
-                        <div class="exec-stat-desc">Total Produksi dari {{ $eksekutif['countPanen'] }} lokasi</div>
-                        <div class="exec-stat-avg">Avg: {{ number_format($eksekutif['avgProduksi'], 1, ',', '.') }} Kg/lokasi</div>
-                    </div>
-                </div>
-            </div>
-            <div class="exec-panel exec-stat-panel">
-                <div class="exec-stat-icon revenue"><i class="fa-solid fa-money-bill-trend-up"></i></div>
-                <div class="exec-stat-content">
-                    <div class="exec-stat-val">Rp {{ number_format($eksekutif['totalNilai'], 0, ',', '.') }}</div>
-                    <div class="exec-stat-row">
-                        <div class="exec-stat-desc">Total Realisasi Pendapatan</div>
-                        <div class="exec-stat-avg">Avg: Rp {{ number_format($eksekutif['avgNilai'] / 1000000, 1, ',', '.') }} Jt/lokasi</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 {{-- ═══════════ KPI CARDS 2×3 ═══════════ --}}
 <div class="kpi-grid">
-    <div class="kc kc-blue">
-        <div class="kc-ico"><i class="fa-solid fa-location-dot"></i></div>
-        <div class="kc-body"><span class="kc-val">{{ number_format($totalLokasi) }}</span><span class="kc-lbl">Total Lokasi KDMP</span></div>
+    <div class="kc">
+        <div class="kc-top">
+            <span class="kc-title">TOTAL LOKASI KDMP</span>
+            <div class="kc-icon blue"><i class="fa-solid fa-location-dot"></i></div>
+        </div>
+        <div class="kc-bot">
+            <span class="kc-val">{{ number_format($totalLokasi) }}</span>
+            <span class="kc-unit">Lokasi</span>
+        </div>
     </div>
-    <div class="kc kc-emerald">
-        <div class="kc-ico"><i class="fa-solid fa-boxes-stacked"></i></div>
-        <div class="kc-body"><span class="kc-val">{{ number_format($totalProduksi, 0, ',', '.') }} <small>kg</small></span><span class="kc-lbl">Volume Panen</span></div>
+    <div class="kc">
+        <div class="kc-top">
+            <span class="kc-title">VOLUME PANEN</span>
+            <div class="kc-icon emerald"><i class="fa-solid fa-boxes-stacked"></i></div>
+        </div>
+        <div class="kc-bot">
+            <span class="kc-val">{{ number_format($totalProduksi, 0, ',', '.') }}</span>
+            <span class="kc-unit">Kg</span>
+        </div>
     </div>
-    <div class="kc kc-amber">
-        <div class="kc-ico"><i class="fa-solid fa-money-bill-trend-up"></i></div>
-        <div class="kc-body"><span class="kc-val">Rp {{ number_format($totalNilaiProduksi / 1000000, 1, ',', '.') }}M</span><span class="kc-lbl">Nilai Produksi</span></div>
+    <div class="kc">
+        <div class="kc-top">
+            <span class="kc-title">NILAI PRODUKSI</span>
+            <div class="kc-icon amber"><i class="fa-solid fa-money-bill-trend-up"></i></div>
+        </div>
+        <div class="kc-bot">
+            <span class="kc-val">{{ number_format($totalNilaiProduksi / 1000000, 1, ',', '.') }}</span>
+            <span class="kc-unit">Juta Rp</span>
+        </div>
     </div>
-    <div class="kc kc-cyan">
-        <div class="kc-ico"><i class="fa-solid fa-heart-pulse"></i></div>
-        <div class="kc-body"><span class="kc-val">{{ number_format($avgSR, 1) }}%</span><span class="kc-lbl">Rata-rata Survival Rate</span></div>
+    <div class="kc">
+        <div class="kc-top">
+            <span class="kc-title">RATA-RATA SURVIVAL RATE</span>
+            <div class="kc-icon cyan"><i class="fa-solid fa-heart-pulse"></i></div>
+        </div>
+        <div class="kc-bot">
+            <span class="kc-val">{{ number_format($avgSR, 1) }}</span>
+            <span class="kc-unit">%</span>
+        </div>
     </div>
-    <div class="kc kc-teal">
-        <div class="kc-ico"><i class="fa-solid fa-water"></i></div>
-        <div class="kc-body"><span class="kc-val">{{ $utilisasi }}%</span><span class="kc-lbl">Utilisasi Kolam Aktif</span></div>
+    <div class="kc">
+        <div class="kc-top">
+            <span class="kc-title">UTILISASI KOLAM AKTIF</span>
+            <div class="kc-icon teal"><i class="fa-solid fa-water"></i></div>
+        </div>
+        <div class="kc-bot">
+            <span class="kc-val">{{ $utilisasi }}</span>
+            <span class="kc-unit">%</span>
+        </div>
     </div>
 </div>
 
-{{-- ═══════════ PUNCAK KINERJA ═══════════ --}}
-<div class="perf-dashboard">
-    <h3 class="perf-title">Puncak Kinerja: Dominasi {{ $performanceSummary['regionName'] }}</h3>
-    
-    <div class="perf-grid">
-        <!-- TOP 5 -->
-        <div class="perf-col">
-            <h4 class="perf-col-title" style="color: #22d3ee;"><i class="fa-solid fa-arrow-trend-up"></i> Top 5 Kinerja Tertinggi</h4>
-            <div class="perf-list-container">
-                @foreach($performanceSummary['top5'] as $index => $item)
-                <div class="perf-item">
-                    <div class="perf-number {{ $index < 3 ? 'top-3' : '' }}">{{ $index + 1 }}</div>
-                    <div class="perf-details">
-                        <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
-                        <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-
+{{-- ═══════════ PUNCAK KINERJA & DASBOR EKSEKUTIF (SIDE-BY-SIDE) ═══════════ --}}
+<div class="perf-exec-grid">
+    {{-- ═══════════ DASBOR EKSEKUTIF ═══════════ --}}
+    <div class="exec-dashboard">
+        <h3 class="exec-title"><i class="fa-solid fa-chart-column"></i> Capaian Kumulatif Program {{ $filterTahun }}</h3>
+        <div class="exec-bar-wrapper">
+            <canvas id="cExecStatus" height="280"></canvas>
         </div>
+    </div>
+
+    {{-- ═══════════ PUNCAK KINERJA ═══════════ --}}
+    <div class="perf-dashboard">
+        <h3 class="perf-title">Puncak Kinerja: Dominasi {{ $performanceSummary['regionName'] }}</h3>
         
-        <!-- BOTTOM 5 -->
-        <div class="perf-col">
-            <h4 class="perf-col-title" style="color: #f87171;"><i class="fa-solid fa-arrow-trend-down"></i> Bottom 5 Kinerja Terendah</h4>
-            <div class="perf-list-container">
-                @foreach($performanceSummary['bottom5'] as $index => $item)
-                <div class="perf-item bottom">
-                    <div class="perf-number bottom">{{ $index + 1 }}</div>
-                    <div class="perf-details">
-                        <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
-                        <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
+        <div class="perf-grid">
+            <!-- TOP 5 -->
+            <div class="perf-col">
+                <h4 class="perf-col-title" style="color: #22d3ee;"><i class="fa-solid fa-arrow-trend-up"></i> Top 5 Kinerja Tertinggi</h4>
+                <div class="perf-list-container">
+                    @foreach($performanceSummary['top5'] as $index => $item)
+                    <div class="perf-item">
+                        <div class="perf-number {{ $index < 3 ? 'top-3' : '' }}">{{ $index + 1 }}</div>
+                        <div class="perf-details">
+                            <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
+                            <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
+                        </div>
                     </div>
+                    @endforeach
                 </div>
-                @endforeach
+            </div>
+            
+            <!-- BOTTOM 5 -->
+            <div class="perf-col">
+                <h4 class="perf-col-title" style="color: #f87171;"><i class="fa-solid fa-arrow-trend-down"></i> Bottom 5 Kinerja Terendah</h4>
+                <div class="perf-list-container">
+                    @foreach($performanceSummary['bottom5'] as $index => $item)
+                    <div class="perf-item bottom">
+                        <div class="perf-number bottom">{{ $index + 1 }}</div>
+                        <div class="perf-details">
+                            <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
+                            <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>
@@ -147,8 +142,8 @@
     <div class="map-head">
         <h6><i class="fa-solid fa-map-location-dot"></i> Peta Infografis Lokasi KDMP</h6>
         <div class="map-leg">
-            <span><i class="fa-solid fa-circle" style="color:#10B981"></i> Sudah Panen</span>
-            <span><i class="fa-solid fa-circle" style="color:#EF4444"></i> Underperformed</span>
+            <span><i class="fa-solid fa-circle" style="color:#10B981"></i> On Track</span>
+            <span><i class="fa-solid fa-circle" style="color:#EF4444"></i> Underperform</span>
             <span><i class="fa-solid fa-circle" style="color:#94A3B8"></i> Belum Panen</span>
         </div>
     </div>
@@ -205,15 +200,6 @@
     <div class="panel">
         <div class="ph" style="align-items: center;">
             <h6><i class="fa-solid fa-chart-line"></i> Tren Produksi</h6>
-            <form method="GET" action="{{ route('dashboard') }}" id="trendForm" style="margin:0">
-                <input type="hidden" name="provinsi" value="{{ $filterProvinsi }}">
-                <input type="hidden" name="komoditas" value="{{ $filterKomoditas }}">
-                <select name="tahun" class="dash-fsel" style="background:var(--bg-surface);border:1px solid var(--border-color);border-radius:20px;padding:4px 12px;" onchange="document.getElementById('trendForm').submit()">
-                    @foreach($tahunList as $t)
-                    <option value="{{ $t }}" {{ $filterTahun == $t ? 'selected' : '' }}>Tahun {{ $t }}</option>
-                    @endforeach
-                </select>
-            </form>
         </div>
         <div class="pb" style="height:350px"><canvas id="cTrend"></canvas></div>
     </div>
@@ -258,127 +244,27 @@
     color: #0891b2;
     font-size: 1rem;
 }
-.exec-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 22px;
-}
-@media(max-width:992px) { .exec-grid { grid-template-columns: 1fr; } }
-.exec-panel {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 24px;
-}
-.exec-chart-panel {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.exec-chart-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 28px;
-    width: 100%;
-}
-.exec-chart-container {
+.exec-bar-wrapper {
     position: relative;
-    width: 190px;
-    height: 190px;
-    flex-shrink: 0;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
 }
-.exec-chart-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--gray-500);
-    line-height: 1.3;
+
+/* ═══ Perf & Exec Grid (Side-by-side) ═══ */
+.perf-exec-grid {
+    display: grid;
+    grid-template-columns: 3.5fr 6.5fr;
+    gap: 24px;
+    margin-bottom: 24px;
 }
-.exec-panel-group {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+.perf-exec-grid .exec-dashboard,
+.perf-exec-grid .perf-dashboard {
+    margin-bottom: 0;
+    height: 100%;
 }
-.exec-stat-panel {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex: 1;
-    padding: 20px;
-}
-.exec-stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: rgba(8, 145, 178, 0.1);
-    color: #0891b2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-}
-.exec-stat-icon.revenue {
-    background: rgba(16, 185, 129, 0.1);
-    color: #059669;
-}
-.exec-stat-content {
-    flex: 1;
-    min-width: 0;
-}
-.exec-stat-val {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #0f172a;
-    line-height: 1.2;
-    margin-bottom: 4px;
-    letter-spacing: -0.3px;
-}
-.exec-stat-val small {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--gray-500);
-}
-.exec-stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-}
-.exec-stat-desc {
-    font-size: 0.78rem;
-    color: var(--gray-500);
-    font-weight: 500;
-}
-.exec-stat-avg {
-    text-align: right;
-    font-size: 0.72rem;
-    color: var(--gray-400);
-    font-weight: 500;
-}
-.legend-item {
-    text-align: center;
-    flex-shrink: 0;
-}
-.legend-item.cyan { color: #0891b2; }
-.legend-item.orange { color: #ea580c; }
-.legend-item strong {
-    font-size: 1.5rem;
-    font-weight: 800;
-    line-height: 1.1;
-    display: block;
-}
-.legend-item span {
-    font-size: 0.72rem;
-    opacity: 0.8;
-    line-height: 1.3;
-    margin-top: 4px;
-    display: block;
+@media(max-width: 1200px) {
+    .perf-exec-grid { grid-template-columns: 1fr; }
 }
 
 /* ═══ Performance Dashboard ═══ */
@@ -493,26 +379,6 @@
     color: #fff;
     border-color: var(--border-color);
 }
-[data-theme="dark"] .exec-panel {
-    background: rgba(255,255,255,0.04);
-    border-color: var(--border-color);
-}
-[data-theme="dark"] .exec-stat-val {
-    color: #22d3ee;
-}
-[data-theme="dark"] .exec-stat-icon {
-    background: rgba(34, 211, 238, 0.1);
-    color: #22d3ee;
-}
-[data-theme="dark"] .exec-stat-icon.revenue {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-}
-[data-theme="dark"] .exec-chart-center { color: var(--gray-400); }
-[data-theme="dark"] .exec-stat-desc { color: rgba(255,255,255,0.7); }
-[data-theme="dark"] .exec-stat-avg { color: rgba(255,255,255,0.45); }
-[data-theme="dark"] .legend-item.cyan { color: #22d3ee; }
-[data-theme="dark"] .legend-item.orange { color: #f59e0b; }
 [data-theme="dark"] .perf-title { color: #f8fafc; }
 [data-theme="dark"] .perf-item {
     background: transparent;
@@ -538,21 +404,32 @@
 
 
 /* ═══ KPI Grid ═══ */
-.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px}
+@media(max-width:1200px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:768px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
-.kc{display:flex;align-items:center;gap:14px;padding:20px;border-radius:16px;background:var(--bg-surface);border:1px solid var(--border-color);box-shadow:var(--shadow-sm);transition:transform .25s,box-shadow .25s}
-.kc:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
-.kc-ico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
-.kc-body{display:flex;flex-direction:column}
-.kc-val{font-size:1.35rem;font-weight:800;line-height:1.2;color:var(--text-primary)}
-.kc-val small{font-size:.8rem;font-weight:600;color:var(--gray-500)}
-.kc-lbl{font-size:.72rem;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
-.kc-blue .kc-ico{background:rgba(59,130,246,.12);color:#3B82F6}
-.kc-emerald .kc-ico{background:rgba(16,185,129,.12);color:#10B981}
-.kc-amber .kc-ico{background:rgba(245,158,11,.12);color:#F59E0B}
-.kc-cyan .kc-ico{background:rgba(6,182,212,.12);color:#06B6D4}
-.kc-violet .kc-ico{background:rgba(139,92,246,.12);color:#8B5CF6}
-.kc-teal .kc-ico{background:rgba(13,148,136,.12);color:#0D9488}
+.kc {
+    background: var(--bg-surface);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+.kc:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.kc-top { display: flex; justify-content: space-between; align-items: center; }
+.kc-title { font-size: 0.72rem; font-weight: 700; color: var(--gray-500); letter-spacing: 0.5px; text-transform: uppercase; }
+.kc-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+.kc-icon.blue { background: rgba(59,130,246,0.12); color: #3b82f6; }
+.kc-icon.emerald { background: rgba(16,185,129,0.12); color: #10b981; }
+.kc-icon.amber { background: rgba(245,158,11,0.12); color: #f59e0b; }
+.kc-icon.cyan { background: rgba(6,182,212,0.12); color: #06b6d4; }
+.kc-icon.teal { background: rgba(13,148,136,0.12); color: #0d9488; }
+.kc-bot { display: flex; align-items: baseline; gap: 6px; }
+.kc-val { font-size: 1.6rem; font-weight: 800; color: var(--text-primary); line-height: 1; }
+.kc-unit { font-size: 0.8rem; font-weight: 600; color: var(--gray-500); }
 
 /* ═══ Map Card ═══ */
 .map-card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:18px}
@@ -696,28 +573,49 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
     if(mkrs.length) map.fitBounds(L.featureGroup(mkrs).getBounds().pad(.1));
 
-    /* ═══ DASBOR EKSEKUTIF DOUGHNUT ═══ */
+    /* ═══ DASBOR EKSEKUTIF BAR CHART ═══ */
     new Chart(document.getElementById('cExecStatus'), {
-        type: 'doughnut',
+        type: 'bar',
         data: {
-            labels: ['Panen', 'Belum Panen'],
+            labels: ['Belum Panen', 'Sudah Panen', 'Underperform', 'On Track'],
             datasets: [{
-                data: [{{ $eksekutif['countPanen'] }}, {{ $eksekutif['countBelumPanen'] }}],
-                backgroundColor: ['#22d3ee', '#f59e0b'],
-                borderWidth: 0,
-                hoverOffset: 4
+                data: [
+                    {{ $eksekutif['countBelumPanen'] }},
+                    {{ $eksekutif['countPanen'] }},
+                    {{ $eksekutif['countUnderperform'] }},
+                    {{ $eksekutif['countOnTrack'] }}
+                ],
+                backgroundColor: ['#94A3B8', '#3B82F6', '#EF4444', '#10B981'],
+                borderRadius: 6,
+                maxBarThickness: 64,
+                borderSkipped: false
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '80%',
             plugins: {
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: function(ctx) { return ' ' + ctx.label + ': ' + ctx.parsed + ' Lokasi'; }
+                        label: function(ctx) { return ' ' + ctx.parsed.y + ' Lokasi'; }
                     }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: gridC },
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0,
+                        font: { size: 12, weight: 600 }
+                    },
+                    title: { display: true, text: 'Jumlah Lokasi', font: { size: 12 } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 12, weight: 600 } }
                 }
             }
         }
