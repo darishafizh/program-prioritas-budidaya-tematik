@@ -16,6 +16,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Preconnect CDN domains for faster sub-page loads -->
+    <link rel="preconnect" href="https://code.jquery.com">
+    <link rel="preconnect" href="https://cdn.datatables.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -100,8 +106,8 @@
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert2 (deferred — not needed on initial render) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
         // Display current date in topbar
@@ -187,6 +193,83 @@
             const theme = document.documentElement.getAttribute('data-theme') || 'light';
             updateThemeIcon(theme);
         });
+    </script>
+
+    {{-- Global SweetAlert2 Flash Messages --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for Swal to be available (loaded with defer)
+        function waitForSwal(callback, tries) {
+            if (typeof Swal !== 'undefined') { callback(); return; }
+            if (tries > 20) return;
+            setTimeout(() => waitForSwal(callback, (tries || 0) + 1), 100);
+        }
+
+        waitForSwal(function() {
+            @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: @json(session('success')),
+                width: '320px',
+                padding: '1.25rem',
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'rounded-xl shadow-lg',
+                    title: 'fs-5'
+                }
+            });
+            @endif
+
+            @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: @json(session('error')),
+                width: '320px',
+                padding: '1.25rem',
+                confirmButtonColor: '#EF4444',
+                confirmButtonText: 'OK',
+                customClass: {
+                    popup: 'rounded-xl shadow-lg',
+                    title: 'fs-5',
+                    confirmButton: 'btn btn-danger btn-sm px-3 py-1'
+                },
+                buttonsStyling: false
+            });
+            @endif
+        });
+    });
+
+    // Global delete confirmation function
+    function confirmDelete(formId, label) {
+        label = label || 'data ini';
+        Swal.fire({
+            title: 'Hapus ' + label + '?',
+            text: "Tindakan ini tidak bisa dibatalkan.",
+            icon: 'warning',
+            width: '320px',
+            padding: '1.25rem',
+            showCancelButton: true,
+            confirmButtonColor: '#EF4444',
+            cancelButtonColor: '#6B7280',
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal',
+            customClass: {
+                popup: 'rounded-xl shadow-lg',
+                title: 'fs-5',
+                confirmButton: 'btn btn-danger btn-sm px-3 py-1 mx-1',
+                cancelButton: 'btn btn-outline btn-sm px-3 py-1 mx-1'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
+    }
     </script>
     
     @stack('scripts')

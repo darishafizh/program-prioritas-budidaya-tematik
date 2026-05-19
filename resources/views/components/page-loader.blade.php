@@ -198,7 +198,9 @@
         }, 350);
     }
 
-    // 1. Intercept all link clicks (except # anchors, javascript:, new tabs)
+    let loaderTimeout = null;
+
+    // 1. Intercept all link clicks (except # anchors, javascript:, new tabs, downloads, exports)
     document.addEventListener('click', function(e) {
         const link = e.target.closest('a');
         if (!link) return;
@@ -208,11 +210,17 @@
         if (href.startsWith('#') || href.startsWith('javascript:')) return;
         if (link.target === '_blank' || link.target === '_new') return;
         if (link.hasAttribute('download')) return;
+        if (link.hasAttribute('data-no-loader')) return;
         if (e.ctrlKey || e.metaKey || e.shiftKey) return;
         // Don't show for onclick handlers that prevent default
         if (link.getAttribute('onclick') && link.getAttribute('onclick').includes('preventDefault')) return;
+        // Skip links that trigger file downloads (export, csv, pdf, xlsx)
+        if (href.match(/\/(export|download)/i) || href.match(/\.(csv|pdf|xlsx|xls|zip)(\?|$)/i)) return;
 
         showLoader();
+        // Safety: auto-hide after 8s in case navigation doesn't complete
+        clearTimeout(loaderTimeout);
+        loaderTimeout = setTimeout(hideLoader, 8000);
     });
 
     // 2. Intercept all form submissions
@@ -220,24 +228,29 @@
         const form = e.target;
         if (!form || form.tagName !== 'FORM') return;
 
-        // Don't show for AJAX forms
+        // Don't show for AJAX forms or export forms
         if (form.hasAttribute('data-no-loader')) return;
 
         showLoader();
+        clearTimeout(loaderTimeout);
+        loaderTimeout = setTimeout(hideLoader, 8000);
     });
 
     // 3. Hide loader when page finishes loading (for back/forward navigation)
     window.addEventListener('pageshow', function(e) {
+        clearTimeout(loaderTimeout);
         hideLoader();
     });
 
     // 4. Also hide on DOMContentLoaded as safety net
     document.addEventListener('DOMContentLoaded', function() {
+        clearTimeout(loaderTimeout);
         hideLoader();
     });
 
     // 5. Hide if page loaded from cache (bfcache)
     window.addEventListener('load', function() {
+        clearTimeout(loaderTimeout);
         setTimeout(hideLoader, 100);
     });
 })();

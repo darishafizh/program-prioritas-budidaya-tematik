@@ -110,7 +110,7 @@
                             $lastRecord = $kdmp->progresFisikRecords->first();
                             $avg = $lastRecord ? $lastRecord->average_progress : 0;
                         @endphp
-                        <tr data-kdmp-id="{{ $kdmp->id }}">
+                        <tr data-kdmp-id="{{ $kdmp->hashid }}">
                             <td class="text-center fw-bold text-muted">{{ $kdmp->no }}</td>
                             <td>
                                 <div class="fw-bold">{{ $kdmp->nama_kdkmp }}</div>
@@ -187,8 +187,8 @@
                             </td>
                             <td class="text-center">
                                 <div class="d-flex gap-1 justify-content-center">
-                                    <a href="{{ route('progres-fisik.show', $kdmp->id) }}" class="btn btn-sm btn-primary">Detail</a>
-                                    <a href="{{ route('progres-fisik.create', ['kdmp_id' => $kdmp->id]) }}" class="btn btn-sm btn-outline" title="Tambah data">+</a>
+                                    <a href="{{ route('progres-fisik.show', $kdmp) }}" class="btn btn-sm btn-primary">Detail</a>
+                                    <a href="{{ route('progres-fisik.create', ['kdmp_id' => $kdmp->hashid]) }}" class="btn btn-sm btn-outline" title="Tambah data">+</a>
                                 </div>
                             </td>
                         </tr>

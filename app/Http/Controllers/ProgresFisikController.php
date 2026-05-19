@@ -99,6 +99,10 @@ class ProgresFisikController extends Controller
     public function create(Request $request)
     {
         $kdmpId = $request->get('kdmp_id');
+        if ($kdmpId && !is_numeric($kdmpId)) {
+            $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
+            $kdmpId = $decoded[0] ?? null;
+        }
         $kdmpList = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'kabupaten', 'provinsi']);
         $kdmpSelected = $kdmpId ? Kdmp::find($kdmpId) : null;
 
@@ -117,6 +121,12 @@ class ProgresFisikController extends Controller
      */
     public function store(Request $request)
     {
+        $kdmpId = $request->input('kdmp_id');
+        if ($kdmpId && !is_numeric($kdmpId)) {
+            $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
+            $request->merge(['kdmp_id' => $decoded[0] ?? null]);
+        }
+
         $validated = $request->validate([
             'kdmp_id' => 'required|exists:kdmp,id',
             'bulan' => 'required|integer|between:1,12',
@@ -170,7 +180,11 @@ class ProgresFisikController extends Controller
 
         ProgresFisikRecord::create($validated);
 
-        return redirect()->route('progres-fisik.index', ['highlight' => $validated['kdmp_id']])
+        $kdmpHash = (new \App\Models\Kdmp)->getRouteKeyName() == 'id' 
+            ? \Vinkla\Hashids\Facades\Hashids::encode($validated['kdmp_id']) 
+            : \Vinkla\Hashids\Facades\Hashids::encode($validated['kdmp_id']); // Always encode for highlight
+
+        return redirect()->route('progres-fisik.index', ['highlight' => $kdmpHash])
             ->with('success', 'Data progres fisik berhasil disimpan!');
     }
 
@@ -247,7 +261,8 @@ class ProgresFisikController extends Controller
 
         $record->update($validated);
 
-        return redirect()->route('progres-fisik.show', $record->kdmp_id)
+        $kdmpHash = \Vinkla\Hashids\Facades\Hashids::encode($record->kdmp_id);
+        return redirect()->route('progres-fisik.show', $kdmpHash)
             ->with('success', 'Data progres fisik berhasil diperbarui!');
     }
 
@@ -299,7 +314,8 @@ class ProgresFisikController extends Controller
         $kdmpId = $record->kdmp_id;
         $record->delete();
 
-        return redirect()->route('progres-fisik.show', $kdmpId)
+        $kdmpHash = \Vinkla\Hashids\Facades\Hashids::encode($kdmpId);
+        return redirect()->route('progres-fisik.show', $kdmpHash)
             ->with('success', 'Data progres fisik telah dihapus.');
     }
 

@@ -57,7 +57,7 @@
                 <select name="kdmp_id" id="kdmp_select" class="form-control form-select" required>
                     <option value="">-- Pilih KDKMP --</option>
                     @foreach($kdmpList as $k)
-                    <option value="{{ $k->id }}" {{ (old('kdmp_id', $kdmpSelected?->id) == $k->id) ? 'selected' : '' }}>
+                    <option value="{{ $k->hashid }}" {{ (old('kdmp_id', $kdmpSelected?->hashid) == $k->hashid) ? 'selected' : '' }}>
                         [{{ $k->no }}] {{ $k->nama_kdkmp }} — {{ $k->kabupaten }}, {{ $k->provinsi }}
                     </option>
                     @endforeach

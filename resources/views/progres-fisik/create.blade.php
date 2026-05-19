@@ -38,7 +38,7 @@
                     <select name="kdmp_id" class="form-control form-select" required>
                         <option value="">— Pilih Lokasi KDMP —</option>
                         @foreach($kdmpList as $k)
-                            <option value="{{ $k->id }}" {{ (old('kdmp_id', $kdmpSelected?->id) == $k->id) ? 'selected' : '' }}>
+                            <option value="{{ $k->hashid }}" {{ (old('kdmp_id', $kdmpSelected?->hashid) == $k->hashid) ? 'selected' : '' }}>
                                 {{ $k->no }}. {{ $k->nama_kdkmp }} — {{ $k->kabupaten }}, {{ $k->provinsi }}
                             </option>
                         @endforeach
@@ -144,7 +144,7 @@
             {{-- Actions --}}
             <div class="form-actions" style="display:flex;gap:0.75rem;padding-top:1rem;border-top:1px solid var(--border-color);margin-top:1.5rem;">
                 <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check" style="font-size:0.75rem;"></i> Simpan Data</button>
-                <a href="{{ route('progres-fisik.index', $kdmpSelected ? ['highlight' => $kdmpSelected->id] : []) }}" class="btn btn-outline">Batal</a>
+                <a href="{{ route('progres-fisik.index', $kdmpSelected ? ['highlight' => $kdmpSelected->hashid] : []) }}" class="btn btn-outline">Batal</a>
             </div>
         </form>
     </div>

@@ -95,9 +95,9 @@
             </div>
         </div>
         <div class="progres-hero-actions">
-            <a href="{{ route('progres-fisik.pdf-detail', $kdmp->id) }}" class="hero-btn hero-btn-danger" target="_blank"><i class="fa-solid fa-file-pdf"></i> PDF</a>
-            <a href="{{ route('progres-fisik.create', ['kdmp_id' => $kdmp->id]) }}" class="hero-btn hero-btn-primary"><i class="fa-solid fa-plus"></i> Tambah Data</a>
-            <a href="{{ route('progres-fisik.index', ['highlight' => $kdmp->id]) }}" class="hero-btn hero-btn-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+            <a href="{{ route('progres-fisik.pdf-detail', $kdmp) }}" class="hero-btn hero-btn-danger" target="_blank"><i class="fa-solid fa-file-pdf"></i> PDF</a>
+            <a href="{{ route('progres-fisik.create', ['kdmp_id' => $kdmp->hashid]) }}" class="hero-btn hero-btn-primary"><i class="fa-solid fa-plus"></i> Tambah Data</a>
+            <a href="{{ route('progres-fisik.index', ['highlight' => $kdmp->hashid]) }}" class="hero-btn hero-btn-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
         </div>
     </div>
 </div>
@@ -154,10 +154,10 @@
                 </span>
             </div>
             <div style="display:flex;gap:0.35rem;">
-                <a href="{{ route('progres-fisik.edit', $record->id) }}" class="btn btn-sm btn-outline" style="font-size:0.72rem;"><i class="fa-solid fa-pen-to-square" style="font-size:0.65rem;"></i> Edit</a>
-                <form action="{{ route('progres-fisik.destroy', $record->id) }}" method="POST" onsubmit="return confirm('Yakin hapus data ini?')">
+                <a href="{{ route('progres-fisik.edit', $record) }}" class="btn btn-sm btn-outline" style="font-size:0.72rem;"><i class="fa-solid fa-pen-to-square" style="font-size:0.65rem;"></i> Edit</a>
+                <form id="delete-form-pf-{{ $record->hashid ?? $record->id }}" action="{{ route('progres-fisik.destroy', $record) }}" method="POST">
                     @csrf @method('DELETE')
-                    <button type="submit" class="btn btn-sm" style="background:rgba(239,68,68,0.06);color:#DC2626;border:none;font-size:0.72rem;"><i class="fa-solid fa-trash-can" style="font-size:0.65rem;"></i> Hapus</button>
+                    <button type="button" class="btn btn-sm" style="background:rgba(239,68,68,0.06);color:#DC2626;border:none;font-size:0.72rem;" onclick="confirmDelete('delete-form-pf-{{ $record->hashid ?? $record->id }}', 'Data Progres')"><i class="fa-solid fa-trash-can" style="font-size:0.65rem;"></i> Hapus</button>
                 </form>
             </div>
         </div>
@@ -231,7 +231,7 @@
         </div>
         <h4 style="font-size:0.95rem;font-weight:600;color:var(--gray-700);margin-bottom:0.35rem;">Belum Ada Data</h4>
         <p style="font-size:0.82rem;color:var(--gray-500);margin-bottom:1.25rem;">Belum ada data progres fisik untuk KDMP ini.</p>
-        <a href="{{ route('progres-fisik.create', ['kdmp_id' => $kdmp->id]) }}" class="btn btn-primary"><i class="fa-solid fa-plus" style="font-size:0.75rem;"></i> Tambah Data Pertama</a>
+        <a href="{{ route('progres-fisik.create', ['kdmp_id' => $kdmp->hashid]) }}" class="btn btn-primary"><i class="fa-solid fa-plus" style="font-size:0.75rem;"></i> Tambah Data Pertama</a>
     </div>
     @endforelse
 </div>

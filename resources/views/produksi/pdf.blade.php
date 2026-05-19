@@ -121,7 +121,7 @@
                 </td>
                 <td class="kop-text">
                     <h1 style="font-size:18px; margin:0 0 5px 0;">KEMENTERIAN KELAUTAN DAN PERIKANAN</h1>
-                    <h2 style="font-size:16px; margin:0; font-weight:normal;">BIRO PERENCANAAN</h2>
+                    <h2 style="font-size:16px; margin:0; font-weight:normal;">SEKRETARIAT JENDERAL</h2>
                 </td>
             </tr>
         </table>
@@ -129,8 +129,10 @@
     </div>
 
     <div class="page-title">
-        <h3 style="margin-bottom: 5px;">DATA OPERASIONAL BUDI DAYA TEMATIK BIOFLOK TAHUN 2025</h3>
-        <p style="margin: 0; font-size: 11px;">Periode: {{ $bulanList[$bulan] ?? $bulan }} {{ $tahun }}</p>
+        <h3 style="margin-bottom: 5px;">DATA PRODUKSI BUDI DAYA TEMATIK BIOFLOK TAHUN ANGGARAN 2025</h3>
+        <p style="margin: 0; font-size: 11px;">Periode:
+            {{ now()->timezone('Asia/Jakarta')->locale('id')->isoFormat('D MMMM YYYY') }}
+        </p>
         @if($search)
             <p style="margin: 2px 0 0; font-size: 11px;">Pencarian: "{{ $search }}"</p>
         @endif
@@ -139,17 +141,17 @@
     <table>
         <thead>
             <tr>
-                <th rowspan="2">Unit Usaha (KDKMP)</th>
-                <th colspan="3">Biaya Operasional</th>
+                <th rowspan="2">Nama Koperasi Desa / Kelurahan Merah Putih (KDKMP)</th>
+                {{-- <th colspan="3">Biaya Operasional</th> --}}
                 <th colspan="2">Hasil Panen</th>
-                <th rowspan="2">Harga Jual / Kg</th>
-                <th rowspan="2">Pendapatan</th>
-                <th rowspan="2">Status Kinerja</th>
+                <th rowspan="2">Harga Jual / Kg (Rp)</th>
+                {{-- <th rowspan="2">Pendapatan</th> --}}
+                {{-- <th rowspan="2">Status Kinerja</th> --}}
             </tr>
             <tr>
-                <th>Bibit (Rp)</th>
-                <th>Pakan (Rp)</th>
-                <th>Lainnya (Rp)</th>
+                {{-- <th>Bibit (Rp)</th> --}}
+                {{-- <th>Pakan (Rp)</th> --}}
+                {{-- <th>Lainnya (Rp)</th> --}}
                 <th>Volume (Kg)</th>
                 <th>Nilai Penjualan (Rp)</th>
             </tr>
@@ -169,31 +171,50 @@
                             $hargaJual = $lastRecord->volume_panen_kg > 0 ? ($lastRecord->nilai_produksi / $lastRecord->volume_panen_kg) : 0;
                             $untungRugi = $lastRecord->nilai_produksi - $lastRecord->biaya_operasional;
                         @endphp
-                        <td class="text-right">{{ number_format($lastRecord->biaya_bibit, 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($lastRecord->biaya_pakan, 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($lastRecord->biaya_lainnya, 0, ',', '.') }}</td>
+                        {{-- <td class="text-right">{{ number_format($lastRecord->biaya_bibit, 0, ',', '.') }}</td> --}}
+                        {{-- <td class="text-right">{{ number_format($lastRecord->biaya_pakan, 0, ',', '.') }}</td> --}}
+                        {{-- <td class="text-right">{{ number_format($lastRecord->biaya_lainnya, 0, ',', '.') }}</td> --}}
                         <td class="text-right">{{ number_format($lastRecord->volume_panen_kg, 2, ',', '.') }}</td>
                         <td class="text-right">{{ number_format($lastRecord->nilai_produksi, 0, ',', '.') }}</td>
                         <td class="text-right">{{ number_format($hargaJual, 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($untungRugi, 0, ',', '.') }}</td>
-                        <td class="text-center">{{ $lastRecord->status_label }}</td>
+                        {{-- <td class="text-right">{{ number_format($untungRugi, 0, ',', '.') }}</td> --}}
+                        {{-- <td class="text-center">{{ $lastRecord->status_label }}</td> --}}
                     @else
+                        {{-- <td class="text-center">-</td> --}}
+                        {{-- <td class="text-center">-</td> --}}
+                        {{-- <td class="text-center">-</td> --}}
                         <td class="text-center">-</td>
                         <td class="text-center">-</td>
                         <td class="text-center">-</td>
-                        <td class="text-center">-</td>
-                        <td class="text-center">-</td>
-                        <td class="text-center">-</td>
-                        <td class="text-center">-</td>
-                        <td class="text-center">-</td>
+                        {{-- <td class="text-center">-</td> --}}
+                        {{-- <td class="text-center">-</td> --}}
                     @endif
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center">Tidak ada data.</td>
+                    <td colspan="4" class="text-center">Tidak ada data.</td>
                 </tr>
             @endforelse
         </tbody>
+        <tfoot>
+            @php
+                $totalVolume = 0;
+                $totalNilai = 0;
+                foreach ($kdmpList as $k) {
+                    foreach ($k->monitoringRecords as $rec) {
+                        $totalVolume += (float) $rec->volume_panen_kg;
+                        $totalNilai += (float) $rec->nilai_produksi;
+                    }
+                }
+                $avgHargaJual = $totalVolume > 0 ? ($totalNilai / $totalVolume) : 0;
+            @endphp
+            <tr style="font-weight: bold; background: #e8e8e8;">
+                <td style="text-align: center; font-weight: bold;">TOTAL</td>
+                <td class="text-right" style="font-weight: bold;">{{ number_format($totalVolume, 2, ',', '.') }}</td>
+                <td class="text-right" style="font-weight: bold;">{{ number_format($totalNilai, 0, ',', '.') }}</td>
+                <td class="text-right" style="font-weight: bold;">{{ number_format($avgHargaJual, 0, ',', '.') }}</td>
+            </tr>
+        </tfoot>
     </table>
 </body>
 

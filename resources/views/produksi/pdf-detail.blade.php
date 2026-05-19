@@ -213,12 +213,12 @@
         <tr>
             <td class="label">Ketua / Anggota (Telp)</td>
             <td class="separator">:</td>
-            <td>{{ $kdmp->ketua_anggota ?? '-' }}{{ $kdmp->no_hp ? ' ('.$kdmp->no_hp.')' : '' }}</td>
+            <td>{{ $kdmp->ketua_anggota ?? '-' }}{{ $kdmp->no_hp ? ' (0'.ltrim((string)$kdmp->no_hp, '0').')' : '' }}</td>
         </tr>
         <tr>
             <td class="label">Penyuluh (Telp)</td>
             <td class="separator">:</td>
-            <td>{{ $kdmp->nama_penyuluh ?? '-' }}{{ $kdmp->no_hp_penyuluh ? ' ('.$kdmp->no_hp_penyuluh.')' : '' }}</td>
+            <td>{{ $kdmp->nama_penyuluh ?? '-' }}{{ $kdmp->no_hp_penyuluh ? ' (0'.ltrim((string)$kdmp->no_hp_penyuluh, '0').')' : '' }}</td>
         </tr>
     </table>
 

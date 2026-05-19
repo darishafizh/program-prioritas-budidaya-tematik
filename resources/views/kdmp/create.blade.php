@@ -37,7 +37,7 @@
                     <select name="kdmp_id" id="kdmp_id_selector" class="form-control form-select">
                         <option value="">-- Pilih nama KDKMP --</option>
                         @foreach($kdmpList as $kdmp)
-                            <option value="{{ $kdmp->id }}" data-nama="{{ $kdmp->nama_kdkmp }}" data-desa="{{ $kdmp->desa }}"
+                            <option value="{{ $kdmp->hashid }}" data-nama="{{ $kdmp->nama_kdkmp }}" data-desa="{{ $kdmp->desa }}"
                                 data-kabupaten="{{ $kdmp->kabupaten }}" data-provinsi="{{ $kdmp->provinsi }}"
                                 data-komoditas="{{ $kdmp->komoditas }}" data-lat="{{ $kdmp->lat }}"
                                 data-long="{{ $kdmp->long }}">

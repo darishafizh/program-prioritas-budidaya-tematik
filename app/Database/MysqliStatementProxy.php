@@ -93,7 +93,8 @@ class MysqliStatementProxy
         }
 
         $this->affectedRows = $this->stmt->affected_rows;
-        $this->result = $this->stmt->get_result();
+        $result = $this->stmt->get_result();
+        $this->result = $result instanceof \mysqli_result ? $result : null;
 
         return true;
     }

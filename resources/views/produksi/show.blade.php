@@ -746,11 +746,11 @@
             </div>
         </div>
         <div class="detail-hero-actions">
-            <a href="{{ route('produksi.pdf-detail', $kdmp->id) }}" class="hero-btn hero-btn-danger" target="_blank" title="Export PDF">
+            <a href="{{ route('produksi.pdf-detail', $kdmp) }}" class="hero-btn hero-btn-danger" target="_blank" title="Export PDF">
                 <i class="fa-solid fa-file-pdf"></i>
                 <span>PDF</span>
             </a>
-            <a href="{{ route('produksi.create', ['kdmp_id' => $kdmp->id]) }}" class="hero-btn hero-btn-primary">
+            <a href="{{ route('produksi.create', ['kdmp_id' => $kdmp->hashid]) }}" class="hero-btn hero-btn-primary">
                 <i class="fa-solid fa-plus"></i>
                 <span>Tambah Laporan</span>
             </a>
@@ -921,12 +921,12 @@
                 </div>
             </div>
             <div class="record-actions">
-                <a href="{{ route('produksi.edit', $record->id) }}" class="record-action-btn">
+                <a href="{{ route('produksi.edit', $record) }}" class="record-action-btn">
                     <i class="fa-solid fa-pen-to-square" style="font-size:0.68rem;"></i> Edit
                 </a>
-                <form action="{{ route('produksi.destroy', $record->id) }}" method="POST" onsubmit="return confirm('Yakin hapus laporan ini?')">
+                <form id="delete-form-{{ $record->hashid ?? $record->id }}" action="{{ route('produksi.destroy', $record) }}" method="POST">
                     @csrf @method('DELETE')
-                    <button type="submit" class="record-action-btn danger">
+                    <button type="button" class="record-action-btn danger" onclick="confirmDelete('delete-form-{{ $record->hashid ?? $record->id }}', 'Laporan')">
                         <i class="fa-solid fa-trash-can" style="font-size:0.68rem;"></i> Hapus
                     </button>
                 </form>
@@ -962,7 +962,7 @@
         </div>
         <h4>Belum Ada Laporan</h4>
         <p>Belum ada laporan monitoring untuk KDMP ini.</p>
-        <a href="{{ route('produksi.create', ['kdmp_id' => $kdmp->id]) }}" class="btn btn-primary">
+        <a href="{{ route('produksi.create', ['kdmp_id' => $kdmp->hashid]) }}" class="btn btn-primary">
             <i class="fa-solid fa-plus" style="font-size:0.75rem;"></i>
             Tambah Laporan Pertama
         </a>

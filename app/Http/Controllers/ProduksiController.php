@@ -26,13 +26,15 @@ class ProduksiController extends Controller
         $search = $request->get('search');
 
         // Ambil semua KDMP beserta record sesuai periode yang dipilih
+        // Ambil KDMP yang diperlukan dengan field spesifik untuk meringankan beban memori
         $query = Kdmp::with([
             'monitoringRecords' => fn($q) => $q
+                ->select('id', 'kdmp_id', 'tahun', 'bulan', 'volume_panen_kg', 'nilai_produksi', 'biaya_operasional', 'biaya_pakan', 'biaya_bibit', 'biaya_lainnya')
                 ->where('tahun', $tahun)
                 ->where('bulan', $bulan)
                 ->orderBy('tahun', 'desc')
                 ->orderBy('bulan', 'desc'),
-        ]);
+        ])->select('id', 'no', 'nama_kdkmp', 'kabupaten', 'provinsi');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -44,8 +46,11 @@ class ProduksiController extends Controller
 
         $kdmpList = $query->orderBy('no')->get();
 
-        $recordsPeriode = MonitoringRecord::where('tahun', $tahun)->where('bulan', $bulan);
-        $allRecords = (clone $recordsPeriode)->get();
+        // 1 Query cepat untuk mengambil semua record spesifik pada periode terkait tanpa N+1
+        $allRecords = MonitoringRecord::select('kdmp_id', 'volume_panen_kg', 'nilai_produksi', 'biaya_operasional')
+                                      ->where('tahun', $tahun)
+                                      ->where('bulan', $bulan)
+                                      ->get();
         $targetKeuntungan = 15000000;
         $onTrackCount = 0;
         $underperformCount = 0;
@@ -219,6 +224,10 @@ class ProduksiController extends Controller
     public function create(Request $request)
     {
         $kdmpId = $request->get('kdmp_id');
+        if ($kdmpId && !is_numeric($kdmpId)) {
+            $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
+            $kdmpId = $decoded[0] ?? null;
+        }
         $kdmpList = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'kabupaten', 'provinsi']);
         $kdmpSelected = $kdmpId ? Kdmp::find($kdmpId) : null;
 
@@ -246,6 +255,12 @@ class ProduksiController extends Controller
      */
     public function store(Request $request)
     {
+        $kdmpId = $request->input('kdmp_id');
+        if ($kdmpId && !is_numeric($kdmpId)) {
+            $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
+            $request->merge(['kdmp_id' => $decoded[0] ?? null]);
+        }
+
         $validated = $request->validate([
             'kdmp_id' => 'required|exists:kdmp,id',
             'tanggal' => 'required|date',
@@ -352,7 +367,8 @@ class ProduksiController extends Controller
 
         $monitoring->update($validated);
 
-        return redirect()->route('produksi.show', $monitoring->kdmp_id)
+        $kdmpHash = \Vinkla\Hashids\Facades\Hashids::encode($monitoring->kdmp_id);
+        return redirect()->route('produksi.show', $kdmpHash)
             ->with('success', 'Laporan monitoring berhasil diperbarui!');
     }
 
@@ -364,7 +380,8 @@ class ProduksiController extends Controller
         $kdmpId = $monitoring->kdmp_id;
         $monitoring->delete();
 
-        return redirect()->route('produksi.show', $kdmpId)
+        $kdmpHash = \Vinkla\Hashids\Facades\Hashids::encode($kdmpId);
+        return redirect()->route('produksi.show', $kdmpHash)
             ->with('success', 'Laporan telah dihapus.');
     }
     /**
@@ -493,9 +510,9 @@ class ProduksiController extends Controller
 
                 $alamat = implode(', ', array_filter([$kdmp->desa, $kdmp->kabupaten, $kdmp->provinsi])) ?: '-';
                 $ketua = $kdmp->ketua_anggota ?? '-';
-                if ($kdmp->no_hp) $ketua .= ' (' . $kdmp->no_hp . ')';
+                if ($kdmp->no_hp) $ketua .= ' (0' . ltrim((string)$kdmp->no_hp, '0') . ')';
                 $penyuluh = $kdmp->nama_penyuluh ?? '-';
-                if ($kdmp->no_hp_penyuluh) $penyuluh .= ' (' . $kdmp->no_hp_penyuluh . ')';
+                if ($kdmp->no_hp_penyuluh) $penyuluh .= ' (0' . ltrim((string)$kdmp->no_hp_penyuluh, '0') . ')';
 
                 $periode = '-';
                 $status = '-';

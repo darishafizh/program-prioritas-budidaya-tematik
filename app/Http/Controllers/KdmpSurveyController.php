@@ -59,6 +59,12 @@ class KdmpSurveyController extends Controller
      */
     public function store(Request $request)
     {
+        $kdmpId = $request->input('kdmp_id');
+        if ($kdmpId && !is_numeric($kdmpId)) {
+            $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
+            $request->merge(['kdmp_id' => $decoded[0] ?? null]);
+        }
+
         $validated = $request->validate([
             'kdmp_id' => 'nullable|exists:kdmp,id',
             'verifikator' => 'nullable|string|max:255',
@@ -123,6 +129,12 @@ class KdmpSurveyController extends Controller
      */
     public function update(Request $request, KdmpSurvey $kdmp)
     {
+        $kdmpId = $request->input('kdmp_id');
+        if ($kdmpId && !is_numeric($kdmpId)) {
+            $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
+            $request->merge(['kdmp_id' => $decoded[0] ?? null]);
+        }
+
         $validated = $request->validate([
             'kdmp_id' => 'nullable|exists:kdmp,id',
             'verifikator' => 'nullable|string|max:255',

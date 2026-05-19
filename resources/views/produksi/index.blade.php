@@ -102,10 +102,10 @@
                         <tr>
                             <th rowspan="2" style="width:40px; vertical-align:middle; text-align:center;">No</th>
                             <th rowspan="2" style="vertical-align:middle; text-align:center;">KDKMP</th>
-                            <th rowspan="2" style="vertical-align:middle; text-align:center;">Biaya Produksi (Rp)</th>
+                            <!-- <th rowspan="2" style="vertical-align:middle; text-align:center;">Biaya Produksi (Rp)</th> -->
                             <th colspan="2" style="text-align:center;">Hasil Panen</th>
                             <th rowspan="2" style="vertical-align:middle; text-align:center;">Harga Jual (Rp)</th>
-                            <th rowspan="2" style="vertical-align:middle; text-align:center;">Keuntungan (Rp)</th>
+                            {{-- <th rowspan="2" style="vertical-align:middle; text-align:center;">Keuntungan (Rp)</th> --}}
                             <th rowspan="2" style="text-align:center; width:80px; vertical-align:middle;">Detail</th>
                         </tr>
                         <tr>
@@ -131,7 +131,7 @@
                             <tr>
                                 <td class="text-center fw-bold text-muted">{{ $kdmp->no }}</td>
                                 <td>
-                                    <a href="{{ route('produksi.show', $kdmp->id) }}"
+                                    <a href="{{ route('produksi.show', $kdmp) }}"
                                        class="fw-bold text-decoration-none" style="color:var(--kkp-teal)">
                                         {{ $kdmp->nama_kdkmp }}
                                     </a>
@@ -139,11 +139,11 @@
                                         {{ $kdmp->kabupaten }}, {{ $kdmp->provinsi }}
                                     </div>
                                 </td>
-                                <td class="text-end">{{ $lastRecord ? number_format($biaya, 0, ',', '.') : '-' }}</td>
+                                <!-- <td class="text-end">{{ $lastRecord ? number_format($biaya, 0, ',', '.') : '-' }}</td> -->
                                 <td class="text-end">{{ $lastRecord && $volume > 0 ? number_format($volume, 0, ',', '.') : '-' }}</td>
                                 <td class="text-end">{{ $lastRecord && $nilai > 0 ? number_format($nilai, 0, ',', '.') : '-' }}</td>
                                 <td class="text-end">{{ $lastRecord && $volume > 0 ? number_format($hargaJual, 0, ',', '.') : '-' }}</td>
-                                <td class="text-end">
+                                {{-- <td class="text-end">
                                     <div style="color:{{ $keuntungan >= 0 ? 'var(--kkp-teal)' : '#DC2626' }};
                                                 font-weight:{{ $lastRecord ? '600' : 'normal' }};">
                                         {{ $lastRecord ? number_format($keuntungan, 0, ',', '.') : '-' }}
@@ -154,14 +154,14 @@
                                             {{ $statusLabel }}
                                         </span>
                                     @endif
-                                </td>
+                                </td> --}}
                                 <td class="text-center">
-                                    <a href="{{ route('produksi.show', $kdmp->id) }}" class="btn btn-sm btn-primary">Detail</a>
+                                    <a href="{{ route('produksi.show', $kdmp) }}" class="btn btn-sm btn-primary">Detail</a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" style="text-align:center;padding:2rem;color:var(--gray-400);">
+                                <td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-400);">
                                     Tidak ada data untuk periode ini
                                 </td>
                             </tr>
@@ -305,7 +305,8 @@
                 dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
                 orderCellsTop: true,
                 order: [[0, 'asc']],
-                columnDefs: [{ orderable: false, targets: [7] }]
+                deferRender: true, // Significant performance boost for large tables
+                columnDefs: [{ orderable: false, targets: [5] }]
             });
 
             // ── Scatter Chart ─────────────────────────────────────────────────────
@@ -390,7 +391,10 @@
                 scatterChart.render();
             }
 
-            renderScatterChart();
+            // Defer chart rendering so the table and UI paint first (non-blocking)
+            setTimeout(() => {
+                renderScatterChart();
+            }, 10);
 
             const _origToggleTheme = window.toggleTheme;
             window.toggleTheme = function () {

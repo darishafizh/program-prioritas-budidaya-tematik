@@ -14,28 +14,7 @@
 
 
 
-    <!-- Alert Messages -->
-    @if(session('success'))
-        <div class="alert alert-success mb-4">
-            <div class="alert-icon">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-            </div>
-            {{ session('success') }}
-        </div>
-    @endif
 
-    @if(session('error'))
-        <div class="alert alert-danger mb-4">
-            <div class="alert-icon">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </div>
-            {{ session('error') }}
-        </div>
-    @endif
 
     <!-- Data Table -->
     <div class="card shadow-sm border-0" style="border-radius: 12px;">
@@ -111,10 +90,9 @@
                                         </svg>
                                     </a>
                                     @if($user->id !== auth()->id())
-                                        <form action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline;"
-                                            onsubmit="return confirm('Hapus user ini?')">
+                                        <form id="delete-form-{{ $user->hashid ?? $user->id }}" action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline;">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="table-action-btn delete" title="Hapus">
+                                            <button type="button" class="table-action-btn delete" title="Hapus" onclick="confirmDelete('delete-form-{{ $user->hashid ?? $user->id }}', 'User')">
                                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
@@ -160,7 +138,6 @@
                 dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
                 order: [[0, 'asc']],
                 columnDefs: [{ orderable: false, targets: [4] }]
-            });
         });
     </script>
 @endpush
