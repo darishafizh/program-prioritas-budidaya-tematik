@@ -17,6 +17,6 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: 103.93.191.25
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: kkpsamudrahostin
+          password: 123!@#Gamb!r2026KKP
           server-dir: /home/kkpsamudrahostin/repositoris/program-prioritas-budidaya-tematik/
