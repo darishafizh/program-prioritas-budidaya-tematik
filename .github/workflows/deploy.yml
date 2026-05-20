@@ -1,23 +1,22 @@
-name: Deploy via SFTP
 on:
   push:
     branches:
-      - main
+      - main # Ubah ke 'master' jika branch utama Anda bernama master
+
+name: Deploy website on push
 
 jobs:
   web-deploy:
     name: Deploy ke cPanel
     runs-on: ubuntu-latest
     steps:
-      - name: Ambil kode terbaru
+      - name: Mengambil kode terbaru
         uses: actions/checkout@v4
 
-      - name: Sinkronisasi file ke cPanel via SFTP
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      - name: Sinkronisasi file ke hosting
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local_path: "./*"
-          remote_path: "/home/kkpsamudrahostin/repositoris/program-prioritas-budidaya-tematik"
-          sftpArgs: "-o ConnectTimeout=5"
+          server-dir: /home/kkpsamudrahostin/repositoris/program-prioritas-budidaya-tematik/
