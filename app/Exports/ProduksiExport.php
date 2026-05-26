@@ -15,6 +15,7 @@ class ProduksiExport implements FromCollection, WithHeadings, WithMapping, Shoul
     protected $tahun;
     protected $bulan;
     protected $search;
+    private $rowNumber = 0;
 
     public function __construct($tahun, $bulan, $search)
     {
@@ -45,7 +46,7 @@ class ProduksiExport implements FromCollection, WithHeadings, WithMapping, Shoul
             });
         }
 
-        return $query->orderBy('no')->get();
+        return $query->orderBy('id')->get();
     }
 
     public function map($kdmp): array
@@ -90,8 +91,9 @@ class ProduksiExport implements FromCollection, WithHeadings, WithMapping, Shoul
             $catatan = $lastRecord->catatan ?? '-';
         }
 
+        $this->rowNumber++;
         return [
-            $kdmp->no,
+            $this->rowNumber,
             $kdmp->nama_kdkmp,
             $alamat,
             $kdmp->komoditas ?? '-',

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Budidaya Tematik | KKP</title>
+    <title>Bioflok | KKP</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('logo-kkp.png') }}">
@@ -66,7 +66,7 @@
                         </svg>
                     </button>
                     <div class="ms-4 d-none d-md-block">
-                        <h5 class="mb-0 fw-bold" style="color: var(--gray-900); letter-spacing: -0.01em;">Halo, {{ Auth::user()->name ?? 'Pengguna' }} 👋</h5>
+                        <h5 class="mb-0 fw-semibold" style="color: var(--gray-900); letter-spacing: -0.01em; font-size: 0.95rem;">Halo, {{ Auth::user()->name ?? 'Pengguna' }} 👋</h5>
                     </div>
                 </div>
                 <div class="topbar-right">
@@ -211,14 +211,13 @@
                 icon: 'success',
                 title: 'Berhasil!',
                 text: @json(session('success')),
-                width: '320px',
-                padding: '1.25rem',
+                width: '340px',
+                padding: '1.5rem',
                 timer: 2500,
                 timerProgressBar: true,
                 showConfirmButton: false,
                 customClass: {
-                    popup: 'rounded-xl shadow-lg',
-                    title: 'fs-5'
+                    popup: 'shadow-lg'
                 }
             });
             @endif
@@ -228,13 +227,11 @@
                 icon: 'error',
                 title: 'Gagal!',
                 text: @json(session('error')),
-                width: '320px',
-                padding: '1.25rem',
-                confirmButtonColor: '#EF4444',
+                width: '340px',
+                padding: '1.5rem',
                 confirmButtonText: 'OK',
                 customClass: {
-                    popup: 'rounded-xl shadow-lg',
-                    title: 'fs-5',
+                    popup: 'shadow-lg',
                     confirmButton: 'btn btn-danger btn-sm px-3 py-1'
                 },
                 buttonsStyling: false
@@ -250,18 +247,15 @@
             title: 'Hapus ' + label + '?',
             text: "Tindakan ini tidak bisa dibatalkan.",
             icon: 'warning',
-            width: '320px',
-            padding: '1.25rem',
+            width: '340px',
+            padding: '1.5rem',
             showCancelButton: true,
-            confirmButtonColor: '#EF4444',
-            cancelButtonColor: '#6B7280',
             confirmButtonText: 'Ya, hapus',
             cancelButtonText: 'Batal',
             customClass: {
-                popup: 'rounded-xl shadow-lg',
-                title: 'fs-5',
+                popup: 'shadow-lg',
                 confirmButton: 'btn btn-danger btn-sm px-3 py-1 mx-1',
-                cancelButton: 'btn btn-outline btn-sm px-3 py-1 mx-1'
+                cancelButton: 'btn btn-secondary btn-sm px-3 py-1 mx-1'
             },
             buttonsStyling: false
         }).then((result) => {

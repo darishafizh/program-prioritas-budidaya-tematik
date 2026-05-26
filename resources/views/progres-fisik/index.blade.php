@@ -111,7 +111,7 @@
                             $avg = $lastRecord ? $lastRecord->average_progress : 0;
                         @endphp
                         <tr data-kdmp-id="{{ $kdmp->hashid }}">
-                            <td class="text-center fw-bold text-muted">{{ $kdmp->no }}</td>
+                            <td class="text-center fw-bold text-muted">{{ $loop->iteration }}</td>
                             <td>
                                 <div class="fw-bold">{{ $kdmp->nama_kdkmp }}</div>
                                 <div class="text-muted" style="font-size:0.8em;">{{ $kdmp->kabupaten }}, {{ $kdmp->provinsi }}</div>
@@ -204,8 +204,15 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 <style>
     .table thead, .table thead th, .table thead td, .table th {
-        color: #333 !important; background: #f0f0f0 !important;
+        color: #ffffff !important; background: var(--kkp-teal, #0891B2) !important;
     }
+    .table tbody td {
+        color: #111827 !important;
+    }
+    .table { border: 1px solid #ccc !important; border-collapse: collapse !important; }
+    .table th, .table td { border: 1px solid #ccc !important; }
+
+    /* Dark Mode overrides */
     [data-theme="dark"] .table thead, [data-theme="dark"] .table thead th,
     [data-theme="dark"] .table thead td, [data-theme="dark"] .table th {
         color: #E5E7EB !important; background: #1F2937 !important; border-color: #374151 !important;
@@ -214,8 +221,6 @@
         background: var(--bg-surface) !important; color: #D1D5DB !important; border-color: #374151 !important;
     }
     [data-theme="dark"] .table tbody tr:hover td { background: #1F2937 !important; }
-    .table { border: 1px solid #ccc !important; border-collapse: collapse !important; }
-    .table th, .table td { border: 1px solid #ccc !important; }
     [data-theme="dark"] .table { border-color: #374151 !important; }
     [data-theme="dark"] .table th, [data-theme="dark"] .table td { border-color: #374151 !important; }
     .highlight-row td {

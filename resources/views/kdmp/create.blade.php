@@ -41,7 +41,7 @@
                                 data-kabupaten="{{ $kdmp->kabupaten }}" data-provinsi="{{ $kdmp->provinsi }}"
                                 data-komoditas="{{ $kdmp->komoditas }}" data-lat="{{ $kdmp->lat }}"
                                 data-long="{{ $kdmp->long }}">
-                                [{{ $kdmp->no }}] {{ $kdmp->nama_kdkmp }} — {{ $kdmp->kabupaten }}, {{ $kdmp->provinsi }}
+                                [{{ $loop->iteration }}] {{ $kdmp->nama_kdkmp }} — {{ $kdmp->kabupaten }}, {{ $kdmp->provinsi }}
                             </option>
                         @endforeach
                     </select>

@@ -118,7 +118,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
             </div>
-            <h3 class="mb-0 fw-bold" style="font-size: 1.2rem;">Ranking Lokasi</h3>
+            <h3 class="mb-0 fw-semibold" style="font-size: 0.82rem;">Ranking Lokasi</h3>
         </div>
     </div>
     <div class="card-body p-0 mt-3">
@@ -209,8 +209,8 @@
 .score-badge.low { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
 
 .total-score {
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 600;
     color: var(--kkp-navy);
 }
 
@@ -243,7 +243,6 @@
 .table-sm td, .table-sm th {
     padding: 0.75rem 0.75rem;
     vertical-align: middle;
-    font-size: 0.875rem;
 }
 
 /* Dark mode support */

@@ -188,7 +188,7 @@ class DashboardController extends Controller
 
                 return [
                     'id'          => $item->id,
-                    'no'          => $item->no,
+                    'no'          => $item->id,
                     'name'        => $item->nama_kdkmp ?? 'KDMP',
                     'kabupaten'   => $item->kabupaten,
                     'provinsi'    => $item->provinsi,

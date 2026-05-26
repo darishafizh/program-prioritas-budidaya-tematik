@@ -38,7 +38,7 @@ class KdmpSurveyController extends Controller
             $query->where('komoditas', $komoditas);
         }
 
-        $kdmpLocations = $query->orderBy('no', 'asc')->get();
+        $kdmpLocations = $query->orderBy('id', 'asc')->get();
         $provinces = Province::orderBy('name')->pluck('name', 'id');
 
         return view('kdmp.index', compact('kdmpLocations', 'provinces'));
@@ -50,7 +50,7 @@ class KdmpSurveyController extends Controller
     public function create()
     {
         $provinces = Province::orderBy('name')->get();
-        $kdmpList = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'desa', 'kabupaten', 'provinsi', 'komoditas', 'long', 'lat']);
+        $kdmpList = Kdmp::orderBy('id')->get(['id', 'nama_kdkmp', 'desa', 'kabupaten', 'provinsi', 'komoditas', 'long', 'lat']);
         return view('kdmp.create', compact('provinces', 'kdmpList'));
     }
 
@@ -120,7 +120,7 @@ class KdmpSurveyController extends Controller
     public function edit(KdmpSurvey $kdmp)
     {
         $provinces = Province::orderBy('name')->get();
-        $kdmpList = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'desa', 'kabupaten', 'provinsi', 'komoditas', 'long', 'lat']);
+        $kdmpList = Kdmp::orderBy('id')->get(['id', 'nama_kdkmp', 'desa', 'kabupaten', 'provinsi', 'komoditas', 'long', 'lat']);
         return view('kdmp.edit', compact('kdmp', 'provinces', 'kdmpList'));
     }
 

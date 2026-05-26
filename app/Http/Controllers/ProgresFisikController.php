@@ -32,7 +32,7 @@ class ProgresFisikController extends Controller
             });
         }
 
-        $kdmpList = $query->orderBy('no')->get();
+        $kdmpList = $query->orderBy('id')->get();
 
         // Statistik ringkasan
         $allRecords = ProgresFisikRecord::where('tahun', $tahun)->where('bulan', $bulan)->get();
@@ -103,7 +103,7 @@ class ProgresFisikController extends Controller
             $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
             $kdmpId = $decoded[0] ?? null;
         }
-        $kdmpList = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'kabupaten', 'provinsi']);
+        $kdmpList = Kdmp::orderBy('id')->get(['id', 'nama_kdkmp', 'kabupaten', 'provinsi']);
         $kdmpSelected = $kdmpId ? Kdmp::find($kdmpId) : null;
 
         $bulanList = [
@@ -329,7 +329,7 @@ class ProgresFisikController extends Controller
 
         $kdmpList = Kdmp::with([
             'progresFisikRecords' => fn($q) => $q->where('tahun', $tahun)->where('bulan', $bulan),
-        ])->orderBy('no')->get();
+        ])->orderBy('id')->get();
 
         $bulanList = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',

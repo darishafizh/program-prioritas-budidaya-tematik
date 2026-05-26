@@ -229,7 +229,7 @@
         <div style="width:56px;height:56px;background:var(--gray-100);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
             <i class="fa-solid fa-hammer" style="font-size:1.25rem;color:var(--gray-400);"></i>
         </div>
-        <h4 style="font-size:0.95rem;font-weight:600;color:var(--gray-700);margin-bottom:0.35rem;">Belum Ada Data</h4>
+        <h4 style="font-size:0.82rem;font-weight:600;color:var(--gray-700);margin-bottom:0.35rem;">Belum Ada Data</h4>
         <p style="font-size:0.82rem;color:var(--gray-500);margin-bottom:1.25rem;">Belum ada data progres fisik untuk KDMP ini.</p>
         <a href="{{ route('progres-fisik.create', ['kdmp_id' => $kdmp->hashid]) }}" class="btn btn-primary"><i class="fa-solid fa-plus" style="font-size:0.75rem;"></i> Tambah Data Pertama</a>
     </div>

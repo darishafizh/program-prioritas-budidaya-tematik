@@ -39,7 +39,7 @@
                         <option value="">— Pilih Lokasi KDMP —</option>
                         @foreach($kdmpList as $k)
                             <option value="{{ $k->hashid }}" {{ (old('kdmp_id', $kdmpSelected?->hashid) == $k->hashid) ? 'selected' : '' }}>
-                                {{ $k->no }}. {{ $k->nama_kdkmp }} — {{ $k->kabupaten }}, {{ $k->provinsi }}
+                                {{ $loop->iteration }}. {{ $k->nama_kdkmp }} — {{ $k->kabupaten }}, {{ $k->provinsi }}
                             </option>
                         @endforeach
                     </select>
@@ -63,7 +63,7 @@
             </div>
 
             {{-- Progres per Komponen --}}
-            <h4 style="font-size:0.9rem;font-weight:600;color:var(--gray-700);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color);">
+            <h4 style="font-size:0.82rem;font-weight:600;color:var(--gray-700);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color);">
                 <i class="fa-solid fa-chart-simple" style="color:var(--kkp-teal);margin-right:0.3rem;"></i> Progres per Komponen (0-100%)
             </h4>
 
@@ -91,7 +91,7 @@
             @endforeach
 
             {{-- Catatan --}}
-            <h4 style="font-size:0.9rem;font-weight:600;color:var(--gray-700);margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color);">
+            <h4 style="font-size:0.82rem;font-weight:600;color:var(--gray-700);margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color);">
                 <i class="fa-solid fa-note-sticky" style="color:var(--kkp-teal);margin-right:0.3rem;"></i> Catatan Lapangan
             </h4>
             <div class="form-group">
@@ -108,7 +108,7 @@
             </div>
 
             {{-- Dokumentasi Foto --}}
-            <h4 style="font-size:0.9rem;font-weight:600;color:var(--gray-700);margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color);">
+            <h4 style="font-size:0.82rem;font-weight:600;color:var(--gray-700);margin:1.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color);">
                 <i class="fa-solid fa-camera" style="color:var(--kkp-teal);margin-right:0.3rem;"></i> Dokumentasi Foto
             </h4>
 

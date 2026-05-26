@@ -209,8 +209,8 @@ body {
 }
 
 .dt-card-header .dt-card-title {
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 0.82rem;
+    font-weight: 600;
     color: var(--kkp-navy, #1e3a5f);
     margin: 0;
 }
@@ -706,6 +706,40 @@ body {
     color: #F3F4F6 !important;
 }
 
+/* --- SweetAlert2 global font consistency --- */
+.swal2-popup {
+    font-family: 'Poppins', sans-serif !important;
+    border-radius: 16px !important;
+}
+
+.swal2-title {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 1.05rem !important;
+    font-weight: 600 !important;
+    color: var(--gray-900) !important;
+}
+
+.swal2-html-container {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.82rem !important;
+    font-weight: 400 !important;
+    color: var(--gray-600) !important;
+    line-height: 1.5 !important;
+}
+
+.swal2-actions .btn {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.78rem !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    padding: 0.4rem 1rem !important;
+}
+
+.swal2-icon {
+    transform: scale(0.85);
+    margin-bottom: 0.5rem !important;
+}
+
 /* --- SweetAlert2 dark mode --- */
 [data-theme="dark"] .swal2-popup {
     background: #111827 !important;
@@ -765,18 +799,18 @@ body {
    TYPOGRAPHY
    ===================================================== */
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.25;
     color: var(--gray-900);
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
 }
 
-h1 { font-size: 1.875rem; }
-h2 { font-size: 1.5rem; }
-h3 { font-size: 1.25rem; }
-h4 { font-size: 1.125rem; }
-h5 { font-size: 1rem; }
-h6 { font-size: 0.875rem; }
+h1 { font-size: 1.625rem; }
+h2 { font-size: 1.375rem; }
+h3 { font-size: 1.125rem; }
+h4 { font-size: 1.0rem; }
+h5 { font-size: 0.875rem; }
+h6 { font-size: 0.8rem; }
 
 p {
     margin-bottom: var(--spacing-md);
@@ -938,7 +972,7 @@ a:hover {
 
 .sidebar-brand-text h1 {
     font-size: 0.9375rem;
-    font-weight: 700;
+    font-weight: 600;
     color: white;
     margin: 0;
     line-height: 1.25;
@@ -1249,19 +1283,19 @@ a:hover {
 @media (max-width: 768px) {
     /* Typography */
     h1, .page-title {
-        font-size: 1.35rem !important;
+        font-size: 1.15rem !important;
     }
 
     h2 {
-        font-size: 1.2rem;
-    }
-
-    h3, .section-title {
         font-size: 1rem;
     }
 
+    h3, .section-title {
+        font-size: 0.85rem;
+    }
+
     .page-subtitle {
-        font-size: 0.8125rem;
+        font-size: 0.72rem;
     }
 
     /* Topbar */
@@ -1576,15 +1610,25 @@ a:hover {
 
     /* Login page */
     .login-card {
-        padding: var(--spacing-lg);
+        padding: 1.5rem 1.25rem 1.25rem;
+        border-radius: 1.25rem;
+        max-width: 95%;
+    }
+
+    .login-card::before {
+        border-radius: 1.25rem;
+    }
+
+    .login-card::after {
+        border-radius: 1.25rem 1.25rem 0 0;
     }
 
     .login-logo {
-        width: 60px;
+        width: 48px;
     }
 
     .login-title {
-        font-size: 1.25rem;
+        font-size: 1.05rem;
     }
 }
 
@@ -1609,7 +1653,7 @@ a:hover {
 }
 
 .card-title {
-    font-size: 1.125rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--gray-800);
     margin: 0;
@@ -1675,18 +1719,18 @@ a:hover {
     flex-shrink: 0;
 }
 .kpi-value {
-    font-size: 1.3rem;
-    font-weight: 700;
+    font-size: 1.15rem;
+    font-weight: 600;
     line-height: 1.1;
     color: var(--gray-900);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
 }
 [data-theme="dark"] .kpi-value {
     color: #E5E7EB;
 }
 .kpi-label {
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.68rem;
+    font-weight: 500;
     color: var(--gray-500);
     margin-top: 0.15rem;
 }
@@ -2211,104 +2255,194 @@ textarea.form-control {
    LOGIN PAGE
    ===================================================== */
 /* =====================================================
-   LOGIN PAGE - MODERN SAAS
+   LOGIN PAGE - GLASSMORPHISM PREMIUM
    ===================================================== */
 .login-wrapper {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: var(--spacing-lg);
-    background-color: #0b1120;
-    background-image: 
-        radial-gradient(at 0% 0%, rgba(8, 145, 178, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(30, 58, 95, 0.3) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
     position: relative;
     overflow: hidden;
+    background: #0b1120;
 }
 
-/* Add animated floating orbs for premium feel */
-.login-wrapper::before,
+/* Background image layer */
+.login-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--login-bg, url('/login-bg.png'));
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    /* Darken overlay for readability */
+    filter: brightness(0.45) saturate(1.2);
+    animation: bgZoom 30s ease-in-out infinite alternate;
+}
+
+@keyframes bgZoom {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.08); }
+}
+
+/* Gradient overlay on top of background */
 .login-wrapper::after {
     content: '';
     position: absolute;
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: 0;
-    opacity: 0.5;
-    animation: floatingOrbs 15s infinite alternate ease-in-out;
+    inset: 0;
+    background: 
+        linear-gradient(135deg, rgba(11, 17, 32, 0.7) 0%, rgba(8, 145, 178, 0.15) 50%, rgba(11, 17, 32, 0.75) 100%),
+        radial-gradient(ellipse at 20% 50%, rgba(6, 182, 212, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(30, 58, 95, 0.25) 0%, transparent 50%);
+    z-index: 1;
 }
 
-.login-wrapper::before {
-    background: rgba(8, 145, 178, 0.2);
-    top: -100px;
-    left: -100px;
-}
-
-.login-wrapper::after {
-    background: rgba(30, 58, 95, 0.3);
-    bottom: -150px;
-    right: -100px;
-    animation-delay: -5s;
-}
-
-@keyframes floatingOrbs {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(50px, 50px) scale(1.1); }
-}
-
+/* Floating particles */
 .login-card {
     width: 100%;
-    max-width: 420px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1.5rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 2.5rem;
+    max-width: 380px;
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    /* Glassmorphism */
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1.5rem;
+    backdrop-filter: blur(24px) saturate(1.5);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    padding: 2rem 1.75rem 1.75rem;
+    /* Glass shadow */
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 1px 0 rgba(255, 255, 255, 0.1) inset;
+    /* Entry animation */
+    animation: cardFloat 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform: translateY(30px);
+    opacity: 0;
+}
+
+/* Subtle animated glow border */
+.login-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 1.5rem;
+    padding: 1px;
+    background: linear-gradient(
+        135deg,
+        rgba(6, 182, 212, 0.4),
+        rgba(255, 255, 255, 0.05),
+        rgba(8, 145, 178, 0.3),
+        rgba(255, 255, 255, 0.08)
+    );
+    background-size: 300% 300%;
+    animation: glowBorder 6s ease-in-out infinite;
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+    opacity: 0.7;
+}
+
+/* Inner glass light refraction */
+.login-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    border-radius: 1.5rem 1.5rem 0 0;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.07) 0%,
+        transparent 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes cardFloat {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes glowBorder {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .login-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 1;
 }
 
 .login-logo {
-    width: 72px;
+    width: 56px;
     height: auto;
-    margin-bottom: 1.25rem;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+    margin-bottom: 0.75rem;
+    filter: drop-shadow(0 4px 12px rgba(6, 182, 212, 0.3));
+    animation: logoFloat 4s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
 }
 
 .login-title {
-    font-size: 1.5rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: white;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
     letter-spacing: -0.02em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .login-subtitle {
-    font-size: 0.8125rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.55);
     font-weight: 500;
+    letter-spacing: 0.02em;
 }
 
-/* Login form specific overrides for dark card */
+/* Login form specific overrides for glass card */
+.login-form {
+    position: relative;
+    z-index: 1;
+}
+
+.login-form .form-group {
+    position: relative;
+}
+
 .login-form .form-label {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    font-size: 0.78rem;
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.01em;
 }
 
 .login-form .form-control {
-    background: rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: white;
+    border-radius: 0.625rem;
+    padding: 0.55rem 0.85rem 0.55rem 2.5rem;
+    font-size: 0.82rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
 }
 
 /* Fix Browser Autofill replacing the dark background */
@@ -2316,24 +2450,32 @@ textarea.form-control {
 .login-form .form-control:-webkit-autofill:hover, 
 .login-form .form-control:-webkit-autofill:focus, 
 .login-form .form-control:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
+    -webkit-box-shadow: 0 0 0 30px rgba(15, 23, 42, 0.95) inset !important;
     -webkit-text-fill-color: white !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
     transition: background-color 5000s ease-in-out 0s;
 }
 
 .login-form .form-control:focus {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: var(--kkp-cyan);
-    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(6, 182, 212, 0.6);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15), 0 0 20px rgba(6, 182, 212, 0.1);
+    outline: none;
 }
 
 .login-form .form-control::placeholder {
     color: rgba(255, 255, 255, 0.3);
+    font-weight: 400;
+    font-size: 0.8rem;
 }
 
 .login-form .input-icon {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.45);
+    transition: color 0.3s ease;
+}
+
+.login-form .form-group:focus-within .input-icon {
+    color: rgba(6, 182, 212, 0.8);
 }
 
 .login-form .form-check-label {
@@ -2354,21 +2496,72 @@ textarea.form-control {
 }
 
 .login-form .btn-primary {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.9375rem;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.85rem;
     font-weight: 600;
     width: 100%;
+    border: none;
+    border-radius: 0.625rem;
+    background: linear-gradient(135deg, #0891B2, #06B6D4, #0E7490);
+    background-size: 200% 200%;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(8, 145, 178, 0.35);
+    animation: btnGradient 4s ease-in-out infinite;
+}
+
+.login-form .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.5s ease;
+}
+
+.login-form .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(8, 145, 178, 0.45);
+}
+
+.login-form .btn-primary:hover::before {
+    left: 100%;
+}
+
+.login-form .btn-primary:active {
+    transform: translateY(0);
+}
+
+@keyframes btnGradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .login-copyright {
-    position: absolute;
-    bottom: var(--spacing-lg);
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.75rem;
+    position: relative;
+    z-index: 2;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.7rem;
     white-space: nowrap;
-    z-index: 1;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Captcha box glass override */
+.login-wrapper .captcha-box {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+}
+
+.login-wrapper .captcha-refresh:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* =====================================================
@@ -2399,14 +2592,14 @@ textarea.form-control {
 }
 
 .page-title {
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: 1.35rem;
+    font-weight: 600;
     color: var(--gray-800);
     margin: 0;
 }
 
 .page-subtitle {
-    font-size: 0.9375rem;
+    font-size: 0.78rem;
     color: var(--gray-500);
     margin-top: var(--spacing-xs);
 }
@@ -2664,7 +2857,7 @@ textarea.form-control {
 }
 
 .subsection-title {
-    font-size: 1rem;
+    font-size: 0.78rem;
     font-weight: 600;
     color: var(--gray-700);
 }
@@ -2847,14 +3040,14 @@ textarea.form-control {
 }
 
 .section-icon {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--radius-lg);
-    font-weight: 700;
-    font-size: 0.875rem;
+    font-weight: 600;
+    font-size: 0.75rem;
 }
 
 .section-icon.teal {
@@ -2878,7 +3071,7 @@ textarea.form-control {
 }
 
 .section-title {
-    font-size: 1.125rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--gray-800);
     margin: 0;
@@ -3195,8 +3388,6 @@ div.dataTables_wrapper div.dataTables_filter {
 }
 
 table.dataTable thead th {
-    background: #0E7490 !important;
-    color: white !important;
     font-weight: 600;
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -3268,8 +3459,7 @@ table.dataTable.no-footer {
 }
 
 .table thead {
-    background: #0E7490;
-    color: white;
+    /* Inherit background/color from specific tables */
 }
 
 .table thead th {
@@ -3280,7 +3470,6 @@ table.dataTable.no-footer {
     letter-spacing: 0.5px;
     text-align: left;
     white-space: nowrap;
-    color: #ffffff;
 }
 
 .table tbody td {
@@ -3730,4 +3919,38 @@ table.dataTable.no-footer {
     .grid-cols-3 {
         grid-template-columns: 1fr;
     }
+}
+
+/* =====================================================
+   CONSISTENT DASHBOARD TYPOGRAPHY OVERRIDES
+   ===================================================== */
+.table th, table.dataTable thead th, .table-sm th {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    color: var(--gray-600);
+}
+
+[data-theme="dark"] .table th, [data-theme="dark"] table.dataTable thead th, [data-theme="dark"] .table-sm th {
+    color: #9CA3AF !important;
+}
+
+.table td, table.dataTable tbody td, .table-sm td {
+    font-size: 0.78rem !important;
+    font-weight: 500 !important;
+}
+
+/* Ensure dataTable buttons and search match dashboard font size */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+}
+
+.dataTables_wrapper .form-control,
+.dataTables_wrapper .form-select {
+    font-size: 0.75rem !important;
 }

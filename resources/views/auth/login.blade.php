@@ -1,8 +1,8 @@
 <x-guest-layout>
     <div class="login-header">
         <img src="{{ asset('logo-kkp.png') }}" alt="Logo KKP" class="login-logo">
-        <h1 class="login-title">Survey Budidaya Tematik</h1>
-        <p class="login-subtitle">Kementerian Kelautan dan Perikanan</p>
+        <h1 class="login-title">Monev Budidaya Tematik Bioflok</h1>
+        <p class="login-subtitle">Biro Perencanaan, Sekretariat Jenderal Kementerian Kelautan dan Perikanan</p>
     </div>
 
     <!-- Session Status -->
@@ -25,7 +25,7 @@
                     placeholder="Masukkan username anda" required autofocus autocomplete="username" style="color: white !important;">
             </div>
             @error('username')
-                <span style="display: block; font-size: 0.8rem; font-weight: 500; color: #FCA5A5; margin-top: 0.25rem;">{{ $message }}</span>
+                <span style="display: block; font-size: 0.75rem; font-weight: 500; color: #FCA5A5; margin-top: 0.25rem;">{{ $message }}</span>
             @enderror
         </div>
 
@@ -56,22 +56,22 @@
                 </span>
             </div>
             @error('password')
-                <span style="display: block; font-size: 0.8rem; font-weight: 500; color: #FCA5A5; margin-top: 0.25rem;">{{ $message }}</span>
+                <span style="display: block; font-size: 0.75rem; font-weight: 500; color: #FCA5A5; margin-top: 0.25rem;">{{ $message }}</span>
             @enderror
         </div>
 
         <!-- CAPTCHA -->
         <div class="form-group">
-            <label for="captcha" class="form-label" style="color: white;">Verifikasi CAPTCHA</label>
+            <label for="captcha" class="form-label" style="color: white;">Verifikasi Captcha</label>
             <div class="captcha-box">
                 <div class="captcha-question" id="captchaQuestion">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;flex-shrink:0;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:15px;height:15px;flex-shrink:0;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
                     <span>{{ $captcha_question ?? '...' }}</span>
                 </div>
                 <a href="{{ route('login') }}" class="captcha-refresh" title="Ganti soal">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:14px;height:14px;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                     </svg>
                 </a>
@@ -86,13 +86,13 @@
                     placeholder="Masukkan jawaban" required autocomplete="off" style="color: white !important;">
             </div>
             @error('captcha')
-                <span style="display: block; font-size: 0.8rem; font-weight: 500; color: #FCA5A5; margin-top: 0.25rem;">{{ $message }}</span>
+                <span style="display: block; font-size: 0.75rem; font-weight: 500; color: #FCA5A5; margin-top: 0.25rem;">{{ $message }}</span>
             @enderror
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary" style="width:100%; margin-top: 0.5rem;">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;">
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top: 0.25rem;">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:16px;height:16px;">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
                 </path>
@@ -104,7 +104,7 @@
     <style>
         /* Jarak antar field password dan submit lebih besar dari antar username-password */
         .login-form .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0.7rem;
         }
 
         /* Alert Container */
@@ -139,7 +139,7 @@
         .login-alert-content p {
             margin: 0;
             padding: 0;
-            font-size: 0.82rem;
+            font-size: 0.75rem;
             line-height: 1.45;
             color: #FCA5A5;
             font-weight: 500;

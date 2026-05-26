@@ -29,7 +29,7 @@
 
         <div class="table-responsive">
         <table id="kdmpTable" class="table table-hover w-100 table-sm align-middle">
-            <thead class="bg-light">
+            <thead style="background: #fff !important;">
                 <tr>
                     <th class="text-center" width="40">No</th>
                     <th>Provinsi</th>
@@ -44,7 +44,7 @@
             <tbody>
                 @foreach($kdmpLocations as $item)
                 <tr>
-                    <td class="text-center">{{ $item->no ?? $loop->iteration }}</td>
+                    <td class="text-center">{{ $loop->iteration }}</td>
                     <td>{{ $item->provinsi ?? '-' }}</td>
                     <td>{{ $item->kabupaten ?? '-' }}</td>
                     <td>{{ $item->desa ?? '-' }}</td>
@@ -84,16 +84,17 @@
 @push('styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 <style>
-    /* Ensure Manrope font is used */
-    body, .page-title, .table, .btn {
-        font-family: 'Manrope', sans-serif;
-    }
+    /* Use global font */
     
     /* Table modifications */
+    table#kdmpTable thead th {
+        background: #ffffff !important;
+        color: var(--gray-700) !important;
+        border-bottom: 2px solid var(--gray-200) !important;
+    }
     .table-sm td, .table-sm th {
         padding: 0.75rem 0.75rem;
         vertical-align: middle;
-        font-size: 0.875rem;
     }
     
     /* Custom Badge Colors to match theme */

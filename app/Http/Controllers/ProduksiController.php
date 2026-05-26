@@ -34,7 +34,7 @@ class ProduksiController extends Controller
                 ->where('bulan', $bulan)
                 ->orderBy('tahun', 'desc')
                 ->orderBy('bulan', 'desc'),
-        ])->select('id', 'no', 'nama_kdkmp', 'kabupaten', 'provinsi');
+        ])->select('id', 'nama_kdkmp', 'kabupaten', 'provinsi');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -44,7 +44,7 @@ class ProduksiController extends Controller
             });
         }
 
-        $kdmpList = $query->orderBy('no')->get();
+        $kdmpList = $query->orderBy('id')->get();
 
         // 1 Query cepat untuk mengambil semua record spesifik pada periode terkait tanpa N+1
         $allRecords = MonitoringRecord::select('kdmp_id', 'volume_panen_kg', 'nilai_produksi', 'biaya_operasional')
@@ -228,7 +228,7 @@ class ProduksiController extends Controller
             $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
             $kdmpId = $decoded[0] ?? null;
         }
-        $kdmpList = Kdmp::orderBy('no')->get(['id', 'no', 'nama_kdkmp', 'kabupaten', 'provinsi']);
+        $kdmpList = Kdmp::orderBy('id')->get(['id', 'nama_kdkmp', 'kabupaten', 'provinsi']);
         $kdmpSelected = $kdmpId ? Kdmp::find($kdmpId) : null;
 
         $bulanList = [
@@ -426,7 +426,7 @@ class ProduksiController extends Controller
             });
         }
 
-        $kdmpList = $query->orderBy('no')->get();
+        $kdmpList = $query->orderBy('id')->get();
 
         $bulanList = [
             1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -466,7 +466,7 @@ class ProduksiController extends Controller
             });
         }
 
-        $kdmpList = $query->orderBy('no')->get();
+        $kdmpList = $query->orderBy('id')->get();
 
         $namaBulan = $bulanList[$bulan] ?? $bulan;
         $filename = "Data_Monitoring_Produksi_{$namaBulan}_{$tahun}.csv";
@@ -505,6 +505,7 @@ class ProduksiController extends Controller
             ]);
 
             // Data rows
+            $no = 1;
             foreach ($kdmpList as $kdmp) {
                 $lastRecord = $kdmp->monitoringRecords->first();
 
@@ -545,7 +546,7 @@ class ProduksiController extends Controller
                 }
 
                 fputcsv($file, [
-                    $kdmp->no,
+                    $no++,
                     $kdmp->nama_kdkmp,
                     $alamat,
                     $kdmp->komoditas ?? '-',

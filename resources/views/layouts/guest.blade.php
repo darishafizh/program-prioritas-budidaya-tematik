@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Survey Budidaya Tematik') }} - Login</title>
+    <title>Login | Bioflok KKP</title>
 
     <!-- Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,20 +22,20 @@
         .captcha-box {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            padding: 0.65rem 1rem;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
             backdrop-filter: blur(4px);
         }
         .captcha-question {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             flex: 1;
             color: #67e8f9;
-            font-size: 1.15rem;
+            font-size: 1rem;
             font-weight: 700;
             letter-spacing: 2px;
             font-family: 'Courier New', monospace;
@@ -47,9 +47,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             background: rgba(255, 255, 255, 0.1);
             color: rgba(255, 255, 255, 0.6);
             text-decoration: none;
@@ -68,7 +68,7 @@
     {{-- Global Page Loader --}}
     <x-page-loader />
 
-    <div class="login-wrapper">
+    <div class="login-wrapper" style="--login-bg: url('{{ asset('login-bg.png') }}');">
         <div class="login-card">
             {{ $slot }}
         </div>
