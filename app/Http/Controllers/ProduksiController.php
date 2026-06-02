@@ -313,6 +313,10 @@ class ProduksiController extends Controller
      */
     public function edit(MonitoringRecord $monitoring)
     {
+        if (Auth::user()->role !== 'admin' && $monitoring->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+
         $record = $monitoring;
         $record->load('kdmp');
 
@@ -340,6 +344,10 @@ class ProduksiController extends Controller
      */
     public function update(Request $request, MonitoringRecord $monitoring)
     {
+        if (Auth::user()->role !== 'admin' && $monitoring->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+
         $validated = $request->validate([
             'status_lokasi' => 'required|in:on_track,bermasalah,selesai,vakum',
             'progres_fisik' => 'required|integer|between:0,100',
@@ -377,6 +385,10 @@ class ProduksiController extends Controller
      */
     public function destroy(MonitoringRecord $monitoring)
     {
+        if (Auth::user()->role !== 'admin' && $monitoring->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat menghapus data milik Anda sendiri.');
+        }
+
         $kdmpId = $monitoring->kdmp_id;
         $monitoring->delete();
 

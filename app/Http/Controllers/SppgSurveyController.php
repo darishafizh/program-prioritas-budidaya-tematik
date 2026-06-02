@@ -42,10 +42,21 @@ class SppgSurveyController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'verifikator' => 'nullable|string|max:255',
-            'responden' => 'nullable|string|max:255',
-            'nama_sppg' => 'required|string|max:255',
+            'verifikator' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
+            'responden' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
+            'nama_sppg' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
             'kabupaten' => 'required|string|max:255',
+            'tanggal' => 'nullable|date',
+            'jam' => 'nullable|date_format:H:i',
+            'jumlah_sekolah' => 'nullable|integer|min:0',
+            'jumlah_siswa' => 'nullable|integer|min:0',
+            'porsi_harian' => 'nullable|integer|min:0',
+            'porsi_bulanan' => 'nullable|integer|min:0',
+            'kebutuhan_lele' => 'nullable|numeric|min:0',
+            'kebutuhan_nila' => 'nullable|numeric|min:0',
+            'kebutuhan_lain' => 'nullable|numeric|min:0',
+            'anggaran_porsi' => 'nullable|numeric|min:0',
+            'volume_kebutuhan' => 'nullable|numeric|min:0',
         ]);
         
         $validated['user_id'] = Auth::id();
@@ -58,7 +69,7 @@ class SppgSurveyController extends Controller
         $validated['sumber_prioritas'] = $request->input('sumber_prioritas', []);
         $validated['kendala_pasokan'] = $request->input('kendala_pasokan', []);
         
-        $allFields = $request->except(['_token', '_method']);
+        $allFields = $request->except(['_token', '_method', 'user_id', 'id']);
         $survey = SppgSurvey::create(array_merge($validated, $allFields));
         
         return redirect()
@@ -79,6 +90,10 @@ class SppgSurveyController extends Controller
      */
     public function edit(SppgSurvey $sppg)
     {
+        if (Auth::user()->role !== 'admin' && $sppg->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+        
         return view('sppg.edit', compact('sppg'));
     }
 
@@ -87,11 +102,26 @@ class SppgSurveyController extends Controller
      */
     public function update(Request $request, SppgSurvey $sppg)
     {
+        if (Auth::user()->role !== 'admin' && $sppg->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+        
         $validated = $request->validate([
-            'verifikator' => 'nullable|string|max:255',
-            'responden' => 'nullable|string|max:255',
-            'nama_sppg' => 'required|string|max:255',
+            'verifikator' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
+            'responden' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
+            'nama_sppg' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
             'kabupaten' => 'required|string|max:255',
+            'tanggal' => 'nullable|date',
+            'jam' => 'nullable|date_format:H:i',
+            'jumlah_sekolah' => 'nullable|integer|min:0',
+            'jumlah_siswa' => 'nullable|integer|min:0',
+            'porsi_harian' => 'nullable|integer|min:0',
+            'porsi_bulanan' => 'nullable|integer|min:0',
+            'kebutuhan_lele' => 'nullable|numeric|min:0',
+            'kebutuhan_nila' => 'nullable|numeric|min:0',
+            'kebutuhan_lain' => 'nullable|numeric|min:0',
+            'anggaran_porsi' => 'nullable|numeric|min:0',
+            'volume_kebutuhan' => 'nullable|numeric|min:0',
         ]);
         
         // Process checkbox arrays
@@ -102,7 +132,7 @@ class SppgSurveyController extends Controller
         $validated['sumber_prioritas'] = $request->input('sumber_prioritas', []);
         $validated['kendala_pasokan'] = $request->input('kendala_pasokan', []);
         
-        $allFields = $request->except(['_token', '_method']);
+        $allFields = $request->except(['_token', '_method', 'user_id', 'id']);
         $sppg->update(array_merge($validated, $allFields));
         
         return redirect()
@@ -115,6 +145,10 @@ class SppgSurveyController extends Controller
      */
     public function destroy(SppgSurvey $sppg)
     {
+        if (Auth::user()->role !== 'admin' && $sppg->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat menghapus data milik Anda sendiri.');
+        }
+        
         $sppg->delete();
         
         return redirect()

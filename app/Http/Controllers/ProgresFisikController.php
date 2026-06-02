@@ -193,6 +193,10 @@ class ProgresFisikController extends Controller
      */
     public function edit(ProgresFisikRecord $record)
     {
+        if (Auth::user()->role !== 'admin' && $record->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+
         $record->load('kdmp');
 
         $bulanList = [
@@ -210,6 +214,10 @@ class ProgresFisikController extends Controller
      */
     public function update(Request $request, ProgresFisikRecord $record)
     {
+        if (Auth::user()->role !== 'admin' && $record->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+
         $validated = $request->validate([
             'progres_bangunan' => 'required|integer|between:0,100',
             'progres_kolam' => 'required|integer|between:0,100',
@@ -311,6 +319,10 @@ class ProgresFisikController extends Controller
      */
     public function destroy(ProgresFisikRecord $record)
     {
+        if (Auth::user()->role !== 'admin' && $record->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat menghapus data milik Anda sendiri.');
+        }
+
         $kdmpId = $record->kdmp_id;
         $record->delete();
 

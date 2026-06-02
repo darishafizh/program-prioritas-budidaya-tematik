@@ -117,10 +117,10 @@
         <div class="sidebar-footer" @click.away="userMenu = false">
             <div class="sidebar-user" @click="userMenu = !userMenu" :class="{ 'active': userMenu }">
                 <div class="sidebar-avatar">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
                 </div>
                 <div class="sidebar-user-info">
-                    <div class="sidebar-user-name">{{ Auth::user()->name }}</div>
+                    <div class="sidebar-user-name">{{ Auth::user()->username }}</div>
                     <div class="sidebar-user-role">Administrator</div>
                 </div>
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="sidebar-chevron"

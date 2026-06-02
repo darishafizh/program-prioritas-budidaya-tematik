@@ -87,57 +87,83 @@
     </div>
 </div>
 
-{{-- ═══════════ PUNCAK KINERJA & DASBOR EKSEKUTIF (SIDE-BY-SIDE) ═══════════ --}}
-<div class="perf-exec-grid">
-    {{-- ═══════════ DASBOR EKSEKUTIF ═══════════ --}}
-    <div class="exec-dashboard">
-        <h3 class="exec-title"><i class="fa-solid fa-chart-column"></i> Capaian Kumulatif Program {{ $filterTahun }}</h3>
-        <div class="exec-bar-wrapper">
-            <canvas id="cExecStatus" height="280"></canvas>
+{{-- ═══════════ ROW 2: 3 KOLOM (TOP 10, BOTTOM 10, PRODUKSI PROVINSI) ═══════════ --}}
+<div class="grid-3-col">
+    <!-- TOP 10 -->
+    <div class="panel">
+        <div class="ph"><h6 style="color: #0ea5e9;"><i class="fa-solid fa-arrow-trend-up"></i> Top 10 Kinerja Tertinggi</h6></div>
+        <div class="pb" style="padding-top:8px;">
+            <div class="perf-list-container" style="max-height:300px; overflow-y:auto; padding-right:4px;">
+                @foreach($performanceSummary['top10'] as $index => $item)
+                <div class="perf-item">
+                    <div class="perf-number {{ $index < 3 ? 'top-3' : '' }}">{{ $index + 1 }}</div>
+                    <div class="perf-details">
+                        <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
+                        <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    
+    <!-- BOTTOM 10 -->
+    <div class="panel">
+        <div class="ph"><h6 style="color: #ef4444;"><i class="fa-solid fa-arrow-trend-down"></i> Bottom 10 Kinerja Terendah</h6></div>
+        <div class="pb" style="padding-top:8px;">
+            <div class="perf-list-container" style="max-height:300px; overflow-y:auto; padding-right:4px;">
+                @foreach($performanceSummary['bottom10'] as $index => $item)
+                <div class="perf-item bottom">
+                    <div class="perf-number bottom">{{ $index + 1 }}</div>
+                    <div class="perf-details">
+                        <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
+                        <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
     </div>
 
-    {{-- ═══════════ PUNCAK KINERJA ═══════════ --}}
-    <div class="perf-dashboard">
-        <h3 class="perf-title">Puncak Kinerja: Dominasi {{ $performanceSummary['regionName'] }}</h3>
-        
-        <div class="perf-grid">
-            <!-- TOP 5 -->
-            <div class="perf-col">
-                <h4 class="perf-col-title" style="color: #22d3ee;"><i class="fa-solid fa-arrow-trend-up"></i> Top 5 Kinerja Tertinggi</h4>
-                <div class="perf-list-container">
-                    @foreach($performanceSummary['top5'] as $index => $item)
-                    <div class="perf-item">
-                        <div class="perf-number {{ $index < 3 ? 'top-3' : '' }}">{{ $index + 1 }}</div>
-                        <div class="perf-details">
-                            <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
-                            <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            
-            <!-- BOTTOM 5 -->
-            <div class="perf-col">
-                <h4 class="perf-col-title" style="color: #f87171;"><i class="fa-solid fa-arrow-trend-down"></i> Bottom 5 Kinerja Terendah</h4>
-                <div class="perf-list-container">
-                    @foreach($performanceSummary['bottom5'] as $index => $item)
-                    <div class="perf-item bottom">
-                        <div class="perf-number bottom">{{ $index + 1 }}</div>
-                        <div class="perf-details">
-                            <div class="perf-name">{{ $item['kdmp_name'] }}, {{ $item['kabupaten'] }}</div>
-                            <div class="perf-stats">{{ number_format($item['volume'], 0, ',', '.') }} Kg | Rp {{ number_format($item['nilai'], 0, ',', '.') }}</div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
+    <!-- PRODUKSI PROVINSI -->
+    <div class="panel">
+        <div class="ph"><h6><i class="fa-solid fa-chart-column"></i> Produksi Provinsi (kg)</h6></div>
+        <div class="pb" style="height:300px"><canvas id="cBar"></canvas></div>
     </div>
 </div>
 
-{{-- ═══════════ MAP (full-width) ═══════════ --}}
+{{-- ═══════════ ROW 3: 3 KOLOM DONAT (PANEN, PERFORMA, KOMODITAS) ═══════════ --}}
+<div class="grid-3-col">
+    <!-- DONAT PANEN -->
+    <div class="panel">
+        <div class="ph"><h6><i class="fa-solid fa-chart-pie"></i> Status Panen</h6></div>
+        <div class="pb chart-c" style="height:260px; padding-top:8px"><canvas id="cPanen"></canvas></div>
+    </div>
+    
+    <!-- DONAT PERFORMA -->
+    <div class="panel">
+        <div class="ph"><h6><i class="fa-solid fa-bullseye"></i> Status Kinerja</h6></div>
+        <div class="pb chart-c" style="height:260px; padding-top:8px"><canvas id="cPerforma"></canvas></div>
+    </div>
+
+    <!-- DONAT KOMODITAS -->
+    <div class="panel">
+        <div class="ph"><h6><i class="fa-solid fa-fish-fins"></i> Komoditas</h6></div>
+        <div class="pb chart-c" style="height:260px; padding-top:8px"><canvas id="cKom" height="260"></canvas></div>
+    </div>
+</div>
+
+{{-- ═══════════ ROW 4: TREND PRODUKSI (FULL WIDTH) ═══════════ --}}
+<div class="grid-full">
+    <div class="panel">
+        <div class="ph" style="align-items: center;">
+            <h6><i class="fa-solid fa-chart-line"></i> Tren Produksi</h6>
+        </div>
+        <div class="pb" style="height:300px"><canvas id="cTrend"></canvas></div>
+    </div>
+</div>
+
+{{-- ═══════════ ROW 5: MAP (FULL WIDTH) ═══════════ --}}
 <div class="map-card">
     <div class="map-head">
         <h6><i class="fa-solid fa-map-location-dot"></i> Peta Infografis Lokasi KDMP</h6>
@@ -179,29 +205,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-{{-- ═══════════ ROW: RADAR + BAR ═══════════ --}}
-{{-- ═══════════ ROW: CHARTS (KOMODITAS, BAR PROVINSI) ═══════════ --}}
-<div class="grid-4-8">
-    <div class="panel">
-        <div class="ph"><h6><i class="fa-solid fa-fish-fins"></i> Komoditas</h6></div>
-        <div class="pb chart-c" style="padding-top:8px"><canvas id="cKom" height="260"></canvas></div>
-    </div>
-    <div class="panel">
-        <div class="ph"><h6><i class="fa-solid fa-chart-column"></i> Produksi Provinsi (kg)</h6></div>
-        <div class="pb" style="height:260px"><canvas id="cBar"></canvas></div>
-    </div>
-</div>
-
-{{-- ═══════════ ROW: TREND PRODUKSI (FULL WIDTH) ═══════════ --}}
-<div class="grid-full">
-    <div class="panel">
-        <div class="ph" style="align-items: center;">
-            <h6><i class="fa-solid fa-chart-line"></i> Tren Produksi</h6>
-        </div>
-        <div class="pb" style="height:350px"><canvas id="cTrend"></canvas></div>
     </div>
 </div>
 @endsection
@@ -477,12 +480,11 @@
 .chart-c{display:flex;justify-content:center;align-items:center}
 
 /* ═══ Grids ═══ */
-.grid-4-8{display:grid;grid-template-columns:1fr 2fr;gap:18px;margin-bottom:18px}
-.grid-8-4{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px}
-.grid-3-3-6{display:grid;grid-template-columns:1fr 1fr 2fr;gap:18px;margin-bottom:18px}
+.grid-3-col{display:grid;grid-template-columns:repeat(3, 1fr);gap:18px;margin-bottom:18px}
+@media(max-width:1200px){.grid-3-col{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.grid-3-col{grid-template-columns:1fr}}
+
 .grid-full{margin-bottom:18px}
-@media(max-width:1200px){.grid-3-3-6{grid-template-columns:1fr 1fr}.grid-3-3-6 > :last-child{grid-column:1 / -1}}
-@media(max-width:992px){.grid-4-8,.grid-8-4,.grid-3-3-6{grid-template-columns:1fr}}
 
 .leaflet-container{font-family:'Poppins',sans-serif}
 .map-dot{width:14px;height:14px;border:2.5px solid #fff;border-radius:50%;cursor:pointer;transition:transform .25s ease}
@@ -573,52 +575,32 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
     if(mkrs.length) map.fitBounds(L.featureGroup(mkrs).getBounds().pad(.1));
 
-    /* ═══ DASBOR EKSEKUTIF BAR CHART ═══ */
-    new Chart(document.getElementById('cExecStatus'), {
-        type: 'bar',
+    /* ═══ DONUT PANEN ═══ */
+    new Chart(document.getElementById('cPanen'), {
+        type: 'doughnut',
         data: {
-            labels: ['Belum Panen', 'Sudah Panen', 'Underperform', 'On Track'],
+            labels: ['Sudah Panen', 'Belum Panen'],
             datasets: [{
-                data: [
-                    {{ $eksekutif['countBelumPanen'] }},
-                    {{ $eksekutif['countPanen'] }},
-                    {{ $eksekutif['countUnderperform'] }},
-                    {{ $eksekutif['countOnTrack'] }}
-                ],
-                backgroundColor: ['#94A3B8', '#3B82F6', '#EF4444', '#10B981'],
-                borderRadius: 6,
-                maxBarThickness: 64,
-                borderSkipped: false
+                data: [{{ $eksekutif['countPanen'] }}, {{ $eksekutif['countBelumPanen'] }}],
+                backgroundColor: ['#3B82F6', '#94A3B8'],
+                borderWidth: 0, hoverOffset: 6
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx) { return ' ' + ctx.parsed.y + ' Lokasi'; }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: gridC },
-                    ticks: {
-                        stepSize: 1,
-                        precision: 0,
-                        font: { size: 12, weight: 600 }
-                    },
-                    title: { display: true, text: 'Jumlah Lokasi', font: { size: 12 } }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { size: 12, weight: 600 } }
-                }
-            }
-        }
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } } } }
+    });
+
+    /* ═══ DONUT PERFORMA ═══ */
+    new Chart(document.getElementById('cPerforma'), {
+        type: 'doughnut',
+        data: {
+            labels: ['On Track', 'Underperform'],
+            datasets: [{
+                data: [{{ $eksekutif['countOnTrack'] }}, {{ $eksekutif['countUnderperform'] }}],
+                backgroundColor: ['#10B981', '#EF4444'],
+                borderWidth: 0, hoverOffset: 6
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } } } }
     });
 
     /* ═══ BAR PROVINSI ═══ */

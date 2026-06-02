@@ -50,10 +50,10 @@
                                 <div class="flex items-center gap-3">
                                     <div
                                         style="width:36px;height:36px;background:linear-gradient(135deg,{{ $user->role == 'admin' ? '#0D2137,#164E63' : '#0891B2,#06B6D4' }});border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;font-size:0.875rem;">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        {{ strtoupper(substr($user->username, 0, 1)) }}
                                     </div>
                                     <div>
-                                        <div class="font-medium">{{ $user->name }}</div>
+                                        <div class="font-medium">{{ $user->username }}</div>
                                     </div>
                                 </div>
                             </td>

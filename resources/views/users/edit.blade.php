@@ -5,7 +5,7 @@
     <div class="page-header-row">
         <div>
             <h1 class="page-title">Edit User</h1>
-            <p class="page-subtitle">{{ $user->name }}</p>
+            <p class="page-subtitle">{{ $user->username }}</p>
         </div>
         <x-breadcrumb :items="[
             ['label' => 'Users', 'url' => route('users.index')],
@@ -31,7 +31,7 @@
                 <div class="grid grid-cols-2">
                     <div class="form-group" style="grid-column: span 2;">
                         <label class="form-label">Username <span class="required">*</span></label>
-                        <input type="text" name="name" value="{{ old('name', $user->name) }}" required class="form-control">
+                        <input type="text" name="name" value="{{ old('name', $user->username) }}" required class="form-control">
                         <small class="text-muted">Username akan digunakan untuk login</small>
                         @error('name')<span class="text-danger text-sm">{{ $message }}</span>@enderror
                     </div>

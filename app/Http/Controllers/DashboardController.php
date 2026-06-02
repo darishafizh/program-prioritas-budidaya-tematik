@@ -102,24 +102,24 @@ class DashboardController extends Controller
         })->values();
 
         // Sort by volume descending, then nilai descending
-        $top5 = $performanceData->sortByDesc(function ($item) {
+        $top10 = $performanceData->sortByDesc(function ($item) {
             return $item['volume'] * 1000000000 + $item['nilai'];
-        })->take(5)->values();
+        })->take(10)->values();
 
         // Sort by volume ascending, then nilai ascending
-        $bottom5 = $performanceData->sortBy(function ($item) {
+        $bottom10 = $performanceData->sortBy(function ($item) {
             return $item['volume'] * 1000000000 + $item['nilai'];
-        })->take(5)->values();
+        })->take(10)->values();
 
         $perfRegionName = $filterProvinsi ? "Region " . $filterProvinsi : 'Skala Nasional';
         
-        $topCommodities = $top5->pluck('komoditas')->unique();
+        $topCommodities = $top10->pluck('komoditas')->unique();
         $topCommodity = $topCommodities->count() > 0 ? $topCommodities->first() : 'Budidaya';
         $perfIsAbsolute = $topCommodities->count() === 1 ? 'secara absolut dikuasai oleh' : 'didominasi oleh';
 
         $performanceSummary = [
-            'top5' => $top5,
-            'bottom5' => $bottom5,
+            'top10' => $top10,
+            'bottom10' => $bottom10,
             'regionName' => $perfRegionName,
             'komoditas' => $topCommodity,
             'isAbsolute' => $perfIsAbsolute,

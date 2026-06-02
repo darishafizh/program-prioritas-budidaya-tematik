@@ -12,9 +12,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasHashids;
 
     protected $fillable = [
-        'name',
         'username',
-        'email',
         'password',
         'role',
     ];
@@ -27,9 +25,13 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->username;
     }
 
     public function isAdmin(): bool

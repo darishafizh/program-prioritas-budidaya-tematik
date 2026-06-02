@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'string', 'regex:/^[a-zA-Z0-9]+$/'],
+            'username' => ['required', 'string', 'regex:/^[a-zA-Z0-9\s]+$/'],
             'password' => ['required', 'string'],
         ];
     }
@@ -39,7 +39,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'username.required' => 'Username tidak boleh kosong.',
-            'username.regex' => 'Username hanya boleh mengandung huruf dan angka (tanpa spasi atau karakter spesial).',
+            'username.regex' => 'Username hanya boleh mengandung huruf, angka, dan spasi.',
             'password.required' => 'Password tidak boleh kosong.',
         ];
     }

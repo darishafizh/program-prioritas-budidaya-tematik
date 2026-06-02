@@ -75,28 +75,11 @@ class AuthenticatedSessionController extends Controller
      */
     private function generateCaptcha(Request $request): void
     {
-        $operators = ['+', '-', '×'];
-        $operator = $operators[array_rand($operators)];
+        $a = rand(1, 19);
+        $b = rand(1, 20 - $a);
+        $answer = $a + $b;
 
-        switch ($operator) {
-            case '+':
-                $a = rand(1, 20);
-                $b = rand(1, 20);
-                $answer = $a + $b;
-                break;
-            case '-':
-                $a = rand(5, 25);
-                $b = rand(1, $a); // ensure non-negative result
-                $answer = $a - $b;
-                break;
-            case '×':
-                $a = rand(2, 9);
-                $b = rand(2, 9);
-                $answer = $a * $b;
-                break;
-        }
-
-        $question = "{$a} {$operator} {$b} = ?";
+        $question = "{$a} + {$b} = ?";
 
         $request->session()->put('captcha_question', $question);
         $request->session()->put('captcha_answer', $answer);

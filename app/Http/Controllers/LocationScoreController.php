@@ -76,6 +76,8 @@ class LocationScoreController extends Controller
      */
     public function calculate(Request $request)
     {
+        abort_if(auth()->user()->role !== 'admin', 403, 'Akses ditolak.');
+
         $request->validate([
             'kecamatan' => 'required|string',
             'kabupaten' => 'required|string',
@@ -97,6 +99,8 @@ class LocationScoreController extends Controller
      */
     public function recalculateAll()
     {
+        abort_if(auth()->user()->role !== 'admin', 403, 'Akses ditolak.');
+
         $count = $this->scoringService->recalculateAll();
 
         return redirect()->route('scoring.index')
@@ -153,6 +157,8 @@ class LocationScoreController extends Controller
      */
     public function generateFromSurveys()
     {
+        abort_if(auth()->user()->role !== 'admin', 403, 'Akses ditolak.');
+
         $kdmpSurveys = KdmpSurvey::whereNotNull('kecamatan')
             ->whereNotNull('kabupaten')
             ->get();

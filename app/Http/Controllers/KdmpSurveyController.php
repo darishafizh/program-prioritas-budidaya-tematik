@@ -119,6 +119,10 @@ class KdmpSurveyController extends Controller
      */
     public function edit(KdmpSurvey $kdmp)
     {
+        if (Auth::user()->role !== 'admin' && $kdmp->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+        
         $provinces = Province::orderBy('name')->get();
         $kdmpList = Kdmp::orderBy('id')->get(['id', 'nama_kdkmp', 'desa', 'kabupaten', 'provinsi', 'komoditas', 'long', 'lat']);
         return view('kdmp.edit', compact('kdmp', 'provinces', 'kdmpList'));
@@ -129,6 +133,10 @@ class KdmpSurveyController extends Controller
      */
     public function update(Request $request, KdmpSurvey $kdmp)
     {
+        if (Auth::user()->role !== 'admin' && $kdmp->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+        
         $kdmpId = $request->input('kdmp_id');
         if ($kdmpId && !is_numeric($kdmpId)) {
             $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
@@ -171,6 +179,10 @@ class KdmpSurveyController extends Controller
      */
     public function destroy(KdmpSurvey $kdmp)
     {
+        if (Auth::user()->role !== 'admin' && $kdmp->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat menghapus data milik Anda sendiri.');
+        }
+        
         $kdmp->delete();
 
         return redirect()

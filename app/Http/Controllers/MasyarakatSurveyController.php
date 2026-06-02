@@ -41,15 +41,26 @@ class MasyarakatSurveyController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'verifikator' => 'nullable|string|max:255',
-            'responden' => 'nullable|string|max:255',
+            'verifikator' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
+            'responden' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
             'tempat' => 'nullable|string|max:255',
+            'tanggal' => 'nullable|date',
+            'jam' => 'nullable|date_format:H:i',
+            'umur' => 'nullable|integer|min:1|max:120',
+            'pendapatan_ikan' => 'nullable|numeric|min:0',
+            'pendapatan_lain' => 'nullable|numeric|min:0',
+            'total_pendapatan' => 'nullable|numeric|min:0',
+            'likert_q1' => 'nullable|integer|between:1,5',
+            'likert_q2' => 'nullable|integer|between:1,5',
+            'likert_q3' => 'nullable|integer|between:1,5',
+            'likert_q4' => 'nullable|integer|between:1,5',
+            'likert_q5' => 'nullable|integer|between:1,5',
         ]);
         
         $validated['user_id'] = Auth::id();
         
-        // Add all form fields
-        $allFields = $request->except(['_token', '_method']);
+        // Add all form fields, excluding user_id to prevent mass assignment overrides
+        $allFields = $request->except(['_token', '_method', 'user_id', 'id']);
         $survey = MasyarakatSurvey::create(array_merge($validated, $allFields));
         
         return redirect()
@@ -70,6 +81,10 @@ class MasyarakatSurveyController extends Controller
      */
     public function edit(MasyarakatSurvey $masyarakat)
     {
+        if (Auth::user()->role !== 'admin' && $masyarakat->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+        
         return view('masyarakat.edit', compact('masyarakat'));
     }
 
@@ -78,13 +93,29 @@ class MasyarakatSurveyController extends Controller
      */
     public function update(Request $request, MasyarakatSurvey $masyarakat)
     {
+        if (Auth::user()->role !== 'admin' && $masyarakat->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
+        }
+        
         $validated = $request->validate([
-            'verifikator' => 'nullable|string|max:255',
-            'responden' => 'nullable|string|max:255',
+            'verifikator' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
+            'responden' => 'nullable|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
+            'tempat' => 'nullable|string|max:255',
+            'tanggal' => 'nullable|date',
+            'jam' => 'nullable|date_format:H:i',
+            'umur' => 'nullable|integer|min:1|max:120',
+            'pendapatan_ikan' => 'nullable|numeric|min:0',
+            'pendapatan_lain' => 'nullable|numeric|min:0',
+            'total_pendapatan' => 'nullable|numeric|min:0',
+            'likert_q1' => 'nullable|integer|between:1,5',
+            'likert_q2' => 'nullable|integer|between:1,5',
+            'likert_q3' => 'nullable|integer|between:1,5',
+            'likert_q4' => 'nullable|integer|between:1,5',
+            'likert_q5' => 'nullable|integer|between:1,5',
         ]);
         
-        $allFields = $request->except(['_token', '_method']);
-        $masyarakat->update($allFields);
+        $allFields = $request->except(['_token', '_method', 'user_id', 'id']);
+        $masyarakat->update(array_merge($validated, $allFields));
         
         return redirect()
             ->route('masyarakat.show', $masyarakat)
@@ -96,6 +127,10 @@ class MasyarakatSurveyController extends Controller
      */
     public function destroy(MasyarakatSurvey $masyarakat)
     {
+        if (Auth::user()->role !== 'admin' && $masyarakat->user_id !== Auth::id()) {
+            abort(403, 'Akses ditolak. Anda hanya dapat menghapus data milik Anda sendiri.');
+        }
+        
         $masyarakat->delete();
         
         return redirect()

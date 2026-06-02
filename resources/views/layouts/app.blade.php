@@ -66,7 +66,7 @@
                         </svg>
                     </button>
                     <div class="ms-4 d-none d-md-block">
-                        <h5 class="mb-0 fw-semibold" style="color: var(--gray-900); letter-spacing: -0.01em; font-size: 0.95rem;">Halo, {{ Auth::user()->name ?? 'Pengguna' }} 👋</h5>
+                        <h5 class="mb-0 fw-semibold" style="color: var(--gray-900); letter-spacing: -0.01em; font-size: 0.95rem;">Halo, {{ Auth::user()->username ?? 'Pengguna' }} 👋</h5>
                     </div>
                 </div>
                 <div class="topbar-right">

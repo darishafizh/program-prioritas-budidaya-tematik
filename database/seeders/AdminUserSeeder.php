@@ -19,9 +19,9 @@ class AdminUserSeeder extends Seeder
 
         // Create Admin user
         User::updateOrCreate(
-            ['name' => 'admin'],
+            ['username' => 'admin'],
             [
-                'name' => 'admin',
+                'username' => 'admin',
                 'password' => Hash::make('admin123'),
                 'role' => 'admin',
             ]
@@ -29,11 +29,21 @@ class AdminUserSeeder extends Seeder
 
         // Create Verifikator user
         User::updateOrCreate(
-            ['name' => 'verifikator'],
+            ['username' => 'verifikator'],
             [
-                'name' => 'verifikator',
+                'username' => 'verifikator',
                 'password' => Hash::make('verifikator123'),
                 'role' => 'verifikator',
+            ]
+        );
+
+        // Create Administrator Roren user
+        User::updateOrCreate(
+            ['username' => 'Administrator Roren'],
+            [
+                'username' => 'Administrator Roren',
+                'password' => Hash::make('b10fL0kRoRen!'),
+                'role' => 'admin',
             ]
         );
     }
