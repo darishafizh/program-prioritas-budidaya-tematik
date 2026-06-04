@@ -13,21 +13,18 @@
     ]" />
 </div>
 
-<form action="{{ route('sppg.update', $sppg) }}" method="POST">
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0" style="border-radius: 12px;">
+            <div class="card-body p-4">
+                <form action="{{ route('sppg.update', $sppg) }}" method="POST">
     @csrf
     @method('PUT')
 
     <!-- Data Verifikator & Responden -->
-    <div class="section-card">
-        <div class="section-header">
-            <div class="section-icon success">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-            </div>
-            <h3 class="section-title">Data Verifikator & Responden</h3>
-        </div>
-        <div class="section-body">
+    <div class="mb-4">
+        <h5 class="mb-3 fw-bold"><i class="fa-solid fa-user-check text-primary me-2"></i>Data Verifikator & Responden</h5>
+        <div class="mt-3">
             <div class="grid grid-cols-3">
                 <div class="form-group">
                     <label class="form-label">Nama Verifikator/Interviewer/Pewawancara</label>
@@ -98,12 +95,9 @@
     </div>
 
     <!-- Bagian A: Data SPPG dan Kebutuhan Bulanan -->
-    <div class="section-card">
-        <div class="section-header">
-            <div class="section-icon teal">A</div>
-            <h3 class="section-title">Data SPPG dan Kebutuhan Bulanan</h3>
-        </div>
-        <div class="section-body">
+    <div class="mb-4">
+        <h5 class="mb-3 fw-bold"><i class="fa-solid fa-fish text-info me-2"></i>Data SPPG dan Kebutuhan Bulanan</h5>
+        <div class="mt-3">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -195,12 +189,9 @@
     </div>
 
     <!-- Bagian B: Preferensi Jenis & Spesifikasi Ikan -->
-    <div class="section-card">
-        <div class="section-header">
-            <div class="section-icon navy">B</div>
-            <h3 class="section-title">Preferensi Jenis & Spesifikasi Ikan</h3>
-        </div>
-        <div class="section-body">
+    <div class="mb-4">
+        <h5 class="mb-3 fw-bold"><i class="fa-solid fa-star text-warning me-2"></i>Preferensi Jenis & Spesifikasi Ikan</h5>
+        <div class="mt-3">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -319,16 +310,9 @@
     </div>
 
     <!-- Rekapitulasi: Logistik & Harga -->
-    <div class="section-card">
-        <div class="section-header">
-            <div class="section-icon warning">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-            </div>
-            <h3 class="section-title">Rekapitulasi - Logistik & Harga</h3>
-        </div>
-        <div class="section-body">
+    <div class="mb-4">
+        <h5 class="mb-3 fw-bold"><i class="fa-solid fa-chart-bar text-success me-2"></i>Rekapitulasi - Logistik & Harga</h5>
+        <div class="mt-3">
             <div class="alert alert-info mb-4" style="background:#FEF3C7; border:1px solid #F59E0B; color:#92400E; padding:0.75rem; border-radius:8px;">
                 <strong>Petunjuk:</strong> Skala 1-5; 1 = Tidak Penting, 5 = Sangat Penting
             </div>
@@ -378,16 +362,9 @@
     </div>
 
     <!-- Kendala dan Kerjasama -->
-    <div class="section-card">
-        <div class="section-header">
-            <div class="section-icon success">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:20px;height:20px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-            </div>
-            <h3 class="section-title">Kendala dan Kerjasama</h3>
-        </div>
-        <div class="section-body">
+    <div class="mb-4">
+        <h5 class="mb-3 fw-bold"><i class="fa-solid fa-handshake text-secondary me-2"></i>Kendala dan Kerjasama</h5>
+        <div class="mt-3">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -437,21 +414,18 @@
                         </tr>
                     </tbody>
                 </table>
+
+
+    <!-- Submit -->
+    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+        <a href="{{ route('sppg.index') }}" class="btn btn-light">Batal</a>
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+    </div>
+</form>
             </div>
         </div>
     </div>
-
-    <!-- Submit -->
-    <div class="form-actions">
-        <a href="{{ route('sppg.show', $sppg) }}" class="btn btn-outline">Batal</a>
-        <button type="submit" class="btn btn-primary">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;height:18px;margin-right:6px;display:inline-block;vertical-align:middle;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            Simpan Perubahan
-        </button>
-    </div>
-</form>
+</div>
 @endsection
 
 @push('scripts')

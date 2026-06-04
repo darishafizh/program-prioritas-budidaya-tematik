@@ -1,93 +1,94 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="page-header-row">
-    <div>
-        <h1 class="page-title">Progres Fisik Pembangunan</h1>
-        <p class="page-subtitle">Monitoring progres pembangunan infrastruktur 100 KDMP Bioflok</p>
-    </div>
-</div>
-
-{{-- KPI Summary Cards --}}
-<div class="grid grid-cols-4 mb-5">
-    <div class="kpi-card kpi-produksi">
-        <div class="kpi-icon"><i class="fa-solid fa-building" style="font-size:1rem;"></i></div>
+    {{-- ═══ BARIS 1: Judul | Filter + Export ═══ --}}
+    <div class="produksi-row1 mb-3">
         <div>
-            <div class="kpi-value">{{ $stats['total_kdmp'] }}</div>
-            <div class="kpi-label">TOTAL KDMP</div>
-            <div class="kpi-sub">Sudah melapor: {{ $stats['sudah_lapor'] }}</div>
+            <h1 class="page-title">Progres Fisik Pembangunan</h1>
+            <p class="page-subtitle">Monitoring progres pembangunan infrastruktur 100 KDMP Bioflok</p>
         </div>
-    </div>
-    <div class="kpi-card kpi-sr success">
-        <div class="kpi-icon"><i class="fa-solid fa-circle-check" style="font-size:1rem;"></i></div>
-        <div>
-            <div class="kpi-value">{{ $stats['selesai'] }}</div>
-            <div class="kpi-label">SELESAI</div>
-            <div class="kpi-sub">Progres 100%</div>
-        </div>
-    </div>
-    <div class="kpi-card kpi-aktif">
-        <div class="kpi-icon"><i class="fa-solid fa-hammer" style="font-size:1rem;"></i></div>
-        <div>
-            <div class="kpi-value">{{ $stats['berjalan'] }}</div>
-            <div class="kpi-label">SEDANG BERJALAN</div>
-            <div class="kpi-sub">Progres ≥ 50%</div>
-        </div>
-    </div>
-    <div class="kpi-card kpi-perkolam">
-        <div class="kpi-icon"><i class="fa-solid fa-chart-simple" style="font-size:1rem;"></i></div>
-        <div>
-            <div class="kpi-value">{{ $stats['rata_rata'] }}%</div>
-            <div class="kpi-label">RATA-RATA PROGRES</div>
-            <div class="kpi-sub">Seluruh lokasi periode ini</div>
-        </div>
-    </div>
-</div>
-
-{{-- Filter --}}
-<div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
-    <div class="card-body">
-        <form method="GET" action="{{ route('progres-fisik.index') }}" class="d-flex gap-3 flex-wrap align-items-end">
-            <div class="form-group mb-0" style="min-width:200px;">
-                <label class="form-label">Cari KDMP</label>
-                <input type="text" name="search" value="{{ $search }}" class="form-control" placeholder="Nama, kabupaten, provinsi...">
-            </div>
-            <div class="form-group" style="margin:0;">
-                <label class="form-label">Bulan</label>
-                <select name="bulan" class="form-control form-select">
+        <form method="GET" action="{{ route('progres-fisik.index') }}"
+              class="produksi-filter-form">
+            <div class="filter-inline-group">
+                <label class="filter-label">Bulan</label>
+                <select name="bulan" class="filter-select" onchange="this.form.submit()">
+                    <option value="">--</option>
                     @foreach($bulanList as $num => $nama)
                         <option value="{{ $num }}" {{ $bulan == $num ? 'selected' : '' }}>{{ $nama }}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="form-group" style="margin:0;">
-                <label class="form-label">Tahun</label>
-                <select name="tahun" class="form-control form-select">
+            <div class="filter-inline-group">
+                <label class="filter-label">Tahun</label>
+                <select name="tahun" class="filter-select" onchange="this.form.submit()">
+                    <option value="">--</option>
                     @foreach($tahunList as $t)
                         <option value="{{ $t }}" {{ $tahun == $t ? 'selected' : '' }}>{{ $t }}</option>
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Filter</button>
-            <a href="{{ route('progres-fisik.index') }}" class="btn btn-outline">Reset</a>
-            <a href="{{ route('progres-fisik.pdf', request()->query()) }}" class="btn btn-primary" target="_blank" style="background:#EF4444; border-color:#EF4444;">
-                <i class="fa-solid fa-file-pdf mr-1"></i> Export PDF
+            <input type="hidden" name="search" value="{{ $search }}">
+            <a href="{{ route('progres-fisik.index') }}" class="filter-icon-btn filter-reset-btn" title="Reset Filter">
+                <i class="fa-solid fa-rotate-left"></i>
+            </a>
+            <a href="{{ route('progres-fisik.pdf', request()->query()) }}"
+               class="filter-icon-btn filter-pdf-btn" target="_blank" title="Export PDF">
+                <i class="fa-solid fa-file-pdf"></i> <span class="ms-1 d-none d-sm-inline" style="font-size:0.8rem;font-weight:600;">PDF</span>
             </a>
         </form>
     </div>
-</div>
 
-{{-- Tabel KDMP --}}
-<div class="card shadow-sm border-0" style="border-radius: 12px;">
-    <div class="card-body">
-        {{-- Card Header: Title + Add Button --}}
-        <div class="dt-card-header">
-            <h4 class="dt-card-title">Data Progres Fisik KDMP</h4>
-            <a href="{{ route('progres-fisik.create') }}" class="btn-tambah-data">
-                <i class="fa-solid fa-plus"></i>
-                Tambah Data Progres
-            </a>
+    {{-- ═══ BARIS 2: KPI Cards ═══ --}}
+    <div class="grid grid-cols-4 mb-3">
+        <div class="kpi-card kpi-produksi">
+            <div class="kpi-icon"><i class="fa-solid fa-building" style="font-size:1rem;"></i></div>
+            <div>
+                <div class="kpi-value">{{ $stats['total_kdmp'] }}</div>
+                <div class="kpi-label">TOTAL KDMP</div>
+                <div class="kpi-sub">Sudah melapor: {{ $stats['sudah_lapor'] }}</div>
+            </div>
         </div>
+        <div class="kpi-card kpi-sr success">
+            <div class="kpi-icon"><i class="fa-solid fa-circle-check" style="font-size:1rem;"></i></div>
+            <div>
+                <div class="kpi-value">{{ $stats['selesai'] }}</div>
+                <div class="kpi-label">SELESAI</div>
+                <div class="kpi-sub">Progres 100%</div>
+            </div>
+        </div>
+        <div class="kpi-card kpi-aktif">
+            <div class="kpi-icon"><i class="fa-solid fa-hammer" style="font-size:1rem;"></i></div>
+            <div>
+                <div class="kpi-value">{{ $stats['berjalan'] }}</div>
+                <div class="kpi-label">SEDANG BERJALAN</div>
+                <div class="kpi-sub">Progres ≥ 50%</div>
+            </div>
+        </div>
+        <div class="kpi-card kpi-perkolam">
+            <div class="kpi-icon"><i class="fa-solid fa-chart-simple" style="font-size:1rem;"></i></div>
+            <div>
+                <div class="kpi-value">{{ $stats['rata_rata'] }}%</div>
+                <div class="kpi-label">RATA-RATA PROGRES</div>
+                <div class="kpi-sub">Seluruh lokasi periode ini</div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ═══ BARIS 4: Tabel ═══ --}}
+    <div class="card shadow-sm border-0" style="border-radius: 12px;">
+        <div class="card-body">
+            {{-- Card Header: Title + Add Button --}}
+            <div class="dt-card-header">
+                <h4 class="dt-card-title">
+                    Data Progres Fisik KDMP
+                </h4>
+                <a href="{{ route('progres-fisik.create') }}" class="btn-tambah-data">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Tambah Data Progres
+                </a>
+            </div>
 
         <div class="table-responsive">
             <table id="progresFisikTable" class="table table-hover table-sm align-middle w-100 mb-0">
@@ -203,6 +204,65 @@
 @push('styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 <style>
+    /* ── Responsive: Row 1 ──────────────────────────────────────────────── */
+    .produksi-row1 {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        min-width: 0;
+    }
+    .produksi-row1 > div { min-width: 0; flex-shrink: 1; }
+
+    /* ── Filter ─────────────────────────────────────────────────────────── */
+    .produksi-filter-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+        margin-top: 4px;
+    }
+    .filter-inline-group { display:flex; align-items:center; gap:6px; }
+    .filter-label {
+        font-size:0.78rem; font-weight:600;
+        color:var(--gray-600,#6B7280); white-space:nowrap; margin:0;
+    }
+    .filter-select {
+        font-size:0.82rem; padding:5px 10px; border-radius:8px;
+        border:1px solid var(--gray-300,#D1D5DB);
+        background:var(--bg-surface,#fff); color:var(--gray-800,#1F2937);
+        cursor:pointer; transition:border-color 0.2s;
+    }
+    .filter-select:focus {
+        outline:none; border-color:var(--kkp-teal,#0891B2);
+        box-shadow:0 0 0 3px rgba(8,145,178,0.15);
+    }
+    [data-theme="dark"] .filter-select { background:#1F2937; border-color:#374151; color:#E5E7EB; }
+
+    .filter-icon-btn {
+        display:inline-flex; align-items:center; justify-content:center;
+        height:34px; padding:0 10px; border-radius:8px;
+        font-size:0.82rem; text-decoration:none; transition:background 0.2s, color 0.2s;
+    }
+    .filter-reset-btn {
+        background:var(--gray-100,#F3F4F6); color:var(--gray-600,#6B7280);
+        border:1px solid var(--gray-300,#D1D5DB);
+    }
+    .filter-reset-btn:hover { background:var(--gray-200,#E5E7EB); color:var(--gray-800); }
+    .filter-pdf-btn { background:#EF4444; color:#fff; border:1px solid #EF4444; }
+    .filter-pdf-btn:hover { background:#DC2626; color:#fff; }
+    [data-theme="dark"] .filter-reset-btn { background:#1F2937; border-color:#374151; color:#9CA3AF; }
+
+    /* ── Table Card Title ───────────────────────────────────────────────── */
+    .table-card-title { color:var(--kkp-navy,#1e3a5f); font-size:1rem; }
+    [data-theme="dark"] .table-card-title { color:#E5E7EB !important; }
+    .table-period-badge {
+        font-size:0.72rem; font-weight:600; padding:2px 8px; border-radius:20px;
+        background:rgba(16,185,129,0.1); color:#10B981;
+        border:1px solid rgba(16,185,129,0.25); margin-left:6px; vertical-align:middle;
+    }
     .table thead, .table thead th, .table thead td, .table th {
         color: #ffffff !important; background: var(--kkp-teal, #0891B2) !important;
     }

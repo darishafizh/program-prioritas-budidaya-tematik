@@ -168,14 +168,15 @@
                     </td>
                     @if($lastRecord)
                         @php
-                            $hargaJual = $lastRecord->volume_panen_kg > 0 ? ($lastRecord->nilai_produksi / $lastRecord->volume_panen_kg) : 0;
-                            $untungRugi = $lastRecord->nilai_produksi - $lastRecord->biaya_operasional;
+                            $sumVolume = (float) $kdmp->monitoringRecords->sum('volume_panen_kg');
+                            $sumNilai = (float) $kdmp->monitoringRecords->sum('nilai_produksi');
+                            $hargaJual = $sumVolume > 0 ? ($sumNilai / $sumVolume) : 0;
                         @endphp
                         {{-- <td class="text-right">{{ number_format($lastRecord->biaya_bibit, 0, ',', '.') }}</td> --}}
                         {{-- <td class="text-right">{{ number_format($lastRecord->biaya_pakan, 0, ',', '.') }}</td> --}}
                         {{-- <td class="text-right">{{ number_format($lastRecord->biaya_lainnya, 0, ',', '.') }}</td> --}}
-                        <td class="text-right">{{ number_format($lastRecord->volume_panen_kg, 2, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($lastRecord->nilai_produksi, 0, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($sumVolume, 2, ',', '.') }}</td>
+                        <td class="text-right">{{ number_format($sumNilai, 0, ',', '.') }}</td>
                         <td class="text-right">{{ number_format($hargaJual, 0, ',', '.') }}</td>
                         {{-- <td class="text-right">{{ number_format($untungRugi, 0, ',', '.') }}</td> --}}
                         {{-- <td class="text-center">{{ $lastRecord->status_label }}</td> --}}

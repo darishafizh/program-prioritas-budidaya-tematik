@@ -876,8 +876,8 @@
         <div class="record-top">
             <div class="record-main">
                 <div class="record-period">
-                    <div class="record-period-month">{{ $record->tanggal ? \Carbon\Carbon::parse($record->tanggal)->format('d') : '' }} {{ $bulanList[$record->bulan] ?? '-' }}</div>
-                    <div class="record-period-year">{{ $record->tahun }}</div>
+                    <div class="record-period-month">{{ $record->tanggal ? $record->tanggal->translatedFormat('d F') : '-' }}</div>
+                    <div class="record-period-year">{{ $record->tanggal ? $record->tanggal->year : '-' }}</div>
                 </div>
                 <div class="record-divider"></div>
                 <div class="record-content">
@@ -908,6 +908,9 @@
                             <span class="ms-1 px-2 py-1 rounded bg-light" style="font-size:0.7rem">Volume: <strong>{{ number_format($record->volume_panen_kg,0,',','.') }} kg</strong></span>
                             <span class="ms-1 px-2 py-1 rounded bg-light" style="font-size:0.7rem">Nilai: <strong>Rp {{ number_format($record->nilai_produksi,0,',','.') }}</strong></span>
                             <span class="ms-1 px-2 py-1 rounded" style="font-size:0.7rem; background:rgba(16,185,129,0.1); color:#059669;">Harga Jual: <strong>Rp {{ number_format($hargaJual,0,',','.') }} / kg</strong></span>
+                            @if($record->tujuan_pasar)
+                                <span class="ms-1 px-2 py-1 rounded" style="font-size:0.7rem; background:rgba(59,130,246,0.1); color:#2563EB;">Pasar: <strong>{{ $record->tujuan_pasar }}</strong></span>
+                            @endif
                         </div>
                         <div class="record-stat" style="width: 100%; border-top: 1px dashed var(--gray-200); ">
                             <i class="fa-solid fa-wallet"></i>

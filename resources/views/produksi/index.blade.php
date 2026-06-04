@@ -13,6 +13,7 @@
             <div class="filter-inline-group">
                 <label class="filter-label">Bulan</label>
                 <select name="bulan" class="filter-select" onchange="this.form.submit()">
+                    <option value="">--</option>
                     @foreach($bulanList as $num => $nama)
                         <option value="{{ $num }}" {{ $bulan == $num ? 'selected' : '' }}>{{ $nama }}</option>
                     @endforeach
@@ -21,6 +22,7 @@
             <div class="filter-inline-group">
                 <label class="filter-label">Tahun</label>
                 <select name="tahun" class="filter-select" onchange="this.form.submit()">
+                    <option value="">--</option>
                     @foreach($tahunList as $t)
                         <option value="{{ $t }}" {{ $tahun == $t ? 'selected' : '' }}>{{ $t }}</option>
                     @endforeach
@@ -52,19 +54,19 @@
             </div>
         </div>
         <div class="kpi-card kpi-sr success">
-            <div class="kpi-icon"><i class="fa-solid fa-circle-check" style="font-size:1rem;"></i></div>
+            <div class="kpi-icon"><i class="fa-solid fa-boxes-stacked" style="font-size:1rem;"></i></div>
             <div>
-                <div class="kpi-value">{{ $stats['on_track'] }}</div>
-                <div class="kpi-label">ON TRACK</div>
-                <div class="kpi-sub">Berjalan baik &amp; selesai</div>
+                <div class="kpi-value">{{ $stats['sudah_panen'] }}</div>
+                <div class="kpi-label">SUDAH PANEN</div>
+                <div class="kpi-sub">Memiliki data volume panen</div>
             </div>
         </div>
         <div class="kpi-card kpi-sr danger">
-            <div class="kpi-icon"><i class="fa-solid fa-triangle-exclamation" style="font-size:1rem;"></i></div>
+            <div class="kpi-icon"><i class="fa-solid fa-hourglass-half" style="font-size:1rem;"></i></div>
             <div>
-                <div class="kpi-value">{{ $stats['underperforming'] }}</div>
-                <div class="kpi-label">UNDERPERFORMING</div>
-                <div class="kpi-sub">Bermasalah &amp; vakum</div>
+                <div class="kpi-value">{{ $stats['belum_panen'] }}</div>
+                <div class="kpi-label">BELUM PANEN</div>
+                <div class="kpi-sub">Belum ada hasil panen</div>
             </div>
         </div>
     </div>
@@ -73,7 +75,9 @@
     <div class="scatter-card mb-3">
         <div class="scatter-card-header">
             <span class="scatter-card-title">Sebaran Performa Seluruh Lokasi</span>
-            <span class="scatter-period-badge">{{ $bulanList[$bulan] ?? $bulan }} {{ $tahun }}</span>
+            @if($bulan && $tahun)
+                <span class="scatter-period-badge">{{ $bulanList[$bulan] ?? $bulan }} {{ $tahun }}</span>
+            @endif
         </div>
         <p class="scatter-card-subtitle">Titik sebaran KDKMP berdasar Volume Panen (x) dan Nilai Produksi (y)</p>
         <div id="scatterChart" style="height: 300px;"></div>
@@ -86,7 +90,6 @@
             <div class="dt-card-header">
                 <h4 class="dt-card-title">
                     Data Produksi KDKMP
-                    <span class="table-period-badge">{{ $bulanList[$bulan] ?? $bulan }} {{ $tahun }}</span>
                 </h4>
                 <a href="{{ route('produksi.create') }}" class="btn-tambah-data">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,9 +120,9 @@
                         @forelse($kdmpList as $kdmp)
                             @php
                                 $lastRecord = $kdmp->monitoringRecords->first();
-                                $volume     = $lastRecord ? (float) $lastRecord->volume_panen_kg : 0;
-                                $nilai      = $lastRecord ? (float) $lastRecord->nilai_produksi : 0;
-                                $biaya      = $lastRecord ? (float) $lastRecord->biaya_operasional : 0;
+                                $volume     = (float) $kdmp->monitoringRecords->sum('volume_panen_kg');
+                                $nilai      = (float) $kdmp->monitoringRecords->sum('nilai_produksi');
+                                $biaya      = (float) $kdmp->monitoringRecords->sum('biaya_operasional');
                                 $hargaJual  = ($volume > 0) ? ($nilai / $volume) : 0;
                                 $keuntungan = $nilai - $biaya;
                                 $statusLabel = '-'; $statusColor = 'secondary';
@@ -307,6 +310,7 @@
                 },
                 lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Semua"]],
                 pageLength: 10,
+                stateSave: true,
                 dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
                 orderCellsTop: true,
                 order: [[0, 'asc']],

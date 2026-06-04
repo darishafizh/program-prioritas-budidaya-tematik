@@ -61,8 +61,21 @@
             <div class="kc-icon amber"><i class="fa-solid fa-money-bill-trend-up"></i></div>
         </div>
         <div class="kc-bot">
-            <span class="kc-val">{{ number_format($totalNilaiProduksi / 1000000, 1, ',', '.') }}</span>
-            <span class="kc-unit">Juta Rp</span>
+            @php
+                $n = $totalNilaiProduksi;
+                if ($n >= 1000000000000) {
+                    $nVal = number_format($n / 1000000000000, 2, ',', '.');
+                    $nUnit = 'Triliun Rp';
+                } elseif ($n >= 1000000000) {
+                    $nVal = number_format($n / 1000000000, 2, ',', '.');
+                    $nUnit = 'Miliar Rp';
+                } else {
+                    $nVal = number_format($n / 1000000, 1, ',', '.');
+                    $nUnit = 'Juta Rp';
+                }
+            @endphp
+            <span class="kc-val">{{ $nVal }}</span>
+            <span class="kc-unit">{{ $nUnit }}</span>
         </div>
     </div>
     <div class="kc">
@@ -127,7 +140,7 @@
 
     <!-- PRODUKSI PROVINSI -->
     <div class="panel">
-        <div class="ph"><h6><i class="fa-solid fa-chart-column"></i> Produksi Provinsi (kg)</h6></div>
+        <div class="ph"><h6><i class="fa-solid fa-chart-column"></i> Rata-rata Produksi per KDMP (kg)</h6></div>
         <div class="pb" style="height:300px"><canvas id="cBar"></canvas></div>
     </div>
 </div>
@@ -223,6 +236,8 @@
 .dash-fdiv{width:1px;height:18px;background:var(--border-color)}
 .dash-freset{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#FEE2E2;color:#DC2626;font-size:.75rem;text-decoration:none;transition:all .2s}
 .dash-freset:hover{background:#FECACA;transform:scale(1.1)}
+[data-theme="dark"] .dash-filter{background:#1f2937;border-color:#374151}
+[data-theme="dark"] .dash-fsel option{background:#1f2937;color:#e5e7eb}
 
 /* ═══ Exec Dashboard ═══ */
 .exec-dashboard {
@@ -611,7 +626,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     new Chart(document.getElementById('cTrend'),{
         type:'bar',
         data:{
-            labels:['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'],
+            labels: @json($trendLabels),
             datasets:[
                 {
                     label:'Nilai Produksi (Rp)',

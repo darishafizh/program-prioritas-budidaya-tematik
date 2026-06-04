@@ -304,10 +304,10 @@ foreach ($rows as $rowIdx => $row) {
                 $tahun = $parsedDate['tahun'];
                 $tanggal = $parsedDate['tanggal'];
             } else {
-                // Fallback: gunakan bulan Mei 2026 (periode pelaporan)
+                // Fallback: gunakan 1 Mei 2026 (periode pelaporan)
                 $bulan = 5;
                 $tahun = 2026;
-                $tanggal = null;
+                $tanggal = '2026-05-01';
             }
 
             $key = "{$tahun}-{$bulan}";

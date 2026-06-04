@@ -2,13 +2,13 @@
 
 @section('content')
     <!-- Page Header with Breadcrumb -->
-    <div class="page-header-row">
+    <div class="page-header-row mb-4">
         <div>
-            <h1 class="page-title">Kuesioner SPPG</h1>
+            <h1 class="page-title" style="color: var(--kkp-navy);">Kuesioner SPPG</h1>
             <p class="page-subtitle">Data Survei SPPG</p>
         </div>
         <x-breadcrumb :items="[
-            ['label' => 'SPPG', 'url' => route('sppg.index')]
+            ['label' => 'SPPG']
         ]" />
     </div>
 
@@ -25,61 +25,43 @@
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    Tambah Kuesioner
+                    Tambah Data SPPG
                 </a>
             </div>
 
             <div class="table-responsive">
-                <table id="sppgTable" class="table display" style="width:100%">
+                <table id="sppgTable" class="table table-hover w-100 table-sm align-middle">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th class="text-center" width="40">No</th>
                             <th>Nama SPPG</th>
                             <th>Lokasi</th>
                             <th>Tanggal</th>
-                            <th>Aksi</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($surveys as $index => $survey)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>
-                                    <div class="font-medium">{{ $survey->nama_sppg ?? '-' }}</div>
-                                </td>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="fw-bold">{{ $survey->nama_sppg ?? '-' }}</td>
                                 <td>
                                     <div>{{ $survey->kabupaten ?? '-' }}</div>
                                     <div class="text-xs text-muted">{{ $survey->provinsi ?? '-' }}</div>
                                 </td>
                                 <td>{{ $survey->tanggal ? $survey->tanggal->format('d/m/Y') : '-' }}</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <a href="{{ route('sppg.show', $survey) }}" class="table-action-btn view" title="Lihat">
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                                </path>
-                                            </svg>
+                                <td class="text-center">
+                                    <div class="d-flex align-items-center justify-content-center gap-2">
+                                        <a href="{{ route('sppg.show', $survey) }}" class="table-action-btn-modern view">
+                                            <i class="fa-solid fa-eye"></i> Lihat
                                         </a>
-                                        <a href="{{ route('sppg.edit', $survey) }}" class="table-action-btn"
-                                            style="color:#3B82F6;" title="Edit">
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                                </path>
-                                            </svg>
+                                        <a href="{{ route('sppg.edit', $survey) }}" class="table-action-btn-modern">
+                                            <i class="fa-solid fa-pen-to-square"></i> Edit
                                         </a>
-                                        <form id="delete-form-{{ $survey->hashid ?? $survey->id }}" action="{{ route('sppg.destroy', $survey) }}" method="POST"
-                                            style="display:inline;">
+                                        <form id="delete-form-sppg-{{ $survey->hashid ?? $survey->id }}" action="{{ route('sppg.destroy', $survey) }}" method="POST" class="d-inline">
                                             @csrf @method('DELETE')
-                                            <button type="button" class="table-action-btn delete" title="Hapus" onclick="confirmDelete('delete-form-{{ $survey->hashid ?? $survey->id }}', 'Kuesioner')">
-                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                    </path>
-                                                </svg>
+                                            <button type="button" class="table-action-btn-modern danger" onclick="confirmDelete('delete-form-sppg-{{ $survey->hashid ?? $survey->id }}', 'Kuesioner')">
+                                                <i class="fa-solid fa-trash-can"></i> Hapus
                                             </button>
                                         </form>
                                     </div>
@@ -95,6 +77,77 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <style>
+        /* Table modifications */
+        table#sppgTable thead th {
+            background: #ffffff !important;
+            color: var(--gray-700) !important;
+            border-bottom: 2px solid var(--gray-200) !important;
+        }
+        [data-theme="dark"] table#sppgTable thead th {
+            background: #1f2937 !important;
+            color: #e5e7eb !important;
+            border-bottom: 2px solid #374151 !important;
+        }
+        .table-sm td, .table-sm th {
+            padding: 0.75rem 0.75rem;
+            vertical-align: middle;
+        }
+
+        /* Modern Table Action Buttons */
+        .table-action-btn-modern {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1px solid var(--border-color);
+            background: var(--bg-surface);
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all 180ms ease;
+        }
+        .table-action-btn-modern:hover {
+            border-color: #3B82F6;
+            color: #3B82F6;
+            background: rgba(59,130,246,0.04);
+        }
+        .table-action-btn-modern.view:hover {
+            border-color: #10B981;
+            color: #10B981;
+            background: rgba(16,185,129,0.04);
+        }
+        .table-action-btn-modern.danger {
+            border: none;
+            background: rgba(239,68,68,0.06);
+            color: #DC2626;
+        }
+        .table-action-btn-modern.danger:hover {
+            background: rgba(239,68,68,0.12);
+            color: #DC2626;
+        }
+        [data-theme="dark"] .table-action-btn-modern {
+            background: #1F2937;
+            border-color: #374151;
+            color: #9CA3AF;
+        }
+        [data-theme="dark"] .table-action-btn-modern:hover {
+            border-color: #3B82F6;
+            color: #3B82F6;
+        }
+        [data-theme="dark"] .table-action-btn-modern.view:hover {
+            border-color: #10B981;
+            color: #10B981;
+        }
+        [data-theme="dark"] .table-action-btn-modern.danger {
+            background: rgba(239,68,68,0.08);
+            border: none;
+            color: #DC2626;
+        }
+    </style>
 @endpush
 
 @push('scripts')
@@ -118,7 +171,10 @@
                 pageLength: 10,
                 dom: '<"row mb-3"<"col-md-6"l><"col-md-6"f>>rt<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
                 order: [[0, 'asc']],
-                columnDefs: [{ orderable: false, targets: [4] }]
+                columnDefs: [
+                    { className: "text-center", targets: [0, 4] },
+                    { orderable: false, targets: [4] }
+                ]
         });
     </script>
 @endpush

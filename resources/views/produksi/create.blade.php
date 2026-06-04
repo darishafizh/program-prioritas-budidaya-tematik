@@ -137,6 +137,20 @@
                     <input type="hidden" name="jumlah_pembudidaya_aktif" value="{{ old('jumlah_pembudidaya_aktif', 0) }}">
                 </div>
             </div>
+            <div class="grid grid-cols-3 mt-2">
+                <div class="form-group" style="grid-column: span 3; margin-bottom:0;">
+                    <label class="form-label">Tujuan Pasar</label>
+                    <div class="radio-group" style="display: flex; gap: 15px; margin-top: 5px;">
+                        <label><input type="radio" name="tujuan_pasar" value="Pasar Lokal" {{ old('tujuan_pasar') == 'Pasar Lokal' ? 'checked' : '' }}> Pasar Lokal</label>
+                        <label><input type="radio" name="tujuan_pasar" value="SPPG" {{ old('tujuan_pasar') == 'SPPG' ? 'checked' : '' }}> SPPG</label>
+                        <label><input type="radio" name="tujuan_pasar" value="SPPG & Pasar Lokal" {{ old('tujuan_pasar') == 'SPPG & Pasar Lokal' ? 'checked' : '' }}> SPPG & Pasar Lokal</label>
+                        <label><input type="radio" name="tujuan_pasar" value="Lainnya" {{ old('tujuan_pasar') == 'Lainnya' ? 'checked' : '' }}> Lainnya</label>
+                    </div>
+                    <div id="tujuan_pasar_alert" style="display: {{ old('tujuan_pasar') == 'Lainnya' ? 'block' : 'none' }}; margin-top: 10px; padding: 10px; background-color: #FEF3C7; color: #D97706; border-radius: 5px; font-size: 0.85rem;">
+                        <i class="fa-solid fa-circle-info"></i> Silahkan isi tujuan pasar di kolom <b>Catatan Tambahan</b>.
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -154,12 +168,18 @@
             </div>
         </div>
         <div class="monitoring-form-body">
-            <div class="grid grid-cols-3">
+            <div class="grid grid-cols-4">
                 <div class="form-group">
                     <label class="form-label">Survival Rate (%)</label>
                     <input type="number" name="survival_rate" min="0" max="100" step="0.01"
                         value="{{ old('survival_rate') }}" class="form-control" placeholder="0-100">
                     <small style="color:var(--gray-400);font-size:0.72rem;">Tingkat kelangsungan hidup ikan</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">FCR</label>
+                    <input type="number" name="fcr" min="0" step="0.01"
+                        value="{{ old('fcr') }}" class="form-control" placeholder="Food Conversion Ratio">
+                    <small style="color:var(--gray-400);font-size:0.72rem;">Rasio konversi pakan</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Jumlah Kolam Aktif</label>
@@ -191,6 +211,13 @@
             </div>
         </div>
         <div class="monitoring-form-body">
+            <div class="form-group">
+                <label class="form-label">Link Dokumentasi</label>
+                <input type="url" class="form-control" name="dokumentasi" value="{{ old('dokumentasi') }}" placeholder="Contoh: https://drive.google.com/...">
+                @error('dokumentasi')
+                <div class="form-error"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</div>
+                @enderror
+            </div>
             <div class="form-group">
                 <label class="form-label">Kendala</label>
                 <textarea name="kendala" rows="3" class="form-control" placeholder="Tuliskan kendala yang dihadapi...">{{ old('kendala') }}</textarea>
@@ -417,6 +444,15 @@
             placeholder: '-- Cari dan pilih KDKMP --',
             allowClear: true,
             width: '100%'
+        });
+
+        // Toggle tujuan pasar alert
+        $('input[name="tujuan_pasar"]').on('change', function() {
+            if ($(this).val() === 'Lainnya') {
+                $('#tujuan_pasar_alert').slideDown();
+            } else {
+                $('#tujuan_pasar_alert').slideUp();
+            }
         });
     });
 

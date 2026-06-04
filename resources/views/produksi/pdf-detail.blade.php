@@ -279,7 +279,7 @@
                 @endphp
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
-                    <td class="text-center">{{ $record->bulan_label }} {{ $record->tahun }}</td>
+                    <td class="text-center">{{ $record->tanggal ? $record->tanggal->translatedFormat('F Y') : '-' }}</td>
                     <td class="text-center" style="color: {{ $record->status_label === 'On Track' ? '#16A34A' : '#DC2626' }}; font-weight: bold;">{{ $record->status_label }}</td>
                     <td class="text-right">{{ number_format($record->volume_panen_kg, 2, ',', '.') }}</td>
                     <td class="text-right">{{ number_format($record->nilai_produksi, 0, ',', '.') }}</td>

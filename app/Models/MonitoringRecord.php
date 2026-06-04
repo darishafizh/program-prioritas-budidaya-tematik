@@ -15,12 +15,12 @@ class MonitoringRecord extends Model
     protected $fillable = [
         'kdmp_id',
         'user_id',
-        'bulan',
         'tanggal',
-        'tahun',
         'status_lokasi',
         'progres_fisik',
         'volume_panen_kg',
+        'tujuan_pasar',
+        'dokumentasi',
         'nilai_produksi',
         'biaya_pakan',
         'biaya_bibit',
@@ -28,6 +28,7 @@ class MonitoringRecord extends Model
         'biaya_operasional',
         'jumlah_pembudidaya_aktif',
         'survival_rate',
+        'fcr',
         'jumlah_kolam_aktif',
         'jumlah_kolam_total',
         'kendala',
@@ -36,6 +37,7 @@ class MonitoringRecord extends Model
     ];
 
     protected $casts = [
+        'tanggal' => 'date',
         'volume_panen_kg' => 'decimal:2',
         'nilai_produksi' => 'decimal:2',
         'biaya_pakan' => 'decimal:2',
@@ -43,6 +45,7 @@ class MonitoringRecord extends Model
         'biaya_lainnya' => 'decimal:2',
         'biaya_operasional' => 'decimal:2',
         'survival_rate' => 'decimal:2',
+        'fcr' => 'decimal:2',
     ];
 
     // ==========================================
@@ -91,10 +94,11 @@ class MonitoringRecord extends Model
     }
 
     /**
-     * Nama bulan dalam Bahasa Indonesia
+     * Nama bulan dalam Bahasa Indonesia (derived from tanggal)
      */
     public function getBulanLabelAttribute(): string
     {
+        if (!$this->tanggal) return '-';
         $bulanList = [
             1 => 'Januari',
             2 => 'Februari',
@@ -109,15 +113,16 @@ class MonitoringRecord extends Model
             11 => 'November',
             12 => 'Desember',
         ];
-        return $bulanList[$this->bulan] ?? '-';
+        return $bulanList[$this->tanggal->month] ?? '-';
     }
 
     /**
-     * Label periode: "Januari 2026"
+     * Label periode: "Januari 2026" (derived from tanggal)
      */
     public function getPeriodeLabelAttribute(): string
     {
-        return $this->bulan_label . ' ' . $this->tahun;
+        if (!$this->tanggal) return '-';
+        return $this->bulan_label . ' ' . $this->tanggal->year;
     }
 
     /**
@@ -193,11 +198,11 @@ class MonitoringRecord extends Model
 
     public function scopeByPeriode($query, int $bulan, int $tahun)
     {
-        return $query->where('bulan', $bulan)->where('tahun', $tahun);
+        return $query->whereMonth('tanggal', $bulan)->whereYear('tanggal', $tahun);
     }
 
     public function scopeByTahun($query, int $tahun)
     {
-        return $query->where('tahun', $tahun);
+        return $query->whereYear('tanggal', $tahun);
     }
 }

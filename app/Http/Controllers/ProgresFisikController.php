@@ -15,13 +15,16 @@ class ProgresFisikController extends Controller
      */
     public function index(Request $request)
     {
-        $tahun = $request->get('tahun', date('Y'));
-        $bulan = $request->get('bulan', date('n'));
+        $tahun = $request->get('tahun');
+        $bulan = $request->get('bulan');
         $search = $request->get('search');
 
-        // Ambil semua KDMP beserta record progres fisik terakhir
+        // Ambil semua KDMP beserta record progres fisik (filter jika ada)
         $query = Kdmp::with([
-            'progresFisikRecords' => fn($q) => $q->orderBy('tahun', 'desc')->orderBy('bulan', 'desc'),
+            'progresFisikRecords' => fn($q) => $q
+                ->when($tahun, fn($q2) => $q2->where('tahun', $tahun))
+                ->when($bulan, fn($q2) => $q2->where('bulan', $bulan))
+                ->orderBy('tahun', 'desc')->orderBy('bulan', 'desc'),
         ]);
 
         if ($search) {
@@ -35,7 +38,9 @@ class ProgresFisikController extends Controller
         $kdmpList = $query->orderBy('id')->get();
 
         // Statistik ringkasan
-        $allRecords = ProgresFisikRecord::where('tahun', $tahun)->where('bulan', $bulan)->get();
+        $allRecords = ProgresFisikRecord::when($tahun, fn($q) => $q->where('tahun', $tahun))
+            ->when($bulan, fn($q) => $q->where('bulan', $bulan))
+            ->get();
 
         $stats = [
             'total_kdmp' => Kdmp::count(),

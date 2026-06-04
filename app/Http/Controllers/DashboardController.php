@@ -27,18 +27,17 @@ class DashboardController extends Controller
         $filteredKdmpIds = $kdmpQuery->pluck('id');
         $totalLokasi = $filteredKdmpIds->count();
 
-        // ── PRODUKSI (semua record dalam tahun = kumulatif) ─────────
-        $allProdRecords = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds)
-            ->when($filterTahun, fn($q) => $q->where('tahun', $filterTahun))
-            ->get();
+        // ── PRODUKSI (seluruh record tanpa filter tahun = kumulatif) ─────────
+        $allProdRecordsQuery = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds);
+        $allProdRecords = $allProdRecordsQuery->get();
 
-        // Kumulatif: total dari SEMUA record di tahun ini
-        $totalProduksi      = $allProdRecords->sum('volume_panen_kg');
-        $totalNilaiProduksi = $allProdRecords->sum('nilai_produksi');
+        // Kumulatif: total dari SELURUH record tanpa dibatasi filter tahun
+        $totalProduksi      = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds)->sum('volume_panen_kg');
+        $totalNilaiProduksi = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds)->sum('nilai_produksi');
 
         // Record terakhir per KDMP (untuk status, SR, kolam, map, performa)
         $latestProdIds = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds)
-            ->when($filterTahun, fn($q) => $q->where('tahun', $filterTahun))
+            ->when($filterTahun, fn($q) => $q->whereYear('tanggal', $filterTahun))
             ->select('kdmp_id', DB::raw('MAX(id) as latest_id'))
             ->groupBy('kdmp_id')
             ->pluck('latest_id');
@@ -128,23 +127,34 @@ class DashboardController extends Controller
         // ── CHART: Produksi per Provinsi ───────────────────────────
         $prodPerProvinsi = MonitoringRecord::join('kdmp', 'monitoring_produksi.kdmp_id', '=', 'kdmp.id')
             ->whereIn('monitoring_produksi.kdmp_id', $filteredKdmpIds)
-            ->when($filterTahun, fn($q) => $q->where('tahun', $filterTahun))
-            ->select('kdmp.provinsi', DB::raw('SUM(volume_panen_kg) as total'))
+            ->select('kdmp.provinsi', DB::raw('SUM(volume_panen_kg) / COUNT(DISTINCT kdmp.id) as total'))
             ->groupBy('kdmp.provinsi')
             ->orderByDesc('total')
             ->limit(10)
             ->get();
 
-        // ── CHART: Trend bulanan ───────────────────────────────────
-        $prodBulananRaw = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds)
-            ->when($filterTahun, fn($q) => $q->where('tahun', $filterTahun))
-            ->select('bulan', DB::raw('SUM(volume_panen_kg) as vol'), DB::raw('SUM(nilai_produksi) as val'))
-            ->groupBy('bulan')->orderBy('bulan')
-            ->get()->keyBy('bulan');
-        $prodBulanan = $nilaiBulanan = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $prodBulanan[]  = $prodBulananRaw->has($i) ? (float) $prodBulananRaw[$i]->vol : 0;
-            $nilaiBulanan[] = $prodBulananRaw->has($i) ? (float) $prodBulananRaw[$i]->val : 0;
+        // ── CHART: Trend Produksi (Semua Waktu atau Filter Tahun) ──────────
+        $trendQuery = MonitoringRecord::whereIn('kdmp_id', $filteredKdmpIds);
+        if ($filterTahun) {
+            $trendQuery->whereYear('tanggal', $filterTahun);
+        }
+        $prodBulananRaw = $trendQuery
+            ->selectRaw('DATE_FORMAT(tanggal, "%Y-%m") as bulan_tahun, SUM(volume_panen_kg) as vol, SUM(nilai_produksi) as val')
+            ->groupByRaw('DATE_FORMAT(tanggal, "%Y-%m")')
+            ->orderByRaw('DATE_FORMAT(tanggal, "%Y-%m")')
+            ->get();
+
+        $trendLabels = [];
+        $prodBulanan = [];
+        $nilaiBulanan = [];
+        
+        foreach ($prodBulananRaw as $item) {
+            if (!$item->bulan_tahun) continue;
+            // Parse YYYY-MM to Indonesian month-year
+            $date = \Carbon\Carbon::createFromFormat('Y-m', $item->bulan_tahun);
+            $trendLabels[] = $date->translatedFormat('M Y');
+            $prodBulanan[] = (float) $item->vol;
+            $nilaiBulanan[] = (float) $item->val;
         }
 
         // ── CHART: Sebaran Komoditas ───────────────────────────────
@@ -212,15 +222,25 @@ class DashboardController extends Controller
             ->values();
 
         return view('dashboard.index', compact(
-            'filterProvinsi', 'filterKomoditas', 'filterTahun',
-            'provinsiList', 'komoditasList', 'tahunList',
+            'provinsiList',
+            'komoditasList',
+            'tahunList',
+            'filterProvinsi',
+            'filterKomoditas',
+            'filterTahun',
             'totalLokasi',
+            'totalProduksi',
+            'totalNilaiProduksi',
             'eksekutif',
             'performanceSummary',
-            'totalProduksi', 'totalNilaiProduksi', 'avgSR', 'utilisasi',
-            'prodPerProvinsi', 'prodBulanan', 'nilaiBulanan',
+            'prodPerProvinsi',
+            'trendLabels',
+            'prodBulanan',
+            'nilaiBulanan',
             'sebaranKomoditas',
-            'mapLocations'
+            'mapLocations',
+            'avgSR',
+            'utilisasi'
         ));
     }
 }

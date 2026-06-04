@@ -15,25 +15,19 @@ class ProduksiController extends Controller
      */
     public function index(Request $request)
     {
-        // Default ke periode terakhir yang ada datanya, bukan bulan saat ini
-        $latestRecord = MonitoringRecord::orderByDesc('tahun')->orderByDesc('bulan')->first();
-        $defaultTahun = $latestRecord ? $latestRecord->tahun : date('Y');
-        $defaultBulan = $latestRecord ? $latestRecord->bulan : date('n');
-
-        $tahun = $request->get('tahun', $defaultTahun);
-        $bulan = $request->get('bulan', $defaultBulan);
+        // Default: tidak ada filter aktif (tampilkan semua data)
+        $tahun = $request->get('tahun');
+        $bulan = $request->get('bulan');
         $status = $request->get('status');
         $search = $request->get('search');
 
-        // Ambil semua KDMP beserta record sesuai periode yang dipilih
-        // Ambil KDMP yang diperlukan dengan field spesifik untuk meringankan beban memori
+        // Ambil semua KDMP beserta record sesuai periode yang dipilih (atau semua jika tidak difilter)
         $query = Kdmp::with([
             'monitoringRecords' => fn($q) => $q
-                ->select('id', 'kdmp_id', 'tahun', 'bulan', 'volume_panen_kg', 'nilai_produksi', 'biaya_operasional', 'biaya_pakan', 'biaya_bibit', 'biaya_lainnya')
-                ->where('tahun', $tahun)
-                ->where('bulan', $bulan)
-                ->orderBy('tahun', 'desc')
-                ->orderBy('bulan', 'desc'),
+                ->select('id', 'kdmp_id', 'tanggal', 'volume_panen_kg', 'nilai_produksi', 'biaya_operasional', 'biaya_pakan', 'biaya_bibit', 'biaya_lainnya')
+                ->when($tahun, fn($q2) => $q2->whereYear('tanggal', $tahun))
+                ->when($bulan, fn($q2) => $q2->whereMonth('tanggal', $bulan))
+                ->orderByDesc('tanggal'),
         ])->select('id', 'nama_kdkmp', 'kabupaten', 'provinsi');
 
         if ($search) {
@@ -46,29 +40,21 @@ class ProduksiController extends Controller
 
         $kdmpList = $query->orderBy('id')->get();
 
-        // 1 Query cepat untuk mengambil semua record spesifik pada periode terkait tanpa N+1
+        // 1 Query cepat untuk mengambil semua record (dengan filter jika ada)
         $allRecords = MonitoringRecord::select('kdmp_id', 'volume_panen_kg', 'nilai_produksi', 'biaya_operasional')
-                                      ->where('tahun', $tahun)
-                                      ->where('bulan', $bulan)
+                                      ->when($tahun, fn($q) => $q->whereYear('tanggal', $tahun))
+                                      ->when($bulan, fn($q) => $q->whereMonth('tanggal', $bulan))
                                       ->get();
-        $targetKeuntungan = 15000000;
-        $onTrackCount = 0;
-        $underperformCount = 0;
-
-        foreach ($allRecords as $rec) {
-            $keuntungan = (float) $rec->nilai_produksi - (float) $rec->biaya_operasional;
-            if ($keuntungan >= $targetKeuntungan) {
-                $onTrackCount++;
-            } else {
-                $underperformCount++;
-            }
-        }
+        $totalKdmp = Kdmp::count();
+        $kdmpIdsPanen = $allRecords->where('volume_panen_kg', '>', 0)->pluck('kdmp_id')->unique();
+        $sudahPanenCount = $kdmpIdsPanen->count();
+        $belumPanenCount = $totalKdmp - $sudahPanenCount;
 
         $stats = [
-            'total_kdmp' => Kdmp::count(),
-            'sudah_lapor' => $allRecords->count(),
-            'on_track' => $onTrackCount,
-            'underperforming' => $underperformCount,
+            'total_kdmp' => $totalKdmp,
+            'sudah_lapor' => $allRecords->unique('kdmp_id')->count(),
+            'sudah_panen' => $sudahPanenCount,
+            'belum_panen' => $belumPanenCount,
             'total_panen' => $allRecords->sum('volume_panen_kg'),
             'total_nilai' => $allRecords->sum('nilai_produksi'),
         ];
@@ -105,10 +91,10 @@ class ProduksiController extends Controller
 
         // Siapkan Data Grafik Analitik
         // 1. Trend Rata-rata Keseluruhan Lokasi per Bulan (Tahun Ini)
-        $trendBulanan = MonitoringRecord::where('tahun', $tahun)
-            ->selectRaw('bulan, sum(volume_panen_kg) as total_volume, sum(nilai_produksi) as total_nilai, count(id) as jumlah_lapor')
-            ->groupBy('bulan')
-            ->orderBy('bulan')
+        $trendBulanan = MonitoringRecord::whereYear('tanggal', $tahun)
+            ->selectRaw('MONTH(tanggal) as bulan, SUM(volume_panen_kg) as total_volume, SUM(nilai_produksi) as total_nilai, COUNT(id) as jumlah_lapor')
+            ->groupByRaw('MONTH(tanggal)')
+            ->orderByRaw('MONTH(tanggal)')
             ->get();
             
         $chartTrend = [
@@ -181,31 +167,13 @@ class ProduksiController extends Controller
         $kdmp = $monitoring;
         $records = MonitoringRecord::where('kdmp_id', $kdmp->id)
             ->with('user')
-            ->orderByDesc('tahun')
-            ->orderByDesc('bulan')
+            ->orderByDesc('tanggal')
             ->get();
 
-        $bulanList = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember',
-        ];
-
-        // Data chart progres fisik & panen per periode
-        $chartData = $records->sortBy(function ($r) {
-            return $r->tahun * 100 + $r->bulan;
-        })->values()->map(function ($r) use ($bulanList) {
+        // Data chart per periode
+        $chartData = $records->sortBy('tanggal')->values()->map(function ($r) {
             return [
-                'label' => ($bulanList[$r->bulan] ?? $r->bulan) . ' ' . $r->tahun,
+                'label' => $r->tanggal ? $r->tanggal->format('d M Y') : '-',
                 'progres_fisik' => $r->progres_fisik,
                 'volume_panen' => (float) $r->volume_panen_kg,
                 'nilai_produksi' => (float) $r->nilai_produksi,
@@ -215,7 +183,7 @@ class ProduksiController extends Controller
             ];
         });
 
-        return view('produksi.show', compact('kdmp', 'records', 'chartData', 'bulanList'));
+        return view('produksi.show', compact('kdmp', 'records', 'chartData'));
     }
 
     /**
@@ -231,23 +199,7 @@ class ProduksiController extends Controller
         $kdmpList = Kdmp::orderBy('id')->get(['id', 'nama_kdkmp', 'kabupaten', 'provinsi']);
         $kdmpSelected = $kdmpId ? Kdmp::find($kdmpId) : null;
 
-        $bulanList = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember',
-        ];
-        $tahunList = range(2024, (int) date('Y') + 1);
-
-        return view('produksi.create', compact('kdmpList', 'kdmpSelected', 'bulanList', 'tahunList'));
+        return view('produksi.create', compact('kdmpList', 'kdmpSelected'));
     }
 
     /**
@@ -255,6 +207,20 @@ class ProduksiController extends Controller
      */
     public function store(Request $request)
     {
+        // Manipulasi format tanggal: jika input berupa dd/mm/yyyy (misal 12/04/2026)
+        // secara eksplisit kita anggap 12 = tanggal, 04 = bulan, 2026 = tahun
+        if ($request->has('tanggal')) {
+            $rawDate = $request->input('tanggal');
+            if (str_contains($rawDate, '/')) {
+                try {
+                    $parsed = \Carbon\Carbon::createFromFormat('d/m/Y', $rawDate)->format('Y-m-d');
+                    $request->merge(['tanggal' => $parsed]);
+                } catch (\Exception $e) {
+                    // Jika gagal parsing, biarkan apa adanya untuk ditangani validator
+                }
+            }
+        }
+
         $kdmpId = $request->input('kdmp_id');
         if ($kdmpId && !is_numeric($kdmpId)) {
             $decoded = \Vinkla\Hashids\Facades\Hashids::decode($kdmpId);
@@ -265,14 +231,16 @@ class ProduksiController extends Controller
             'kdmp_id' => 'required|exists:kdmp,id',
             'tanggal' => 'required|date',
             'status_lokasi' => 'required|in:on_track,bermasalah,selesai,vakum',
-            'progres_fisik' => 'required|integer|between:0,100',
             'volume_panen_kg' => 'nullable|numeric|min:0',
+            'tujuan_pasar' => 'nullable|string|max:255',
+            'dokumentasi' => 'nullable|url|max:500',
             'nilai_produksi' => 'nullable|numeric|min:0',
             'biaya_pakan' => 'nullable|numeric|min:0',
             'biaya_bibit' => 'nullable|numeric|min:0',
             'biaya_lainnya' => 'nullable|numeric|min:0',
             'jumlah_pembudidaya_aktif' => 'nullable|integer|min:0',
             'survival_rate' => 'nullable|numeric|min:0|max:100',
+            'fcr' => 'nullable|numeric|min:0',
             'jumlah_kolam_aktif' => 'nullable|integer|min:0',
             'jumlah_kolam_total' => 'nullable|integer|min:0',
             'kendala' => 'nullable|string',
@@ -280,24 +248,8 @@ class ProduksiController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-        // Parse tanggal ke bulan dan tahun
-        $date = \Carbon\Carbon::parse($validated['tanggal']);
-        $validated['bulan'] = $date->month;
-        $validated['tahun'] = $date->year;
-
         $validated['user_id'] = Auth::id();
-
-        // Cek duplikasi berdasarkan tanggal yang sama
-        $existing = MonitoringRecord::where('kdmp_id', $validated['kdmp_id'])
-            ->where('tanggal', $validated['tanggal'])
-            ->first();
-
-        if ($existing) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['tanggal' => 'Laporan untuk KDMP ini pada tanggal tersebut sudah ada. Gunakan edit untuk memperbarui.']);
-        }
-
+        
         $validated['biaya_operasional'] = (float)($validated['biaya_pakan'] ?? 0) 
                                         + (float)($validated['biaya_bibit'] ?? 0) 
                                         + (float)($validated['biaya_lainnya'] ?? 0);
@@ -320,23 +272,7 @@ class ProduksiController extends Controller
         $record = $monitoring;
         $record->load('kdmp');
 
-        $bulanList = [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember',
-        ];
-        $tahunList = range(2024, (int) date('Y') + 1);
-
-        return view('produksi.edit', compact('record', 'bulanList', 'tahunList'));
+        return view('produksi.edit', compact('record'));
     }
 
     /**
@@ -344,20 +280,37 @@ class ProduksiController extends Controller
      */
     public function update(Request $request, MonitoringRecord $monitoring)
     {
+        // Manipulasi format tanggal: jika input berupa dd/mm/yyyy
+        // secara eksplisit kita anggap 12 = tanggal, 04 = bulan, 2026 = tahun
+        if ($request->has('tanggal')) {
+            $rawDate = $request->input('tanggal');
+            if (str_contains($rawDate, '/')) {
+                try {
+                    $parsed = \Carbon\Carbon::createFromFormat('d/m/Y', $rawDate)->format('Y-m-d');
+                    $request->merge(['tanggal' => $parsed]);
+                } catch (\Exception $e) {
+                    // Jika gagal parsing, biarkan apa adanya untuk ditangani validator
+                }
+            }
+        }
+
         if (Auth::user()->role !== 'admin' && $monitoring->user_id !== Auth::id()) {
             abort(403, 'Akses ditolak. Anda hanya dapat mengubah data milik Anda sendiri.');
         }
 
         $validated = $request->validate([
+            'tanggal' => 'required|date',
             'status_lokasi' => 'required|in:on_track,bermasalah,selesai,vakum',
-            'progres_fisik' => 'required|integer|between:0,100',
             'volume_panen_kg' => 'nullable|numeric|min:0',
+            'tujuan_pasar' => 'nullable|string|max:255',
+            'dokumentasi' => 'nullable|url|max:500',
             'nilai_produksi' => 'nullable|numeric|min:0',
             'biaya_pakan' => 'nullable|numeric|min:0',
             'biaya_bibit' => 'nullable|numeric|min:0',
             'biaya_lainnya' => 'nullable|numeric|min:0',
             'jumlah_pembudidaya_aktif' => 'nullable|integer|min:0',
             'survival_rate' => 'nullable|numeric|min:0|max:100',
+            'fcr' => 'nullable|numeric|min:0',
             'jumlah_kolam_aktif' => 'nullable|integer|min:0',
             'jumlah_kolam_total' => 'nullable|integer|min:0',
             'kendala' => 'nullable|string',
@@ -403,8 +356,7 @@ class ProduksiController extends Controller
     {
         $records = MonitoringRecord::where('kdmp_id', $kdmp->id)
             ->with('user')
-            ->orderByDesc('tahun')
-            ->orderByDesc('bulan')
+            ->orderByDesc('tanggal')
             ->get();
 
         $progresFisikRecords = \App\Models\ProgresFisikRecord::where('kdmp_id', $kdmp->id)->get();
@@ -427,7 +379,7 @@ class ProduksiController extends Controller
 
         // Ambil semua KDMP beserta record monitoring terakhir
         $query = Kdmp::with([
-            'monitoringRecords' => fn($q) => $q->orderBy('tahun', 'desc')->orderBy('bulan', 'desc'),
+            'monitoringRecords' => fn($q) => $q->orderByDesc('tanggal'),
         ]);
 
         if ($search) {
@@ -467,7 +419,7 @@ class ProduksiController extends Controller
 
         // Query data
         $query = Kdmp::with([
-            'monitoringRecords' => fn($q) => $q->orderBy('tahun', 'desc')->orderBy('bulan', 'desc'),
+            'monitoringRecords' => fn($q) => $q->orderByDesc('tanggal'),
         ]);
 
         if ($search) {
@@ -542,12 +494,12 @@ class ProduksiController extends Controller
                 $catatan = '-';
 
                 if ($lastRecord) {
-                    $periode = $lastRecord->periode_label ?? ($lastRecord->bulan . ' ' . $lastRecord->tahun);
+                    $periode = $lastRecord->periode_label ?? '-';
                     $status = $lastRecord->status_label ?? $lastRecord->status_lokasi;
-                    $volumePanen = $lastRecord->volume_panen_kg;
-                    $nilaiProduksi = $lastRecord->nilai_produksi;
-                    $biayaOperasional = $lastRecord->biaya_operasional;
-                    $keuntungan = (float)$lastRecord->nilai_produksi - (float)$lastRecord->biaya_operasional;
+                    $volumePanen = $kdmp->monitoringRecords->sum('volume_panen_kg');
+                    $nilaiProduksi = $kdmp->monitoringRecords->sum('nilai_produksi');
+                    $biayaOperasional = $kdmp->monitoringRecords->sum('biaya_operasional');
+                    $keuntungan = (float)$nilaiProduksi - (float)$biayaOperasional;
                     $sr = $lastRecord->survival_rate !== null ? $lastRecord->survival_rate . '%' : '-';
                     $kolamAktif = $lastRecord->jumlah_kolam_aktif ?? '-';
                     $kolamTotal = $lastRecord->jumlah_kolam_total ?? '-';
