@@ -14,6 +14,10 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+Route::get('/react-dashboard', function () {
+    return view('react-dashboard');
+});
+
 // Dashboard with new controller
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
